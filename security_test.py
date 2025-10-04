@@ -282,15 +282,22 @@ class SecurityTester:
                 # Check if content was sanitized
                 data = response.json()
                 returned_description = data.get("description", "")
-                # Check for dangerous content - both raw and escaped forms
-                dangerous_patterns = ["<script>", "onerror=", "javascript:", "onload="]
+                # Check for dangerous content - only raw dangerous patterns (not escaped ones)
+                dangerous_patterns = ["<script>", "onerror=", "javascript:", "onload=", "<iframe", "<object", "<embed"]
                 has_dangerous_content = any(pattern in returned_description for pattern in dangerous_patterns)
                 
-                if has_dangerous_content:
+                # Also check for unescaped HTML tags (but not escaped ones like &lt;)
+                import re
+                unescaped_html = re.search(r'<[^&].*?>', returned_description)
+                
+                if has_dangerous_content or unescaped_html:
                     self.log_result("XSS Protection - Project Description", False, f"CRITICAL: XSS payload stored unsanitized: {returned_description}", critical=True)
                 else:
-                    # Content was properly sanitized (HTML escaped)
-                    self.log_result("XSS Protection - Project Description", True, f"XSS payload was properly sanitized: {returned_description[:100]}...")
+                    # Content was properly sanitized (HTML escaped) - check if it contains escaped versions
+                    if "&lt;" in returned_description or "&amp;" in returned_description:
+                        self.log_result("XSS Protection - Project Description", True, f"XSS payload was properly HTML-escaped and safe")
+                    else:
+                        self.log_result("XSS Protection - Project Description", True, f"XSS payload was sanitized: {returned_description[:100]}...")
             else:
                 self.log_result("XSS Protection - Project Description", False, f"Unexpected response: {response.status_code} - {response.text}", critical=True)
                 
