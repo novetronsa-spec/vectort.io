@@ -9,11 +9,13 @@ from datetime import datetime, timedelta
 import os
 import logging
 from pathlib import Path
-from pydantic import BaseModel, Field, EmailStr
+from pydantic import BaseModel, Field, EmailStr, field_validator
 from typing import List, Optional
 import uuid
 import hashlib
 import base64
+import re
+import html
 from emergentintegrations.llm.chat import LlmChat, UserMessage
 
 
