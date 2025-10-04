@@ -148,6 +148,49 @@ export default function Dashboard() {
     }
   };
 
+  const openPreview = (projectId) => {
+    const previewUrl = `${BACKEND_URL}/api/projects/${projectId}/preview`;
+    window.open(previewUrl, '_blank');
+  };
+
+  const viewCode = async (projectId) => {
+    try {
+      const response = await axios.get(`${API}/projects/${projectId}/code`);
+      const codeData = response.data;
+      
+      // Create a simple code viewer modal (you could implement a proper modal)
+      const codeContent = `
+HTML:
+${codeData.html_code || 'Aucun code HTML généré'}
+
+CSS:
+${codeData.css_code || 'Aucun code CSS généré'}
+
+JavaScript:
+${codeData.js_code || 'Aucun code JavaScript généré'}
+
+React:
+${codeData.react_code || 'Aucun code React généré'}
+
+Backend:
+${codeData.backend_code || 'Aucun code backend généré'}
+      `;
+      
+      // For now, just copy to clipboard
+      navigator.clipboard.writeText(codeContent);
+      toast({
+        title: "Code copié !",
+        description: "Le code a été copié dans le presse-papiers.",
+      });
+    } catch (error) {
+      toast({
+        title: "Erreur",
+        description: "Impossible de récupérer le code.",
+        variant: "destructive"
+      });
+    }
+  };
+
   const handleLogout = () => {
     logout();
     navigate("/");
