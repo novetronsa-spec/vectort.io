@@ -405,7 +405,16 @@ metadata:
 
 test_plan:
   current_focus:
-    - "All backend API endpoints tested successfully"
+    - "Landing Page Load and Design"
+    - "App Carousel Navigation"
+    - "Authentication Buttons"
+    - "User Registration"
+    - "User Login"
+    - "Dashboard Load and User Info"
+    - "Project Creation"
+    - "Project Listing"
+    - "Project Deletion"
+    - "Navigation and Logout"
   stuck_tasks: []
   test_all: true
   test_priority: "high_first"
