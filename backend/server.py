@@ -12,6 +12,8 @@ from pathlib import Path
 from pydantic import BaseModel, Field, EmailStr
 from typing import List, Optional
 import uuid
+import hashlib
+import base64
 
 
 ROOT_DIR = Path(__file__).parent
