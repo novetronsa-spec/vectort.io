@@ -40,6 +40,7 @@ export default function Dashboard() {
     location.state?.description || ""
   );
   const [isCreating, setIsCreating] = useState(false);
+  const [currentTab, setCurrentTab] = useState("projects");
   const [stats, setStats] = useState({
     totalProjects: 0,
     activeProjects: 0,
