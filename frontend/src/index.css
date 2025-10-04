@@ -83,6 +83,36 @@ code {
     @apply border-border;
     }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-black text-white;
     }
+}
+
+/* Force high contrast for all elements */
+@layer utilities {
+  .contrast-fix {
+    color: white !important;
+    background-color: black !important;
+  }
+  
+  .input-contrast {
+    background-color: rgb(30, 30, 30) !important;
+    color: white !important;
+    border-color: rgb(60, 60, 60) !important;
+  }
+  
+  .button-contrast {
+    color: white !important;
+  }
+  
+  .text-readable {
+    color: rgb(240, 240, 240) !important;
+  }
+  
+  .muted-readable {
+    color: rgb(160, 160, 160) !important;
+  }
+  
+  .border-visible {
+    border-color: rgb(60, 60, 60) !important;
+  }
 }
