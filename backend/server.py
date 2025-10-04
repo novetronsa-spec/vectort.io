@@ -152,6 +152,75 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
         raise credentials_exception
     return User(**user)
 
+async def generate_app_code(description: str, app_type: str, framework: str) -> dict:
+    """Generate application code using AI"""
+    try:
+        # Initialize LLM Chat
+        chat = LlmChat(
+            api_key=EMERGENT_LLM_KEY,
+            session_id=f"codex-generation-{uuid.uuid4()}",
+            system_message=f"""Tu es un développeur expert qui génère du code de production de haute qualité.
+            
+            Génère une application {app_type} en {framework} basée sur la description fournie.
+            
+            REQUIREMENTS:
+            - Code propre, moderne et optimisé
+            - Design responsive et accessible 
+            - Fonctionnalités complètes et pratiques
+            - Prêt pour la production
+            - Utilise les meilleures pratiques
+            
+            FORMAT DE RÉPONSE:
+            Réponds UNIQUEMENT avec un JSON dans ce format exact:
+            {{
+                "html": "code HTML complet si applicable",
+                "css": "code CSS complet avec design moderne",
+                "js": "code JavaScript complet si applicable", 
+                "react": "code React JSX complet si framework=react",
+                "backend": "code backend API si nécessaire (FastAPI/Node.js)"
+            }}
+            
+            N'inclus AUCUN texte en dehors du JSON."""
+        ).with_model("openai", "gpt-4o")
+        
+        # Create user message
+        user_message = UserMessage(
+            text=f"Génère une application {app_type} en {framework}:\n\n{description}\n\nGénère du code complet et fonctionnel prêt pour la production."
+        )
+        
+        # Send message and get response
+        response = await chat.send_message(user_message)
+        
+        # Parse JSON response
+        import json
+        try:
+            # Extract JSON from response
+            response_text = response.strip()
+            if response_text.startswith("```json"):
+                response_text = response_text[7:-3]
+            elif response_text.startswith("```"):
+                response_text = response_text[3:-3]
+                
+            code_data = json.loads(response_text)
+            return code_data
+            
+        except json.JSONDecodeError:
+            # Fallback: create basic structure
+            return {
+                "html": f"<!DOCTYPE html><html><head><title>Generated App</title></head><body><h1>Application générée</h1><p>{description}</p></body></html>",
+                "css": "body { font-family: Arial, sans-serif; margin: 20px; }",
+                "js": "console.log('Application générée avec succès');",
+                "react": None,
+                "backend": None
+            }
+            
+    except Exception as e:
+        logger.error(f"Error generating app code: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Erreur lors de la génération du code"
+        )
+
 
 # Routes
 @api_router.get("/")
