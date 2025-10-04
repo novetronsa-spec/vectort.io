@@ -78,19 +78,45 @@ export default function Dashboard() {
 
     setIsCreating(true);
     try {
-      const response = await axios.post(`${API}/projects`, {
+      // Create the project first
+      const projectResponse = await axios.post(`${API}/projects`, {
         title: `Projet ${projects.length + 1}`,
         description: newProjectDescription,
         type: "web_app"
       });
 
-      setProjects([response.data, ...projects]);
-      setNewProjectDescription("");
+      const newProject = projectResponse.data;
+      setProjects([newProject, ...projects]);
       
       toast({
         title: "Projet créé !",
-        description: "Votre nouveau projet a été créé avec succès.",
+        description: "Génération du code en cours...",
       });
+
+      // Generate the application code using AI
+      try {
+        await axios.post(`${API}/projects/${newProject.id}/generate`, {
+          description: newProjectDescription,
+          type: "web_app",
+          framework: "react"
+        });
+
+        // Refresh projects list to get updated status
+        fetchProjects();
+        
+        toast({
+          title: "Application générée !",
+          description: "Votre application a été générée avec succès et est prête à être déployée.",
+        });
+      } catch (genError) {
+        toast({
+          title: "Génération échouée",
+          description: "Le projet a été créé mais la génération du code a échoué.",
+          variant: "destructive"
+        });
+      }
+
+      setNewProjectDescription("");
     } catch (error) {
       toast({
         title: "Erreur",
