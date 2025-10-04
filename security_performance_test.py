@@ -287,8 +287,8 @@ class SecurityPerformanceTester:
             
             # Mix of different endpoints
             endpoints = [
-                ("GET", "/"),
-                ("GET", "/stats"),
+                ("GET", "/", None),
+                ("GET", "/stats", None),
                 ("POST", "/auth/login", {"email": "test@example.com", "password": "wrong"})
             ]
             
