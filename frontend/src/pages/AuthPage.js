@@ -285,6 +285,19 @@ export default function AuthPage() {
                         {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                       </button>
                     </div>
+                    {passwordErrors.length > 0 && formData.password.length > 0 && (
+                      <div className="mt-2 text-sm text-red-400">
+                        <p className="font-medium">Le mot de passe doit contenir :</p>
+                        <ul className="mt-1 space-y-1">
+                          {passwordErrors.map((error, idx) => (
+                            <li key={idx} className="flex items-center space-x-2">
+                              <span className="text-red-400">•</span>
+                              <span>{error}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
                   </div>
                   <Button 
                     type="submit" 
