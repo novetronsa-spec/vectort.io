@@ -251,7 +251,7 @@ ${codeData.backend_code || 'Aucun code backend généré'}
           <TabsContent value="projects" className="space-y-6">
             <div className="flex items-center justify-between">
               <h2 className="text-3xl font-bold">Mes Projets</h2>
-              <Button onClick={() => document.querySelector('[value="create"]').click()}>
+              <Button onClick={() => setCurrentTab("create")}>
                 <Plus className="mr-2 h-4 w-4" />
                 Nouveau Projet
               </Button>
