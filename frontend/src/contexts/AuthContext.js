@@ -70,7 +70,24 @@ export const AuthProvider = ({ children }) => {
       
       return { success: true };
     } catch (error) {
-      return { success: false, error: error.response?.data?.detail || "Registration failed" };
+      console.error("Registration error:", error.response?.data);
+      
+      // Gestion spécifique des erreurs de validation Pydantic
+      let errorMessage = "Erreur lors de l'inscription";
+      
+      if (error.response?.data?.detail) {
+        if (Array.isArray(error.response.data.detail)) {
+          // Erreurs de validation Pydantic
+          const validationErrors = error.response.data.detail
+            .map(err => err.msg || err.message)
+            .join('. ');
+          errorMessage = validationErrors;
+        } else if (typeof error.response.data.detail === 'string') {
+          errorMessage = error.response.data.detail;
+        }
+      }
+      
+      return { success: false, error: errorMessage };
     }
   };
 
