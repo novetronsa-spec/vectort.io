@@ -91,6 +91,18 @@ class ProjectBase(BaseModel):
     title: str
     description: str
     type: str = "web_app"
+    
+    @field_validator('title', 'description')
+    @classmethod
+    def sanitize_html(cls, value):
+        if not value:
+            return value
+        # Échapper les caractères HTML dangereux
+        sanitized = html.escape(value.strip())
+        # Vérifier qu'il n'y a pas de scripts ou d'éléments dangereux
+        if re.search(r'<[^>]*script|javascript:|data:|vbscript:', sanitized, re.IGNORECASE):
+            raise ValueError('Contenu potentiellement dangereux détecté')
+        return sanitized
 
 class ProjectCreate(ProjectBase):
     pass
