@@ -234,7 +234,7 @@ ${codeData.backend_code || 'Aucun code backend généré'}
       </header>
 
       <div className="container mx-auto px-6 py-8">
-        <Tabs defaultValue="projects" className="w-full">
+        <Tabs value={currentTab} onValueChange={setCurrentTab} className="w-full">
           <TabsList className="grid w-full grid-cols-3 bg-gray-800 mb-8">
             <TabsTrigger value="projects" className="text-white data-[state=active]:bg-green-600">
               Mes Projets
