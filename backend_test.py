@@ -359,9 +359,406 @@ class CodexAPITester:
         except Exception as e:
             self.log_result("User Statistics", False, f"Exception: {str(e)}")
 
+    def test_ai_app_generation_ecommerce(self):
+        """Test 8a: AI Application Generation - E-commerce Site"""
+        print("\n=== Test 8a: AI Application Generation - E-commerce Site ===")
+        try:
+            if not self.access_token:
+                self.log_result("AI App Generation - E-commerce", False, "No access token available")
+                return
+            
+            # Create a project for generation
+            project_data = {
+                "title": "Site E-commerce Moderne",
+                "description": "Créer un site e-commerce moderne avec panier d'achats, catalogue de produits, système de paiement et interface d'administration",
+                "type": "web_app"
+            }
+            
+            project_response = self.make_request("POST", "/projects", project_data)
+            if project_response.status_code != 200:
+                self.log_result("AI App Generation - E-commerce", False, f"Failed to create project: {project_response.status_code}")
+                return
+            
+            project_id = project_response.json()["id"]
+            
+            # Generate application code
+            generation_request = {
+                "description": "Créer un site e-commerce moderne avec panier d'achats, catalogue de produits, système de paiement et interface d'administration",
+                "type": "web_app",
+                "framework": "react"
+            }
+            
+            response = self.make_request("POST", f"/projects/{project_id}/generate", generation_request)
+            
+            if response.status_code == 200:
+                data = response.json()
+                required_fields = ["id", "project_id", "created_at"]
+                
+                if all(field in data for field in required_fields):
+                    # Check if at least one type of code was generated
+                    code_fields = ["html_code", "css_code", "js_code", "react_code", "backend_code"]
+                    has_code = any(data.get(field) for field in code_fields)
+                    
+                    if has_code:
+                        self.log_result("AI App Generation - E-commerce", True, f"E-commerce app generated successfully with ID: {data['id']}")
+                        self.test_project_id = project_id  # Store for further tests
+                    else:
+                        self.log_result("AI App Generation - E-commerce", False, "No code was generated")
+                else:
+                    self.log_result("AI App Generation - E-commerce", False, f"Missing required fields: {data}")
+            else:
+                self.log_result("AI App Generation - E-commerce", False, f"Status: {response.status_code}, Body: {response.text}")
+        except Exception as e:
+            self.log_result("AI App Generation - E-commerce", False, f"Exception: {str(e)}")
+
+    def test_ai_app_generation_task_manager(self):
+        """Test 8b: AI Application Generation - Task Manager"""
+        print("\n=== Test 8b: AI Application Generation - Task Manager ===")
+        try:
+            if not self.access_token:
+                self.log_result("AI App Generation - Task Manager", False, "No access token available")
+                return
+            
+            # Create a project for generation
+            project_data = {
+                "title": "Gestionnaire de Tâches",
+                "description": "Application de gestion de tâches avec drag & drop",
+                "type": "web_app"
+            }
+            
+            project_response = self.make_request("POST", "/projects", project_data)
+            if project_response.status_code != 200:
+                self.log_result("AI App Generation - Task Manager", False, f"Failed to create project: {project_response.status_code}")
+                return
+            
+            project_id = project_response.json()["id"]
+            
+            # Generate application code
+            generation_request = {
+                "description": "application de gestion de tâches avec drag & drop",
+                "type": "web_app",
+                "framework": "react"
+            }
+            
+            response = self.make_request("POST", f"/projects/{project_id}/generate", generation_request)
+            
+            if response.status_code == 200:
+                data = response.json()
+                code_fields = ["html_code", "css_code", "js_code", "react_code", "backend_code"]
+                has_code = any(data.get(field) for field in code_fields)
+                
+                if has_code:
+                    self.log_result("AI App Generation - Task Manager", True, "Task manager app generated successfully")
+                else:
+                    self.log_result("AI App Generation - Task Manager", False, "No code was generated")
+            else:
+                self.log_result("AI App Generation - Task Manager", False, f"Status: {response.status_code}, Body: {response.text}")
+        except Exception as e:
+            self.log_result("AI App Generation - Task Manager", False, f"Exception: {str(e)}")
+
+    def test_ai_app_generation_portfolio(self):
+        """Test 8c: AI Application Generation - Portfolio"""
+        print("\n=== Test 8c: AI Application Generation - Portfolio ===")
+        try:
+            if not self.access_token:
+                self.log_result("AI App Generation - Portfolio", False, "No access token available")
+                return
+            
+            # Create a project for generation
+            project_data = {
+                "title": "Portfolio Professionnel",
+                "description": "Portfolio professionnel avec galerie d'images",
+                "type": "web_app"
+            }
+            
+            project_response = self.make_request("POST", "/projects", project_data)
+            if project_response.status_code != 200:
+                self.log_result("AI App Generation - Portfolio", False, f"Failed to create project: {project_response.status_code}")
+                return
+            
+            project_id = project_response.json()["id"]
+            
+            # Generate application code
+            generation_request = {
+                "description": "portfolio professionnel avec galerie d'images",
+                "type": "web_app",
+                "framework": "react"
+            }
+            
+            response = self.make_request("POST", f"/projects/{project_id}/generate", generation_request)
+            
+            if response.status_code == 200:
+                data = response.json()
+                code_fields = ["html_code", "css_code", "js_code", "react_code", "backend_code"]
+                has_code = any(data.get(field) for field in code_fields)
+                
+                if has_code:
+                    self.log_result("AI App Generation - Portfolio", True, "Portfolio app generated successfully")
+                else:
+                    self.log_result("AI App Generation - Portfolio", False, "No code was generated")
+            else:
+                self.log_result("AI App Generation - Portfolio", False, f"Status: {response.status_code}, Body: {response.text}")
+        except Exception as e:
+            self.log_result("AI App Generation - Portfolio", False, f"Exception: {str(e)}")
+
+    def test_ai_app_generation_landing_page(self):
+        """Test 8d: AI Application Generation - Landing Page"""
+        print("\n=== Test 8d: AI Application Generation - Landing Page ===")
+        try:
+            if not self.access_token:
+                self.log_result("AI App Generation - Landing Page", False, "No access token available")
+                return
+            
+            # Create a project for generation
+            project_data = {
+                "title": "Landing Page Startup",
+                "description": "Landing page pour startup avec animations",
+                "type": "web_app"
+            }
+            
+            project_response = self.make_request("POST", "/projects", project_data)
+            if project_response.status_code != 200:
+                self.log_result("AI App Generation - Landing Page", False, f"Failed to create project: {project_response.status_code}")
+                return
+            
+            project_id = project_response.json()["id"]
+            
+            # Generate application code
+            generation_request = {
+                "description": "landing page pour startup avec animations",
+                "type": "web_app",
+                "framework": "react"
+            }
+            
+            response = self.make_request("POST", f"/projects/{project_id}/generate", generation_request)
+            
+            if response.status_code == 200:
+                data = response.json()
+                code_fields = ["html_code", "css_code", "js_code", "react_code", "backend_code"]
+                has_code = any(data.get(field) for field in code_fields)
+                
+                if has_code:
+                    self.log_result("AI App Generation - Landing Page", True, "Landing page app generated successfully")
+                else:
+                    self.log_result("AI App Generation - Landing Page", False, "No code was generated")
+            else:
+                self.log_result("AI App Generation - Landing Page", False, f"Status: {response.status_code}, Body: {response.text}")
+        except Exception as e:
+            self.log_result("AI App Generation - Landing Page", False, f"Exception: {str(e)}")
+
+    def test_get_generated_code(self):
+        """Test 9: Get Generated Code"""
+        print("\n=== Test 9: Get Generated Code ===")
+        try:
+            if not self.access_token:
+                self.log_result("Get Generated Code", False, "No access token available")
+                return
+            
+            if not self.test_project_id:
+                self.log_result("Get Generated Code", False, "No test project ID available")
+                return
+            
+            response = self.make_request("GET", f"/projects/{self.test_project_id}/code")
+            
+            if response.status_code == 200:
+                data = response.json()
+                code_fields = ["html_code", "css_code", "js_code", "react_code", "backend_code"]
+                has_code = any(data.get(field) for field in code_fields)
+                
+                if has_code:
+                    self.log_result("Get Generated Code", True, "Generated code retrieved successfully")
+                else:
+                    self.log_result("Get Generated Code", False, "No code found in response")
+            elif response.status_code == 404:
+                self.log_result("Get Generated Code", False, "Generated code not found")
+            else:
+                self.log_result("Get Generated Code", False, f"Status: {response.status_code}, Body: {response.text}")
+        except Exception as e:
+            self.log_result("Get Generated Code", False, f"Exception: {str(e)}")
+
+    def test_preview_generated_app(self):
+        """Test 10: Preview Generated Application"""
+        print("\n=== Test 10: Preview Generated Application ===")
+        try:
+            if not self.access_token:
+                self.log_result("Preview Generated App", False, "No access token available")
+                return
+            
+            if not self.test_project_id:
+                self.log_result("Preview Generated App", False, "No test project ID available")
+                return
+            
+            response = self.make_request("GET", f"/projects/{self.test_project_id}/preview")
+            
+            if response.status_code == 200:
+                content = response.text
+                # Check if it's valid HTML
+                if "<!DOCTYPE html>" in content and "<html" in content and "</html>" in content:
+                    self.log_result("Preview Generated App", True, "HTML preview generated successfully")
+                else:
+                    self.log_result("Preview Generated App", False, "Invalid HTML preview format")
+            elif response.status_code == 404:
+                self.log_result("Preview Generated App", False, "Preview not found")
+            else:
+                self.log_result("Preview Generated App", False, f"Status: {response.status_code}, Body: {response.text}")
+        except Exception as e:
+            self.log_result("Preview Generated App", False, f"Exception: {str(e)}")
+
+    def test_robustness_short_description(self):
+        """Test 11a: Robustness - Short Description"""
+        print("\n=== Test 11a: Robustness - Short Description ===")
+        try:
+            if not self.access_token:
+                self.log_result("Robustness - Short Description", False, "No access token available")
+                return
+            
+            # Create a project for generation
+            project_data = {
+                "title": "Site Web Simple",
+                "description": "site web",
+                "type": "web_app"
+            }
+            
+            project_response = self.make_request("POST", "/projects", project_data)
+            if project_response.status_code != 200:
+                self.log_result("Robustness - Short Description", False, f"Failed to create project: {project_response.status_code}")
+                return
+            
+            project_id = project_response.json()["id"]
+            
+            # Generate application code with very short description
+            generation_request = {
+                "description": "site web",
+                "type": "web_app",
+                "framework": "react"
+            }
+            
+            response = self.make_request("POST", f"/projects/{project_id}/generate", generation_request)
+            
+            if response.status_code == 200:
+                data = response.json()
+                code_fields = ["html_code", "css_code", "js_code", "react_code", "backend_code"]
+                has_code = any(data.get(field) for field in code_fields)
+                
+                if has_code:
+                    self.log_result("Robustness - Short Description", True, "App generated successfully with short description")
+                else:
+                    self.log_result("Robustness - Short Description", False, "No code was generated")
+            else:
+                self.log_result("Robustness - Short Description", False, f"Status: {response.status_code}, Body: {response.text}")
+        except Exception as e:
+            self.log_result("Robustness - Short Description", False, f"Exception: {str(e)}")
+
+    def test_robustness_long_description(self):
+        """Test 11b: Robustness - Long Description"""
+        print("\n=== Test 11b: Robustness - Long Description ===")
+        try:
+            if not self.access_token:
+                self.log_result("Robustness - Long Description", False, "No access token available")
+                return
+            
+            # Create a project for generation
+            long_description = """Créer une application web complète de gestion d'entreprise avec les fonctionnalités suivantes:
+            - Système d'authentification multi-niveaux avec rôles utilisateurs (admin, manager, employé)
+            - Dashboard analytique avec graphiques interactifs et métriques en temps réel
+            - Module de gestion des clients avec CRM intégré, historique des interactions
+            - Système de facturation automatisé avec génération de PDF et envoi par email
+            - Gestion des stocks avec alertes de réapprovisionnement et suivi des mouvements
+            - Module RH avec gestion des congés, évaluations de performance et paie
+            - Système de messagerie interne avec notifications push
+            - API REST complète avec documentation Swagger
+            - Interface responsive compatible mobile et tablette
+            - Système de sauvegarde automatique et export de données
+            - Intégration avec services tiers (comptabilité, paiement, email marketing)
+            - Fonctionnalités de reporting avancées avec filtres personnalisables"""
+            
+            project_data = {
+                "title": "Application Gestion Entreprise Complète",
+                "description": long_description,
+                "type": "web_app"
+            }
+            
+            project_response = self.make_request("POST", "/projects", project_data)
+            if project_response.status_code != 200:
+                self.log_result("Robustness - Long Description", False, f"Failed to create project: {project_response.status_code}")
+                return
+            
+            project_id = project_response.json()["id"]
+            
+            # Generate application code with very long description
+            generation_request = {
+                "description": long_description,
+                "type": "web_app",
+                "framework": "react"
+            }
+            
+            response = self.make_request("POST", f"/projects/{project_id}/generate", generation_request)
+            
+            if response.status_code == 200:
+                data = response.json()
+                code_fields = ["html_code", "css_code", "js_code", "react_code", "backend_code"]
+                has_code = any(data.get(field) for field in code_fields)
+                
+                if has_code:
+                    self.log_result("Robustness - Long Description", True, "App generated successfully with long description")
+                else:
+                    self.log_result("Robustness - Long Description", False, "No code was generated")
+            else:
+                self.log_result("Robustness - Long Description", False, f"Status: {response.status_code}, Body: {response.text}")
+        except Exception as e:
+            self.log_result("Robustness - Long Description", False, f"Exception: {str(e)}")
+
+    def test_project_status_updates(self):
+        """Test 12: Project Status Updates During Generation"""
+        print("\n=== Test 12: Project Status Updates During Generation ===")
+        try:
+            if not self.access_token:
+                self.log_result("Project Status Updates", False, "No access token available")
+                return
+            
+            # Create a project for generation
+            project_data = {
+                "title": "Test Status Updates",
+                "description": "Simple web application for testing status updates",
+                "type": "web_app"
+            }
+            
+            project_response = self.make_request("POST", "/projects", project_data)
+            if project_response.status_code != 200:
+                self.log_result("Project Status Updates", False, f"Failed to create project: {project_response.status_code}")
+                return
+            
+            project_id = project_response.json()["id"]
+            initial_status = project_response.json()["status"]
+            
+            # Generate application code
+            generation_request = {
+                "description": "Simple web application for testing status updates",
+                "type": "web_app",
+                "framework": "react"
+            }
+            
+            response = self.make_request("POST", f"/projects/{project_id}/generate", generation_request)
+            
+            if response.status_code == 200:
+                # Check final project status
+                project_check = self.make_request("GET", f"/projects/{project_id}")
+                if project_check.status_code == 200:
+                    final_status = project_check.json()["status"]
+                    if final_status in ["completed", "building"]:
+                        self.log_result("Project Status Updates", True, f"Status correctly updated from '{initial_status}' to '{final_status}'")
+                    else:
+                        self.log_result("Project Status Updates", False, f"Unexpected final status: {final_status}")
+                else:
+                    self.log_result("Project Status Updates", False, "Could not check final project status")
+            else:
+                self.log_result("Project Status Updates", False, f"Generation failed: {response.status_code}")
+        except Exception as e:
+            self.log_result("Project Status Updates", False, f"Exception: {str(e)}")
+
     def test_error_cases(self):
-        """Test 7: Error Cases"""
-        print("\n=== Test 7: Error Cases ===")
+        """Test 13: Error Cases"""
+        print("\n=== Test 13: Error Cases ===")
         
         # Test invalid login
         try:
@@ -400,6 +797,23 @@ class CodexAPITester:
                     self.log_result("Non-existent Project Error", False, f"Expected 404, got {response.status_code}")
         except Exception as e:
             self.log_result("Non-existent Project Error", False, f"Exception: {str(e)}")
+        
+        # Test generating code for non-existent project
+        try:
+            if self.access_token:
+                generation_request = {
+                    "description": "test description",
+                    "type": "web_app",
+                    "framework": "react"
+                }
+                response = self.make_request("POST", "/projects/non-existent-id/generate", generation_request)
+                
+                if response.status_code == 404:
+                    self.log_result("Generate for Non-existent Project Error", True, "Correctly returned 404 for non-existent project generation")
+                else:
+                    self.log_result("Generate for Non-existent Project Error", False, f"Expected 404, got {response.status_code}")
+        except Exception as e:
+            self.log_result("Generate for Non-existent Project Error", False, f"Exception: {str(e)}")
 
     def run_all_tests(self):
         """Run all tests in sequence"""
