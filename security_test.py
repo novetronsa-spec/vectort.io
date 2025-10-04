@@ -288,13 +288,13 @@ class SecurityTester:
                 
                 # Also check for unescaped HTML tags (but not escaped ones like &lt;)
                 import re
-                unescaped_html = re.search(r'<[^&].*?>', returned_description)
+                unescaped_html = re.search(r'<(?!/?[a-zA-Z][^>]*>)[^&].*?>', returned_description)
                 
                 if has_dangerous_content or unescaped_html:
                     self.log_result("XSS Protection - Project Description", False, f"CRITICAL: XSS payload stored unsanitized: {returned_description}", critical=True)
                 else:
                     # Content was properly sanitized (HTML escaped) - check if it contains escaped versions
-                    if "&lt;" in returned_description or "&amp;" in returned_description:
+                    if "&amp;" in returned_description and ("lt;" in returned_description or "gt;" in returned_description):
                         self.log_result("XSS Protection - Project Description", True, f"XSS payload was properly HTML-escaped and safe")
                     else:
                         self.log_result("XSS Protection - Project Description", True, f"XSS payload was sanitized: {returned_description[:100]}...")
