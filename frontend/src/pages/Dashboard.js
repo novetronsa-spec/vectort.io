@@ -329,16 +329,38 @@ ${codeData.backend_code || 'Aucun code backend généré'}
                         </CardDescription>
                       </CardHeader>
                       <CardContent>
-                        <div className="flex items-center justify-between">
-                          <Badge variant="outline" className="text-xs">
-                            {projectTypes.find(t => t.id === project.type)?.name || "Autre"}
+                        <div className="flex items-center justify-between mb-4">
+                          <Badge 
+                            variant="outline" 
+                            className={`text-xs ${
+                              project.status === 'completed' ? 'border-green-400 text-green-400' :
+                              project.status === 'building' ? 'border-yellow-400 text-yellow-400' :
+                              project.status === 'error' ? 'border-red-400 text-red-400' :
+                              'border-gray-400 text-gray-400'
+                            }`}
+                          >
+                            {project.status === 'completed' ? '✅ Terminé' :
+                             project.status === 'building' ? '⚡ Génération...' :
+                             project.status === 'error' ? '❌ Erreur' :
+                             '📝 Brouillon'}
                           </Badge>
-                          <Button size="sm" className="bg-green-600 hover:bg-green-700">
-                            <Play className="mr-2 h-4 w-4" />
-                            Ouvrir
-                          </Button>
+                          {project.status === 'completed' ? (
+                            <Button 
+                              size="sm" 
+                              onClick={() => openPreview(project.id)}
+                              className="bg-green-600 hover:bg-green-700"
+                            >
+                              <ExternalLink className="mr-2 h-4 w-4" />
+                              Voir l'app
+                            </Button>
+                          ) : (
+                            <Button size="sm" variant="outline" disabled>
+                              <Play className="mr-2 h-4 w-4" />
+                              En attente...
+                            </Button>
+                          )}
                         </div>
-                        <div className="mt-4 text-xs text-gray-500">
+                        <div className="text-xs text-gray-500">
                           Créé le {new Date(project.created_at).toLocaleDateString('fr-FR')}
                         </div>
                       </CardContent>
