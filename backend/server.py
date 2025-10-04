@@ -383,6 +383,138 @@ async def get_user_stats(current_user: User = Depends(get_current_user)):
         totalViews=total_projects * 42  # Mock calculation
     )
 
+# AI Code Generation routes
+@api_router.post("/projects/{project_id}/generate", response_model=GeneratedApp)
+async def generate_project_code(
+    project_id: str, 
+    request: GenerateAppRequest,
+    current_user: User = Depends(get_current_user)
+):
+    # Verify project ownership
+    project = await db.projects.find_one({"id": project_id, "user_id": current_user.id})
+    if not project:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Project not found"
+        )
+    
+    # Update project status
+    await db.projects.update_one(
+        {"id": project_id},
+        {"$set": {"status": "building", "updated_at": datetime.utcnow()}}
+    )
+    
+    try:
+        # Generate code using AI
+        code_data = await generate_app_code(
+            request.description, 
+            request.type, 
+            request.framework
+        )
+        
+        # Create generated app record
+        generated_app = GeneratedApp(
+            project_id=project_id,
+            html_code=code_data.get("html"),
+            css_code=code_data.get("css"),
+            js_code=code_data.get("js"),
+            react_code=code_data.get("react"),
+            backend_code=code_data.get("backend")
+        )
+        
+        # Save to database
+        await db.generated_apps.insert_one(generated_app.dict())
+        
+        # Update project status to completed
+        await db.projects.update_one(
+            {"id": project_id},
+            {"$set": {"status": "completed", "updated_at": datetime.utcnow()}}
+        )
+        
+        return generated_app
+        
+    except Exception as e:
+        # Update project status to error
+        await db.projects.update_one(
+            {"id": project_id},
+            {"$set": {"status": "error", "updated_at": datetime.utcnow()}}
+        )
+        raise e
+
+@api_router.get("/projects/{project_id}/code", response_model=GeneratedApp)
+async def get_project_code(
+    project_id: str,
+    current_user: User = Depends(get_current_user)
+):
+    # Verify project ownership
+    project = await db.projects.find_one({"id": project_id, "user_id": current_user.id})
+    if not project:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Project not found"
+        )
+    
+    # Get generated code
+    generated_app = await db.generated_apps.find_one({"project_id": project_id})
+    if not generated_app:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Generated code not found"
+        )
+    
+    return GeneratedApp(**generated_app)
+
+@api_router.get("/projects/{project_id}/preview")
+async def preview_project(
+    project_id: str,
+    current_user: User = Depends(get_current_user)
+):
+    """Return HTML preview of the generated application"""
+    # Verify project ownership
+    project = await db.projects.find_one({"id": project_id, "user_id": current_user.id})
+    if not project:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Project not found"
+        )
+    
+    # Get generated code
+    generated_app = await db.generated_apps.find_one({"project_id": project_id})
+    if not generated_app:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Generated code not found"
+        )
+    
+    # Combine HTML, CSS, and JS for preview
+    html = generated_app.get("html_code", "")
+    css = generated_app.get("css_code", "")
+    js = generated_app.get("js_code", "")
+    
+    # Create complete HTML with embedded CSS and JS
+    preview_html = f"""
+    <!DOCTYPE html>
+    <html lang="fr">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Aperçu - {project.get('title', 'Application générée')}</title>
+        <style>
+        {css}
+        </style>
+    </head>
+    <body>
+        {html.replace('<html>', '').replace('</html>', '').replace('<head>', '').replace('</head>', '').replace('<body>', '').replace('</body>', '') if html else ''}
+        <script>
+        {js}
+        </script>
+    </body>
+    </html>
+    """
+    
+    from fastapi.responses import HTMLResponse
+    return HTMLResponse(content=preview_html)
+
 
 # Include the router in the main app
 app.include_router(api_router)
