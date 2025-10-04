@@ -41,7 +41,13 @@ pwd_context = CryptContext(schemes=["sha256_crypt"], deprecated="auto")
 security = HTTPBearer()
 
 # Create the main app without a prefix
-app = FastAPI(title="Codex API", version="1.0.0")
+app = FastAPI(
+    title="Codex API", 
+    version="1.0.0",
+    # Production security headers
+    docs_url="/docs" if os.environ.get("DEBUG") == "true" else None,
+    redoc_url="/redoc" if os.environ.get("DEBUG") == "true" else None
+)
 
 # Create a router with the /api prefix
 api_router = APIRouter(prefix="/api")
