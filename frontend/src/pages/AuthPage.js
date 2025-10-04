@@ -17,6 +17,7 @@ export default function AuthPage() {
   
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [passwordErrors, setPasswordErrors] = useState([]);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
