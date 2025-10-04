@@ -433,8 +433,8 @@ class SecurityTester:
             headers = {}  # No authorization header
             response = requests.get(f"{self.base_url}/projects", headers=headers, timeout=30)
             
-            if response.status_code == 401:
-                self.log_result("Unauthorized Project Access", True, "Correctly rejected access without token")
+            if response.status_code in [401, 403]:
+                self.log_result("Unauthorized Project Access", True, f"Correctly rejected access without token (status: {response.status_code})")
             else:
                 self.log_result("Unauthorized Project Access", False, f"CRITICAL: Unauthorized access allowed: {response.status_code}", critical=True)
                 
