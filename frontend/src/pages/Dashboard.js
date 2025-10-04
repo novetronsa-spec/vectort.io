@@ -17,7 +17,10 @@ import {
   Database,
   ArrowRight,
   Trash2,
-  Edit3
+  Edit3,
+  Eye,
+  Download,
+  ExternalLink
 } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
 import { useToast } from "../hooks/use-toast";
