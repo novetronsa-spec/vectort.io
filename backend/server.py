@@ -136,6 +136,18 @@ class GenerateAppRequest(BaseModel):
     description: str
     type: str = "web_app"
     framework: str = "react"
+    
+    @field_validator('description')
+    @classmethod
+    def sanitize_description(cls, value):
+        if not value:
+            raise ValueError('La description est requise')
+        # Nettoyer et échapper le contenu
+        sanitized = html.escape(value.strip())
+        # Limiter la taille
+        if len(sanitized) > 5000:
+            raise ValueError('La description ne peut pas dépasser 5000 caractères')
+        return sanitized
 
 class GeneratedApp(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
