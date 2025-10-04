@@ -286,14 +286,34 @@ ${codeData.backend_code || 'Aucun code backend généré'}
                           <div className={`p-2 rounded-lg ${iconColor}`}>
                             <ProjectIcon className="h-5 w-5 text-white" />
                           </div>
-                          <div className="flex space-x-2">
-                            <Button variant="ghost" size="sm">
-                              <Edit3 className="h-4 w-4" />
-                            </Button>
+                          <div className="flex space-x-1">
+                            {project.status === 'completed' && (
+                              <>
+                                <Button 
+                                  variant="ghost" 
+                                  size="sm"
+                                  onClick={() => openPreview(project.id)}
+                                  title="Prévisualiser"
+                                  className="text-blue-400 hover:text-blue-300"
+                                >
+                                  <Eye className="h-4 w-4" />
+                                </Button>
+                                <Button 
+                                  variant="ghost" 
+                                  size="sm"
+                                  onClick={() => viewCode(project.id)}
+                                  title="Voir le code"
+                                  className="text-green-400 hover:text-green-300"
+                                >
+                                  <Code className="h-4 w-4" />
+                                </Button>
+                              </>
+                            )}
                             <Button 
                               variant="ghost" 
                               size="sm"
                               onClick={() => deleteProject(project.id)}
+                              title="Supprimer"
                               className="text-red-400 hover:text-red-300"
                             >
                               <Trash2 className="h-4 w-4" />
