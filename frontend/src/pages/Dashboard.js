@@ -266,7 +266,7 @@ ${codeData.backend_code || 'Aucun code backend généré'}
                     <p>Créez votre premier projet pour commencer à construire quelque chose d'incroyable !</p>
                   </div>
                   <Button 
-                    onClick={() => document.querySelector('[value="create"]').click()}
+                    onClick={() => setCurrentTab("create")}
                     className="bg-green-600 hover:bg-green-700"
                   >
                     <Plus className="mr-2 h-4 w-4" />
