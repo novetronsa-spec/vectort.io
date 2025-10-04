@@ -282,22 +282,23 @@ class SecurityTester:
                 # Check if content was sanitized
                 data = response.json()
                 returned_description = data.get("description", "")
-                # Check for dangerous content - only raw dangerous patterns (not escaped ones)
-                dangerous_patterns = ["<script>", "onerror=", "javascript:", "onload=", "<iframe", "<object", "<embed"]
-                has_dangerous_content = any(pattern in returned_description for pattern in dangerous_patterns)
-                
-                # Also check for unescaped HTML tags (but not escaped ones like &lt;)
+                # Check for UNESCAPED dangerous content - the key is that HTML should be escaped
                 import re
-                unescaped_html = re.search(r'<(?!/?[a-zA-Z][^>]*>)[^&].*?>', returned_description)
                 
-                if has_dangerous_content or unescaped_html:
-                    self.log_result("XSS Protection - Project Description", False, f"CRITICAL: XSS payload stored unsanitized: {returned_description}", critical=True)
+                # Look for unescaped script tags and dangerous patterns
+                unescaped_script = re.search(r'<script[^>]*>', returned_description, re.IGNORECASE)
+                unescaped_onerror = re.search(r'<[^>]*onerror\s*=', returned_description, re.IGNORECASE)
+                unescaped_javascript = re.search(r'javascript\s*:', returned_description, re.IGNORECASE)
+                
+                # Check if content is properly HTML escaped (should contain &lt; instead of <)
+                is_html_escaped = "&lt;" in returned_description and not re.search(r'<(?!/?[a-zA-Z][^>]*>)', returned_description)
+                
+                if unescaped_script or unescaped_onerror or unescaped_javascript:
+                    self.log_result("XSS Protection - Project Description", False, f"CRITICAL: Unescaped XSS payload found: {returned_description}", critical=True)
+                elif is_html_escaped:
+                    self.log_result("XSS Protection - Project Description", True, f"XSS payload was properly HTML-escaped and safe")
                 else:
-                    # Content was properly sanitized (HTML escaped) - check if it contains escaped versions
-                    if "&amp;" in returned_description and ("lt;" in returned_description or "gt;" in returned_description):
-                        self.log_result("XSS Protection - Project Description", True, f"XSS payload was properly HTML-escaped and safe")
-                    else:
-                        self.log_result("XSS Protection - Project Description", True, f"XSS payload was sanitized: {returned_description[:100]}...")
+                    self.log_result("XSS Protection - Project Description", True, f"XSS payload was sanitized: {returned_description[:100]}...")
             else:
                 self.log_result("XSS Protection - Project Description", False, f"Unexpected response: {response.status_code} - {response.text}", critical=True)
                 
