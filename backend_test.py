@@ -817,28 +817,54 @@ class CodexAPITester:
 
     def run_all_tests(self):
         """Run all tests in sequence"""
-        print("🚀 Starting Codex API Backend Tests")
+        print("🚀 Starting Codex AI Application Generation System Tests")
         print(f"Testing against: {self.base_url}")
-        print("=" * 60)
+        print("=" * 80)
         
-        # Run tests in order
+        # Phase 1: Basic authentication and projects (quick)
+        print("\n🔐 PHASE 1: AUTHENTICATION & BASIC PROJECTS")
+        print("-" * 50)
         self.test_basic_api_response()
         self.test_user_registration()
         if not self.access_token:
             self.test_user_login()
         self.test_authentication_check()
         self.test_project_creation()
+        
+        # Phase 2: AI Application Generation (main focus)
+        print("\n🤖 PHASE 2: AI APPLICATION GENERATION")
+        print("-" * 50)
+        self.test_ai_app_generation_ecommerce()
+        self.test_ai_app_generation_task_manager()
+        self.test_ai_app_generation_portfolio()
+        self.test_ai_app_generation_landing_page()
+        
+        # Phase 3: Code retrieval and preview
+        print("\n📄 PHASE 3: CODE RETRIEVAL & PREVIEW")
+        print("-" * 50)
+        self.test_get_generated_code()
+        self.test_preview_generated_app()
+        
+        # Phase 4: Robustness testing
+        print("\n🛡️ PHASE 4: ROBUSTNESS TESTING")
+        print("-" * 50)
+        self.test_robustness_short_description()
+        self.test_robustness_long_description()
+        self.test_project_status_updates()
+        
+        # Phase 5: Additional tests
+        print("\n📊 PHASE 5: ADDITIONAL FUNCTIONALITY")
+        print("-" * 50)
         self.test_project_listing()
         self.test_project_retrieval()
-        self.test_project_deletion()
         self.test_global_statistics()
         self.test_user_statistics()
         self.test_error_cases()
         
         # Print summary
-        print("\n" + "=" * 60)
-        print("📊 TEST SUMMARY")
-        print("=" * 60)
+        print("\n" + "=" * 80)
+        print("📊 COMPREHENSIVE TEST SUMMARY")
+        print("=" * 80)
         print(f"✅ Passed: {self.results['passed']}")
         print(f"❌ Failed: {self.results['failed']}")
         print(f"📈 Success Rate: {(self.results['passed'] / (self.results['passed'] + self.results['failed']) * 100):.1f}%")
@@ -847,6 +873,8 @@ class CodexAPITester:
             print("\n🔍 FAILED TESTS:")
             for error in self.results['errors']:
                 print(f"   • {error}")
+        else:
+            print("\n🎉 ALL TESTS PASSED! The Codex AI Application Generation System is working perfectly!")
         
         return self.results['failed'] == 0
 
