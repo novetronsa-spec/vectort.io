@@ -14,6 +14,7 @@ from typing import List, Optional
 import uuid
 import hashlib
 import base64
+from emergentintegrations.llm.chat import LlmChat, UserMessage
 
 
 ROOT_DIR = Path(__file__).parent
