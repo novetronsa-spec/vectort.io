@@ -26,6 +26,7 @@ DB_NAME = os.environ.get('DB_NAME', 'codex_db')
 JWT_SECRET = os.environ.get('JWT_SECRET', 'your-super-secret-key-change-this-in-production')
 JWT_ALGORITHM = "HS256"
 JWT_EXPIRATION_HOURS = 24
+EMERGENT_LLM_KEY = os.environ.get('EMERGENT_LLM_KEY')
 
 # MongoDB connection
 client = AsyncIOMotorClient(mongo_url)
