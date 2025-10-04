@@ -103,6 +103,21 @@ class UserStats(BaseModel):
     activeProjects: int
     totalViews: int
 
+class GenerateAppRequest(BaseModel):
+    description: str
+    type: str = "web_app"
+    framework: str = "react"
+
+class GeneratedApp(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    project_id: str
+    html_code: Optional[str] = None
+    css_code: Optional[str] = None
+    js_code: Optional[str] = None
+    react_code: Optional[str] = None
+    backend_code: Optional[str] = None
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
 
 # Utility functions
 def verify_password(plain_password, hashed_password):
