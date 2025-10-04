@@ -27,10 +27,38 @@ export default function AuthPage() {
   const description = location.state?.description || "";
 
   const handleInputChange = (e) => {
+    const { name, value } = e.target;
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [name]: value
     });
+    
+    // Validation en temps réel pour le mot de passe
+    if (name === 'password') {
+      validatePassword(value);
+    }
+  };
+
+  const validatePassword = (password) => {
+    const errors = [];
+    if (password.length > 0) {
+      if (password.length < 8) {
+        errors.push("Au moins 8 caractères");
+      }
+      if (!/[A-Z]/.test(password)) {
+        errors.push("Une lettre majuscule");
+      }
+      if (!/[a-z]/.test(password)) {
+        errors.push("Une lettre minuscule");
+      }
+      if (!/\d/.test(password)) {
+        errors.push("Un chiffre");
+      }
+      if (!/[\W_]/.test(password)) {
+        errors.push("Un caractère spécial");
+      }
+    }
+    setPasswordErrors(errors);
   };
 
   const handleLogin = async (e) => {
