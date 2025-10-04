@@ -104,10 +104,16 @@ class UserStats(BaseModel):
 
 # Utility functions
 def verify_password(plain_password, hashed_password):
-    return pwd_context.verify(plain_password, hashed_password)
+    # Pre-hash the password with SHA-256 and encode to Base64
+    sha256_digest = hashlib.sha256(plain_password.encode()).digest()
+    b64_encoded = base64.b64encode(sha256_digest)
+    return pwd_context.verify(b64_encoded.decode(), hashed_password)
 
 def get_password_hash(password):
-    return pwd_context.hash(password)
+    # Pre-hash the password with SHA-256 and encode to Base64
+    sha256_digest = hashlib.sha256(password.encode()).digest()
+    b64_encoded = base64.b64encode(sha256_digest)
+    return pwd_context.hash(b64_encoded.decode())
 
 def create_access_token(data: dict):
     to_encode = data.copy()
