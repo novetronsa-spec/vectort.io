@@ -91,8 +91,8 @@ export default function LandingPage() {
       <nav className="flex justify-between items-center px-8 py-6">
         <div className="text-2xl font-bold">codex</div>
         <div className="flex items-center space-x-8">
-          <a href="#features" className="hover:text-green-400 transition-colors">Features</a>
-          <a href="#pricing" className="hover:text-green-400 transition-colors">Pricing</a>
+          <button onClick={() => navigate("/features")} className="hover:text-green-400 transition-colors">Features</button>
+          <button onClick={() => navigate("/pricing")} className="hover:text-green-400 transition-colors">Pricing</button>
           <a href="#faqs" className="hover:text-green-400 transition-colors">FAQs</a>
           <Button 
             onClick={() => navigate("/auth")}
