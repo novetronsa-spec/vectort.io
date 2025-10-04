@@ -282,10 +282,15 @@ class SecurityTester:
                 # Check if content was sanitized
                 data = response.json()
                 returned_description = data.get("description", "")
-                if "<script>" in returned_description or "onerror=" in returned_description:
+                # Check for dangerous content - both raw and escaped forms
+                dangerous_patterns = ["<script>", "onerror=", "javascript:", "onload="]
+                has_dangerous_content = any(pattern in returned_description for pattern in dangerous_patterns)
+                
+                if has_dangerous_content:
                     self.log_result("XSS Protection - Project Description", False, f"CRITICAL: XSS payload stored unsanitized: {returned_description}", critical=True)
                 else:
-                    self.log_result("XSS Protection - Project Description", True, f"XSS payload was sanitized: {returned_description}")
+                    # Content was properly sanitized (HTML escaped)
+                    self.log_result("XSS Protection - Project Description", True, f"XSS payload was properly sanitized: {returned_description[:100]}...")
             else:
                 self.log_result("XSS Protection - Project Description", False, f"Unexpected response: {response.status_code} - {response.text}", critical=True)
                 
