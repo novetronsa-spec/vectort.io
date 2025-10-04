@@ -30,8 +30,8 @@ JWT_EXPIRATION_HOURS = 24
 client = AsyncIOMotorClient(mongo_url)
 db = client[DB_NAME]
 
-# Password hashing
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+# Password hashing - using sha256_crypt as fallback due to bcrypt issues
+pwd_context = CryptContext(schemes=["sha256_crypt"], deprecated="auto")
 
 # JWT Security
 security = HTTPBearer()
