@@ -102,7 +102,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Teste complètement l'API Codex backend en suivant ces étapes : Test de base, Test d'inscription, Test de connexion, Test d'authentification, Test des projets, Test des statistiques, et teste également les cas d'erreur"
+user_problem_statement: "Teste complètement le nouveau système de génération d'applications IA de Codex : Test authentification et projets de base, Test génération d'applications IA (focus principal), Test de différents types d'applications, Test de robustesse"
 
 backend:
   - task: "Basic API Response"
