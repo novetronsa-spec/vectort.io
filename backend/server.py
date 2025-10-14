@@ -518,12 +518,8 @@ async def generate_project_code(
     )
     
     try:
-        # Generate code using AI
-        code_data = await generate_app_code(
-            request.description, 
-            request.type, 
-            request.framework
-        )
+        # Generate code using ADVANCED AI
+        code_data = await generate_app_code_advanced(request)
         
         # Create generated app record
         generated_app = GeneratedApp(
