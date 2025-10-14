@@ -26,7 +26,7 @@ export default function PricingPage() {
       ],
       limitations: [
         "Pas de domaine personnalisé",
-        "Watermark Codex",
+        "Watermark Vectort",
         "Support standard"
       ],
       buttonText: "Commencer gratuitement",
