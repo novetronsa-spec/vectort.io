@@ -5,6 +5,7 @@ import { Card } from "../components/ui/card";
 import { Textarea } from "../components/ui/textarea";
 import { Badge } from "../components/ui/badge";
 import { ArrowRight, ArrowLeft, ArrowDown, Star } from "lucide-react";
+import VoiceTextarea from "../components/VoiceTextarea";
 import { useAuth } from "../contexts/AuthContext";
 import axios from "axios";
 
