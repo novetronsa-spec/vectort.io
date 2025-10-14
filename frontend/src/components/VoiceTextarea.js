@@ -126,16 +126,22 @@ const VoiceTextarea = ({
               variant="ghost"
               size="sm"
               onClick={handleMicClick}
-              disabled={disabled}
+              disabled={disabled || isProcessing}
               className={cn(
                 "h-8 w-8 p-1",
                 isListening 
                   ? "text-red-500 hover:text-red-600 bg-red-50 hover:bg-red-100" 
-                  : "text-gray-500 hover:text-green-600"
+                  : "text-gray-500 hover:text-green-600",
+                isProcessing && "opacity-50 cursor-not-allowed"
               )}
-              title={isListening ? "Arrêter l'enregistrement" : "Commencer l'enregistrement vocal"}
+              title={
+                isProcessing ? "Traitement en cours..." :
+                isListening ? "Arrêter l'enregistrement" : "Commencer l'enregistrement vocal"
+              }
             >
-              {isListening ? (
+              {isProcessing ? (
+                <div className="w-4 h-4 border-2 border-gray-400 border-t-transparent rounded-full animate-spin" />
+              ) : isListening ? (
                 <MicOff className="h-4 w-4 animate-pulse" />
               ) : (
                 <Mic className="h-4 w-4" />
