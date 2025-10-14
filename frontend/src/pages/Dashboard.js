@@ -109,9 +109,9 @@ export default function Dashboard() {
     try {
       // Create the project first
       const projectResponse = await axios.post(`${API}/projects`, {
-        title: `Projet ${projects.length + 1}`,
+        title: `${projectTypes.find(t => t.id === selectedProjectType)?.name} - ${projects.length + 1}`,
         description: newProjectDescription,
-        type: "web_app"
+        type: selectedProjectType
       });
 
       const newProject = projectResponse.data;
@@ -119,15 +119,20 @@ export default function Dashboard() {
       
       toast({
         title: "Projet créé !",
-        description: "Génération du code en cours...",
+        description: `Génération ${advancedMode ? 'avancée' : 'rapide'} en cours...`,
       });
 
-      // Generate the application code using AI
+      // Generate the application code using ADVANCED AI
       try {
         await axios.post(`${API}/projects/${newProject.id}/generate`, {
           description: newProjectDescription,
-          type: "web_app",
-          framework: "react"
+          type: selectedProjectType,
+          framework: selectedFramework,
+          database: selectedDatabase,
+          features: selectedFeatures,
+          integrations: [],
+          deployment_target: "vercel",
+          advanced_mode: advancedMode
         });
 
         // Refresh projects list to get updated status
