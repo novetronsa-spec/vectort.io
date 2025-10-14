@@ -286,10 +286,10 @@ export default function LandingPage() {
             </div>
           </div>
 
-          <h2 className="text-5xl font-bold mb-6">Meet Codex</h2>
+          <h2 className="text-5xl font-bold mb-6">Meet Vectort</h2>
           <p className="text-xl text-gray-400 mb-12 max-w-2xl mx-auto">
-            Codex turns concepts into production-ready applications, saving 
-            time and eliminating technical barriers.
+            Vectort transforms concepts into production-ready applications with AI, 
+            saving time and eliminating technical barriers.
           </p>
 
           {/* Build Interface */}
