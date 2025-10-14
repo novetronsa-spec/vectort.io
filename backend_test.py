@@ -1270,5 +1270,11 @@ class CodexAPITester:
 
 if __name__ == "__main__":
     tester = CodexAPITester()
-    success = tester.run_all_tests()
+    
+    # Check if we should run corrections tests specifically
+    if len(sys.argv) > 1 and sys.argv[1] == "--corrections":
+        success = tester.run_corrections_tests()
+    else:
+        success = tester.run_all_tests()
+    
     sys.exit(0 if success else 1)
