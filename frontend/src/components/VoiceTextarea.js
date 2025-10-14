@@ -69,23 +69,29 @@ const VoiceTextarea = ({
     }
   };
 
+  const [isProcessing, setIsProcessing] = useState(false);
+  
   const handleMicClick = () => {
-    // Prévenir les clics rapides multiples
+    // Prévenir les clics multiples rapides
+    if (isProcessing) {
+      return;
+    }
+    
+    setIsProcessing(true);
+    
     if (isListening) {
       stopListening();
-      resetTranscript();
     } else {
-      // Reset et nettoyage avant de démarrer
       resetTranscript();
       setLastTranscript('');
-      
-      // Démarrer avec un petit délai pour éviter les conflits
-      setTimeout(() => {
-        if (!isListening) {
-          startListening();
-        }
-      }, 100);
+      setVoiceTextAdded(false);
+      startListening();
     }
+    
+    // Débloquer après un délai
+    setTimeout(() => {
+      setIsProcessing(false);
+    }, 300);
   };
 
   const handleClearVoice = () => {
