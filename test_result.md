@@ -444,6 +444,54 @@ backend:
           agent: "testing"
           comment: "🚀 FINAL ADVANCED GENERATION TESTING: Advanced mode generates project structure and configuration files (package.json, dockerfile, readme) but main code files are empty. Basic mode fallback works perfectly (4/4 files generated). Performance excellent (9.1s average, 92.9% success rate). System ready for production with robust fallback ensuring code generation success."
 
+  - task: "VECTORT.IO 100% Functionality Test - E-commerce Advanced Mode"
+    implemented: true
+    working: false
+    file: "backend/server.py"
+    stuck_count: 1
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: false
+          agent: "testing"
+          comment: "🎯 VECTORT.IO FINAL TEST RESULTS: ❌ CRITICAL ISSUES FOUND: 1) Advanced mode generation experiencing timeout issues (>25s, target <20s) 2) File mapping partially working - only CSS and React code generated in basic mode, missing HTML and Backend code 3) Intelligent mapping system not filling ALL required fields (html_code, css_code, js_code, react_code, backend_code) 4) Fallback mechanism not properly implemented - all_files field empty 5) Performance issues preventing 100% functionality target. Basic mode works (54.5% success rate) but advanced mode fails due to complex AdvancedCodeGenerator timeouts."
+
+  - task: "File Mapping Intelligence System"
+    implemented: true
+    working: false
+    file: "backend/ai_generators/advanced_generator.py"
+    stuck_count: 1
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: false
+          agent: "testing"
+          comment: "❌ MAPPING SYSTEM ISSUES: File extension mapping partially functional - JSX→react_code ✅, CSS→css_code ✅, but HTML→html_code ❌, Python→backend_code ❌. Fallback mechanism not working (all_files field empty). The intelligent mapping system in lines 246-284 of generate_app_code_advanced() needs fixes to ensure ALL file types are properly mapped and fallback works when specific extensions not found."
+
+  - task: "Default Structure Generation"
+    implemented: true
+    working: true
+    file: "backend/ai_generators/advanced_generator.py"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "✅ DEFAULT STRUCTURES WORKING: React structure generates correctly (react_code, css_code), FastAPI structure generates backend code properly. The _get_default_structure method (lines 718-753) functions correctly for both React and FastAPI frameworks."
+
+  - task: "Generation Performance and Timeout Management"
+    implemented: true
+    working: false
+    file: "backend/ai_generators/advanced_generator.py"
+    stuck_count: 1
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: false
+          agent: "testing"
+          comment: "❌ PERFORMANCE ISSUES: Advanced mode generation exceeds 20s target (timing out at 25-30s). The AdvancedCodeGenerator is too complex with multiple sequential LLM calls causing timeouts. Basic mode performs well (13.5s average) but advanced mode needs optimization. Timeout handling in _generate_main_files (lines 206-237) needs improvement."
+
 frontend:
   - task: "Landing Page Load and Design"
     implemented: true
