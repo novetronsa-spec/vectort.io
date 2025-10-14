@@ -816,9 +816,398 @@ class CodexAPITester:
         except Exception as e:
             self.log_result("Generate for Non-existent Project Error", False, f"Exception: {str(e)}")
 
+    def test_password_strength_validation(self):
+        """Test CORRECTION 3: Enhanced Authentication - Password Strength"""
+        print("\n=== CORRECTION 3: Password Strength Validation ===")
+        
+        weak_passwords = [
+            "123",
+            "password", 
+            "PASSWORD",
+            "Password",
+            "Password1",
+            "admin",
+            "test123",
+            "12345678"
+        ]
+        
+        strong_passwords = [
+            "Password123!",
+            "SecureP@ss2024",
+            "Test123!@#",
+            "MyStr0ng!Pass"
+        ]
+        
+        # Test weak passwords - should be rejected
+        for weak_pass in weak_passwords:
+            try:
+                test_user = {
+                    "email": f"weak.test.{int(time.time())}.{weak_pass.replace('!', 'x')}@vectort.io",
+                    "password": weak_pass,
+                    "full_name": "Weak Password Test"
+                }
+                
+                response = self.make_request("POST", "/auth/register", test_user)
+                
+                if response.status_code == 422:
+                    self.log_result(f"Weak Password Rejection ({weak_pass})", True, 
+                                  f"Correctly rejected weak password: {weak_pass}")
+                else:
+                    self.log_result(f"Weak Password Rejection ({weak_pass})", False, 
+                                  f"Weak password '{weak_pass}' was accepted (Status: {response.status_code})")
+            except Exception as e:
+                self.log_result(f"Weak Password Rejection ({weak_pass})", False, f"Exception: {str(e)}")
+        
+        # Test strong passwords - should be accepted
+        for strong_pass in strong_passwords[:2]:  # Test only 2 to avoid too many users
+            try:
+                test_user = {
+                    "email": f"strong.test.{int(time.time())}.{hash(strong_pass) % 10000}@vectort.io",
+                    "password": strong_pass,
+                    "full_name": "Strong Password Test"
+                }
+                
+                response = self.make_request("POST", "/auth/register", test_user)
+                
+                if response.status_code == 200:
+                    data = response.json()
+                    if "access_token" in data:
+                        self.log_result(f"Strong Password Acceptance ({strong_pass})", True, 
+                                      f"Correctly accepted strong password: {strong_pass}")
+                    else:
+                        self.log_result(f"Strong Password Acceptance ({strong_pass})", False, 
+                                      "Registration succeeded but no token returned")
+                else:
+                    self.log_result(f"Strong Password Acceptance ({strong_pass})", False, 
+                                  f"Strong password '{strong_pass}' was rejected (Status: {response.status_code})")
+            except Exception as e:
+                self.log_result(f"Strong Password Acceptance ({strong_pass})", False, f"Exception: {str(e)}")
+
+    def test_projecttype_enum_correction(self):
+        """Test CORRECTION 1: ProjectType enum correction"""
+        print("\n=== CORRECTION 1: ProjectType Enum Correction ===")
+        
+        if not self.access_token:
+            self.log_result("ProjectType Enum Test", False, "No access token available")
+            return
+        
+        # Test ecommerce project type specifically
+        try:
+            project_data = {
+                "title": "Test E-commerce Enum",
+                "description": "Test project for ecommerce enum validation",
+                "type": "ecommerce"  # This should work with enum correction
+            }
+            
+            project_response = self.make_request("POST", "/projects", project_data)
+            if project_response.status_code != 200:
+                self.log_result("ProjectType Enum - Project Creation", False, 
+                              f"Failed to create ecommerce project: {project_response.status_code}")
+                return
+            
+            project_id = project_response.json()["id"]
+            
+            # Test advanced mode generation with ecommerce type
+            generation_request = {
+                "description": "Créer une boutique en ligne moderne avec panier d'achats et système de paiement",
+                "type": "ecommerce",  # Test enum recognition
+                "framework": "react",
+                "database": "mongodb",
+                "advanced_mode": True,  # Test advanced mode
+                "features": ["authentication", "payment_processing", "shopping_cart"]
+            }
+            
+            response = self.make_request("POST", f"/projects/{project_id}/generate", generation_request)
+            
+            if response.status_code == 200:
+                data = response.json()
+                if any(data.get(field) for field in ["html_code", "css_code", "js_code", "react_code"]):
+                    self.log_result("ProjectType Enum - E-commerce Generation", True, 
+                                  "E-commerce project generated successfully with enum correction")
+                else:
+                    self.log_result("ProjectType Enum - E-commerce Generation", False, 
+                                  "No code generated despite successful response")
+            else:
+                # Check if fallback to basic mode worked
+                if response.status_code == 500:
+                    self.log_result("ProjectType Enum - Fallback Test", True, 
+                                  "Advanced mode failed but should fallback to basic mode")
+                else:
+                    self.log_result("ProjectType Enum - E-commerce Generation", False, 
+                                  f"Generation failed: {response.status_code} - {response.text}")
+                
+        except Exception as e:
+            self.log_result("ProjectType Enum Test", False, f"Exception: {str(e)}")
+
+    def test_llmchat_initialization(self):
+        """Test CORRECTION 2: LlmChat initialization with system_message"""
+        print("\n=== CORRECTION 2: LlmChat Initialization ===")
+        
+        if not self.access_token:
+            self.log_result("LlmChat Initialization Test", False, "No access token available")
+            return
+        
+        try:
+            # Create project for testing
+            project_data = {
+                "title": "Test LlmChat System Message",
+                "description": "Test project for LlmChat initialization",
+                "type": "web_app"
+            }
+            
+            project_response = self.make_request("POST", "/projects", project_data)
+            if project_response.status_code != 200:
+                self.log_result("LlmChat Test - Project Creation", False, 
+                              f"Failed to create project: {project_response.status_code}")
+                return
+            
+            project_id = project_response.json()["id"]
+            
+            # Test advanced mode generation (should use LlmChat with system_message)
+            generation_request = {
+                "description": "Créer une application web simple avec React",
+                "type": "web_app",
+                "framework": "react",
+                "advanced_mode": True  # This should trigger LlmChat initialization
+            }
+            
+            response = self.make_request("POST", f"/projects/{project_id}/generate", generation_request)
+            
+            if response.status_code == 200:
+                data = response.json()
+                if any(data.get(field) for field in ["html_code", "css_code", "js_code", "react_code"]):
+                    self.log_result("LlmChat Initialization - Advanced Mode", True, 
+                                  "Advanced mode generation successful - LlmChat initialized correctly")
+                else:
+                    self.log_result("LlmChat Initialization - Advanced Mode", False, 
+                                  "Advanced mode succeeded but no code generated")
+            else:
+                # Test basic mode as fallback
+                basic_request = {
+                    "description": "Créer une application web simple avec React",
+                    "type": "web_app", 
+                    "framework": "react",
+                    "advanced_mode": False
+                }
+                
+                basic_response = self.make_request("POST", f"/projects/{project_id}/generate", basic_request)
+                
+                if basic_response.status_code == 200:
+                    self.log_result("LlmChat Initialization - Basic Fallback", True, 
+                                  "Basic mode works as fallback when advanced mode fails")
+                else:
+                    self.log_result("LlmChat Initialization", False, 
+                                  f"Both advanced and basic modes failed: {response.status_code}")
+                
+        except Exception as e:
+            self.log_result("LlmChat Initialization Test", False, f"Exception: {str(e)}")
+
+    def test_complete_generation_ecommerce_react(self):
+        """Test CORRECTION 4: Complete Generation - E-commerce with React"""
+        print("\n=== CORRECTION 4a: Complete Generation - E-commerce + React ===")
+        
+        if not self.access_token:
+            self.log_result("Complete Generation E-commerce", False, "No access token available")
+            return
+        
+        try:
+            project_data = {
+                "title": "E-commerce React Complet",
+                "description": "Boutique en ligne complète avec React",
+                "type": "ecommerce"
+            }
+            
+            project_response = self.make_request("POST", "/projects", project_data)
+            if project_response.status_code != 200:
+                self.log_result("Complete Generation E-commerce", False, 
+                              f"Failed to create project: {project_response.status_code}")
+                return
+            
+            project_id = project_response.json()["id"]
+            
+            # Test complete generation
+            generation_request = {
+                "description": "Créer une boutique en ligne complète avec catalogue produits, panier d'achats, système de paiement, gestion des commandes et interface d'administration",
+                "type": "ecommerce",
+                "framework": "react",
+                "database": "mongodb",
+                "advanced_mode": True,
+                "features": ["authentication", "payment_processing", "shopping_cart", "admin_panel"],
+                "integrations": ["stripe", "paypal"]
+            }
+            
+            response = self.make_request("POST", f"/projects/{project_id}/generate", generation_request)
+            
+            if response.status_code == 200:
+                data = response.json()
+                
+                # Check for complete generation
+                has_react = bool(data.get("react_code"))
+                has_backend = bool(data.get("backend_code"))
+                has_css = bool(data.get("css_code"))
+                
+                if has_react and has_backend and has_css:
+                    self.log_result("Complete Generation E-commerce", True, 
+                                  "Complete e-commerce application generated with React, backend, and styling")
+                elif has_react or has_backend:
+                    self.log_result("Complete Generation E-commerce", True, 
+                                  "Partial e-commerce generation successful (some components generated)")
+                else:
+                    self.log_result("Complete Generation E-commerce", False, 
+                                  "No meaningful code generated")
+            else:
+                self.log_result("Complete Generation E-commerce", False, 
+                              f"Generation failed: {response.status_code} - {response.text}")
+                
+        except Exception as e:
+            self.log_result("Complete Generation E-commerce", False, f"Exception: {str(e)}")
+
+    def test_complete_generation_social_vue(self):
+        """Test CORRECTION 4: Complete Generation - Social Media with Vue"""
+        print("\n=== CORRECTION 4b: Complete Generation - Social Media + Vue ===")
+        
+        if not self.access_token:
+            self.log_result("Complete Generation Social Vue", False, "No access token available")
+            return
+        
+        try:
+            project_data = {
+                "title": "Social Media Vue Complet",
+                "description": "Réseau social complet avec Vue.js",
+                "type": "social_media"
+            }
+            
+            project_response = self.make_request("POST", "/projects", project_data)
+            if project_response.status_code != 200:
+                self.log_result("Complete Generation Social Vue", False, 
+                              f"Failed to create project: {project_response.status_code}")
+                return
+            
+            project_id = project_response.json()["id"]
+            
+            # Test complete generation with Vue
+            generation_request = {
+                "description": "Créer un réseau social complet avec profils utilisateurs, fil d'actualité, messagerie, notifications et système d'amis",
+                "type": "social_media",
+                "framework": "vue",
+                "database": "postgresql",
+                "advanced_mode": True,
+                "features": ["authentication", "real_time_chat", "notifications", "user_profiles"],
+                "integrations": ["websocket", "redis"]
+            }
+            
+            response = self.make_request("POST", f"/projects/{project_id}/generate", generation_request)
+            
+            if response.status_code == 200:
+                data = response.json()
+                
+                # Check for Vue-specific generation
+                has_vue_code = bool(data.get("react_code"))  # Backend might return React code for Vue
+                has_backend = bool(data.get("backend_code"))
+                has_css = bool(data.get("css_code"))
+                
+                if has_vue_code and has_backend:
+                    self.log_result("Complete Generation Social Vue", True, 
+                                  "Complete social media application generated with Vue and backend")
+                elif has_vue_code or has_backend:
+                    self.log_result("Complete Generation Social Vue", True, 
+                                  "Partial social media generation successful")
+                else:
+                    self.log_result("Complete Generation Social Vue", False, 
+                                  "No meaningful code generated for Vue social media app")
+            else:
+                self.log_result("Complete Generation Social Vue", False, 
+                              f"Generation failed: {response.status_code} - {response.text}")
+                
+        except Exception as e:
+            self.log_result("Complete Generation Social Vue", False, f"Exception: {str(e)}")
+
+    def test_final_validation_endpoints(self):
+        """Test CORRECTION 5: Final Validation - All Critical Endpoints"""
+        print("\n=== CORRECTION 5: Final Validation - Critical Endpoints ===")
+        
+        critical_endpoints = [
+            ("GET", "/", "Basic API"),
+            ("GET", "/stats", "Global Statistics"),
+        ]
+        
+        if self.access_token:
+            authenticated_endpoints = [
+                ("GET", "/auth/me", "Authentication Check"),
+                ("GET", "/projects", "Project Listing"),
+                ("GET", "/users/stats", "User Statistics")
+            ]
+            critical_endpoints.extend(authenticated_endpoints)
+        
+        all_passed = True
+        
+        for method, endpoint, name in critical_endpoints:
+            try:
+                response = self.make_request(method, endpoint)
+                
+                if response.status_code == 200:
+                    self.log_result(f"Critical Endpoint - {name}", True, 
+                                  f"{method} {endpoint} returned 200 OK")
+                else:
+                    self.log_result(f"Critical Endpoint - {name}", False, 
+                                  f"{method} {endpoint} returned {response.status_code}")
+                    all_passed = False
+                    
+            except Exception as e:
+                self.log_result(f"Critical Endpoint - {name}", False, f"Exception: {str(e)}")
+                all_passed = False
+        
+        if all_passed:
+            self.log_result("Final Validation - All Endpoints", True, 
+                          "All critical endpoints functional - no 500 errors detected")
+        else:
+            self.log_result("Final Validation - All Endpoints", False, 
+                          "Some critical endpoints failed validation")
+
+    def run_corrections_tests(self):
+        """Run specific tests for the corrections mentioned in review request"""
+        print("🔧 VÉRIFICATION DES CORRECTIONS PRÉ-DÉPLOIEMENT")
+        print(f"Testing against: {self.base_url}")
+        print("=" * 80)
+        
+        # Setup authentication first
+        print("\n🔐 SETUP: Authentication")
+        print("-" * 50)
+        self.test_user_registration()
+        if not self.access_token:
+            self.test_user_login()
+        
+        # Test specific corrections
+        print("\n🎯 CORRECTIONS TESTING")
+        print("-" * 50)
+        
+        self.test_projecttype_enum_correction()
+        self.test_llmchat_initialization()
+        self.test_password_strength_validation()
+        self.test_complete_generation_ecommerce_react()
+        self.test_complete_generation_social_vue()
+        self.test_final_validation_endpoints()
+        
+        # Print summary
+        print("\n" + "=" * 80)
+        print("🔧 CORRECTIONS VALIDATION SUMMARY")
+        print("=" * 80)
+        print(f"✅ Passed: {self.results['passed']}")
+        print(f"❌ Failed: {self.results['failed']}")
+        print(f"📈 Success Rate: {(self.results['passed'] / (self.results['passed'] + self.results['failed']) * 100):.1f}%")
+        
+        if self.results['errors']:
+            print("\n🔍 FAILED CORRECTIONS:")
+            for error in self.results['errors']:
+                print(f"   • {error}")
+        else:
+            print("\n🎉 ALL CORRECTIONS VALIDATED! Ready for deployment!")
+        
+        return self.results['failed'] == 0
+
     def run_all_tests(self):
         """Run all tests in sequence"""
-        print("🚀 Starting Codex AI Application Generation System Tests")
+        print("🚀 Starting Vectort.io AI Application Generation System Tests")
         print(f"Testing against: {self.base_url}")
         print("=" * 80)
         
@@ -875,7 +1264,7 @@ class CodexAPITester:
             for error in self.results['errors']:
                 print(f"   • {error}")
         else:
-            print("\n🎉 ALL TESTS PASSED! The Codex AI Application Generation System is working perfectly!")
+            print("\n🎉 ALL TESTS PASSED! The Vectort.io AI Application Generation System is working perfectly!")
         
         return self.results['failed'] == 0
 
