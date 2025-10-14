@@ -129,9 +129,9 @@ export default function AuthPage() {
 
         {/* Brand */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold mb-2">codex</h1>
+          <h1 className="text-4xl font-bold mb-2">vectort.io</h1>
           <p className="text-gray-400">
-            Où les idées deviennent <span className="text-green-400">réalité</span>
+            Transformez vos idées en <span className="text-green-400">applications IA</span>
           </p>
         </div>
 
