@@ -221,7 +221,11 @@ class AdvancedCodeGenerator:
     
     async def _generate_single_file(self, request: GenerationRequest, file_path: str, file_desc: str) -> str:
         """Génère le contenu d'un fichier spécifique"""
-        chat = LlmChat(api_key=self.api_key, session_id=f"file-{hash(file_path)}")
+        chat = LlmChat(
+            api_key=self.api_key, 
+            session_id=f"file-{hash(file_path)}",
+            system_message="Tu es un développeur expert spécialisé dans la génération de fichiers de code."
+        )
         
         # Prompt spécialisé selon le type de fichier
         specialized_prompt = self._get_specialized_prompt(request.project_type)
