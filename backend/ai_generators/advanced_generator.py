@@ -161,7 +161,11 @@ class AdvancedCodeGenerator:
     
     async def _generate_architecture(self, request: GenerationRequest) -> Dict[str, str]:
         """Génère l'architecture complète du projet"""
-        chat = LlmChat(api_key=self.api_key, session_id=f"arch-{request.project_type.value}")
+        chat = LlmChat(
+            api_key=self.api_key, 
+            session_id=f"arch-{request.project_type.value}",
+            system_message="Tu es un architecte logiciel expert spécialisé dans la génération de code."
+        )
         
         system_prompt = f"""
         Tu es un architecte logiciel expert. Génère une structure de projet complète et professionnelle.
