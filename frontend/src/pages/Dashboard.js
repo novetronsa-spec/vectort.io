@@ -386,8 +386,8 @@ ${codeData.backend_code || 'Aucun code backend généré'}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
-                <Textarea
-                  placeholder="Ex: Je veux créer une application de gestion de tâches avec authentification, notifications en temps réel, et un design moderne. Les utilisateurs doivent pouvoir créer des projets, ajouter des tâches, collaborer avec d'autres utilisateurs..."
+                <VoiceTextarea
+                  placeholder="Ex: Je veux créer une application de gestion de tâches avec authentification, notifications en temps réel, et un design moderne... 🎤 Utilisez le micro pour décrire votre projet vocalement !"
                   value={newProjectDescription}
                   onChange={(e) => setNewProjectDescription(e.target.value)}
                   className="min-h-32 bg-gray-800 border-gray-600 text-white resize-none"
