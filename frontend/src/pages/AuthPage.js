@@ -86,20 +86,40 @@ export default function AuthPage() {
 
   const handleRegister = async (e) => {
     e.preventDefault();
+    
+    // Validation côté client avant envoi
+    if (passwordErrors.length > 0) {
+      toast({
+        title: "Mot de passe invalide",
+        description: "Veuillez corriger les erreurs de mot de passe avant de continuer.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (!formData.fullName.trim()) {
+      toast({
+        title: "Nom requis",
+        description: "Veuillez saisir votre nom complet.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
     setLoading(true);
     
     const result = await register(formData.email, formData.password, formData.fullName);
     
     if (result.success) {
       toast({
-        title: "Compte créé avec succès !",
-        description: "Bienvenue sur Codex.",
+        title: "Compte créé avec succès ! 🎉",
+        description: "Bienvenue sur Vectort - Prêt à transformer vos idées en applications !",
       });
       navigate(description ? "/dashboard" : "/dashboard", { state: { description } });
     } else {
       toast({
         title: "Erreur d'inscription",
-        description: result.error,
+        description: result.error || "Une erreur est survenue lors de l'inscription. Vérifiez vos informations.",
         variant: "destructive"
       });
     }
