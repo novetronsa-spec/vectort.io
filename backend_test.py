@@ -1646,12 +1646,6 @@ class CodexAPITester:
         
         return self.results['failed'] == 0
             
-            # Timeout de 60s pour génération complète (4 fichiers × 15s)
-            response = self.make_request("POST", f"/projects/{project_id}/generate", 
-                                       generation_request)
-            
-            generation_time = time.time() - start_time
-            
             if response.status_code == 200:
                 data = response.json()
                 
