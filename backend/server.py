@@ -238,24 +238,29 @@ async def generate_app_code_advanced(request: GenerateAppRequest) -> dict:
                 deployment_target=request.deployment_target
             )
             
-            # Génération complète
-            generated_code = await generator.generate_complete_application(generation_request)
-            
-            return {
-                "html": generated_code.main_files.get("index.html", ""),
-                "css": generated_code.main_files.get("styles.css", ""),
-                "js": generated_code.main_files.get("main.js", ""),
-                "react": generated_code.main_files.get("App.jsx", ""),
-                "backend": generated_code.main_files.get("server.py", ""),
-                # NOUVEAUX CHAMPS AVANCÉS
-                "project_structure": generated_code.project_structure,
-                "package_json": generated_code.package_json,
-                "requirements_txt": generated_code.requirements_txt,
-                "dockerfile": generated_code.dockerfile,
-                "readme": generated_code.readme,
-                "deployment_config": generated_code.deployment_config,
-                "all_files": generated_code.main_files
-            }
+            try:
+                # Génération complète
+                generated_code = await generator.generate_complete_application(generation_request)
+                
+                return {
+                    "html": generated_code.main_files.get("index.html", ""),
+                    "css": generated_code.main_files.get("styles.css", ""),
+                    "js": generated_code.main_files.get("main.js", ""),
+                    "react": generated_code.main_files.get("App.jsx", ""),
+                    "backend": generated_code.main_files.get("server.py", ""),
+                    # NOUVEAUX CHAMPS AVANCÉS
+                    "project_structure": generated_code.project_structure,
+                    "package_json": generated_code.package_json,
+                    "requirements_txt": generated_code.requirements_txt,
+                    "dockerfile": generated_code.dockerfile,
+                    "readme": generated_code.readme,
+                    "deployment_config": generated_code.deployment_config,
+                    "all_files": generated_code.main_files
+                }
+            except ValueError as ve:
+                logger.warning(f"ProjectType validation error: {str(ve)}, falling back to basic mode")
+                # Fallback vers génération basique si problème d'enum
+                return await generate_app_code_basic(request.description, request.type, request.framework)
         else:
             # MODE RAPIDE: Génération basique (compatibilité)
             return await generate_app_code_basic(request.description, request.type, request.framework)
