@@ -89,7 +89,7 @@ export default function LandingPage() {
     <div className="min-h-screen bg-black text-white">
       {/* Navigation */}
       <nav className="flex justify-between items-center px-8 py-6">
-        <div className="text-2xl font-bold">codex</div>
+        <div className="text-2xl font-bold">vectort.io</div>
         <div className="flex items-center space-x-8">
           <button onClick={() => navigate("/features")} className="hover:text-green-400 transition-colors">Features</button>
           <button onClick={() => navigate("/pricing")} className="hover:text-green-400 transition-colors">Pricing</button>
