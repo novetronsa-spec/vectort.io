@@ -314,7 +314,7 @@ export default function AuthPage() {
               En continuant, vous acceptez nos{" "}
               <a href="#" className="text-green-400 hover:underline">Conditions d'utilisation</a>{" "}
               et notre{" "}
-              <a href="#" className="text-green-400 hover:underline">Politique de confidentialité</a>.
+              <a href="#" className="text-green-400 hover:underline">Politique de confidentialité</a> de Vectort.
             </p>
           </CardContent>
         </Card>
