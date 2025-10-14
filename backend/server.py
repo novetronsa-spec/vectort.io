@@ -97,6 +97,13 @@ class User(UserBase):
     is_active: bool = True
     provider: str = "email"
     provider_id: Optional[str] = None
+    # SYSTÈME DE CRÉDITS VECTORT.IO
+    credits_free: float = 10.0  # 10 crédits gratuits
+    credits_monthly: float = 0.0  # Crédits mensuels selon plan
+    credits_monthly_limit: float = 0.0  # Limite mensuelle
+    credits_topup: float = 0.0  # Crédits achetés
+    subscription_plan: str = "free"  # free, standard, pro, enterprise
+    credits_total: float = 10.0  # Total disponible
 
 class Token(BaseModel):
     access_token: str
