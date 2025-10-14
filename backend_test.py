@@ -1,20 +1,21 @@
 #!/usr/bin/env python3
 """
-Comprehensive Backend API Testing for Codex Application
-Tests all authentication, project management, and statistics endpoints
+🔧 VÉRIFICATION DES CORRECTIONS PRÉ-DÉPLOIEMENT
+Tests spécifiques pour les corrections apportées au système Vectort.io
 """
 
 import requests
 import json
 import sys
+import time
 from typing import Dict, Any, Optional
 
 # Configuration
 BASE_URL = "https://emergent-clone-151.preview.emergentagent.com/api"
 TEST_USER = {
-    "email": "marie.dupont@example.com",
+    "email": f"test.corrections.{int(time.time())}@vectort.io",
     "password": "SecurePass123!",
-    "full_name": "Marie Dupont"
+    "full_name": "Test Corrections User"
 }
 
 class CodexAPITester:
