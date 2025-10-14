@@ -805,6 +805,30 @@ frontend:
           agent: "testing"
           comment: "✅ VOICE UX AND RESPONSIVE DESIGN EXCELLENT: Microphone buttons properly positioned (absolute positioning in textarea), dark theme integration maintained, mobile responsiveness confirmed (390x844 viewport), manual text input compatibility preserved, comprehensive help messages displayed ('Nouveau !', 'Utilisez votre voix', 'Parlez naturellement', 'IA comprend et génère', 'Plus rapide que de taper'), visual indicators positioned correctly without breaking layout."
 
+  - task: "Voice Recognition Error Handling - InvalidStateError Fix"
+    implemented: true
+    working: false
+    file: "frontend/src/hooks/useSpeechToText.js"
+    stuck_count: 1
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: false
+          agent: "testing"
+          comment: "❌ CRITICAL VOICE RECOGNITION ISSUE FOUND: Multiple 'InvalidStateError: Failed to execute 'start' on 'SpeechRecognition': recognition has already started' errors detected during testing. The issue occurs when users click the microphone button rapidly or when the recognition state is not properly managed. This causes the infinite text accumulation problem mentioned in the user's request. The startListening function in useSpeechToText.js needs better state management to prevent starting recognition when it's already active. Manual text input works correctly, but voice functionality has state management issues that need immediate fixing."
+
+  - task: "Voice Recognition State Management"
+    implemented: true
+    working: false
+    file: "frontend/src/components/VoiceTextarea.js"
+    stuck_count: 1
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: false
+          agent: "testing"
+          comment: "❌ VOICE STATE MANAGEMENT ISSUES: Testing revealed that rapid clicking of the microphone button causes InvalidStateError exceptions. The handleMicClick function doesn't properly check if recognition is already running before attempting to start it again. The isListening state and actual SpeechRecognition state can become desynchronized, leading to the infinite text problem. The visual indicators (animated dots) work correctly, but the underlying state management needs improvement to prevent recognition conflicts."
+
 metadata:
   created_by: "testing_agent"
   version: "1.0"
