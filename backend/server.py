@@ -220,13 +220,58 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
         raise credentials_exception
     return User(**user)
 
-async def generate_app_code(description: str, app_type: str, framework: str) -> dict:
-    """Generate application code using AI"""
+async def generate_app_code_advanced(request: GenerateAppRequest) -> dict:
+    """GÉNÉRATEUR ULTRA-PUISSANT - Génère des applications complètes"""
+    try:
+        # Initialiser le générateur avancé
+        generator = AdvancedCodeGenerator(EMERGENT_LLM_KEY)
+        
+        if request.advanced_mode:
+            # MODE AVANCÉ: Génération complète avec architecture
+            generation_request = GenerationRequest(
+                description=request.description,
+                project_type=ProjectType(request.type),
+                framework=Framework(request.framework),
+                database=DatabaseType(request.database) if request.database else None,
+                features=request.features or [],
+                integrations=request.integrations or [],
+                deployment_target=request.deployment_target
+            )
+            
+            # Génération complète
+            generated_code = await generator.generate_complete_application(generation_request)
+            
+            return {
+                "html": generated_code.main_files.get("index.html", ""),
+                "css": generated_code.main_files.get("styles.css", ""),
+                "js": generated_code.main_files.get("main.js", ""),
+                "react": generated_code.main_files.get("App.jsx", ""),
+                "backend": generated_code.main_files.get("server.py", ""),
+                # NOUVEAUX CHAMPS AVANCÉS
+                "project_structure": generated_code.project_structure,
+                "package_json": generated_code.package_json,
+                "requirements_txt": generated_code.requirements_txt,
+                "dockerfile": generated_code.dockerfile,
+                "readme": generated_code.readme,
+                "deployment_config": generated_code.deployment_config,
+                "all_files": generated_code.main_files
+            }
+        else:
+            # MODE RAPIDE: Génération basique (compatibilité)
+            return await generate_app_code_basic(request.description, request.type, request.framework)
+            
+    except Exception as e:
+        logger.error(f"Error in advanced generation: {str(e)}")
+        # Fallback vers génération basique
+        return await generate_app_code_basic(request.description, request.type, request.framework)
+
+async def generate_app_code_basic(description: str, app_type: str, framework: str) -> dict:
+    """Génération basique pour compatibilité"""
     try:
         # Initialize LLM Chat
         chat = LlmChat(
             api_key=EMERGENT_LLM_KEY,
-            session_id=f"vectort-generation-{uuid.uuid4()}",
+            session_id=f"vectort-basic-{uuid.uuid4()}",
             system_message=f"""Tu es un développeur expert qui génère du code de production de haute qualité.
             
             Génère une application {app_type} en {framework} basée sur la description fournie.
@@ -283,7 +328,7 @@ async def generate_app_code(description: str, app_type: str, framework: str) -> 
             }
             
     except Exception as e:
-        logger.error(f"Error generating app code: {str(e)}")
+        logger.error(f"Error generating basic app code: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Erreur lors de la génération du code"
