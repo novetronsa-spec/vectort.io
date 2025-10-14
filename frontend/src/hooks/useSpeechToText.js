@@ -63,10 +63,36 @@ export const useSpeechToText = () => {
     if (recognitionRef.current && !isListening) {
       setTranscript('');
       try {
-        recognitionRef.current.start();
+        // Vérifier l'état réel de la reconnaissance avant de démarrer
+        if (recognitionRef.current.readyState === 1) {
+          // Si déjà en cours, arrêter d'abord
+          recognitionRef.current.stop();
+          setTimeout(() => {
+            if (!isListening) {
+              recognitionRef.current.start();
+            }
+          }, 100);
+        } else {
+          recognitionRef.current.start();
+        }
       } catch (error) {
         console.error('Erreur lors du démarrage de la reconnaissance:', error);
-        setIsListening(false);
+        if (error.name === 'InvalidStateError') {
+          // Recognition déjà active, arrêter et redémarrer
+          try {
+            recognitionRef.current.stop();
+            setTimeout(() => {
+              if (!isListening && recognitionRef.current) {
+                recognitionRef.current.start();
+              }
+            }, 200);
+          } catch (retryError) {
+            console.error('Impossible de redémarrer la reconnaissance:', retryError);
+            setIsListening(false);
+          }
+        } else {
+          setIsListening(false);
+        }
       }
     }
   };
