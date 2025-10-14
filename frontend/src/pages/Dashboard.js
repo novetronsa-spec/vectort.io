@@ -199,9 +199,44 @@ ${codeData.backend_code || 'Aucun code backend généré'}
   };
 
   const projectTypes = [
+    // Applications Web
     { id: "web_app", name: "Application Web", icon: Globe, color: "bg-blue-600" },
+    { id: "ecommerce", name: "E-commerce", icon: "🛒", color: "bg-green-600" },
+    { id: "social_media", name: "Réseau Social", icon: "👥", color: "bg-purple-600" },
+    { id: "saas_platform", name: "Plateforme SaaS", icon: "💼", color: "bg-indigo-600" },
+    { id: "blog_cms", name: "Blog/CMS", icon: "📝", color: "bg-yellow-600" },
+    { id: "portfolio", name: "Portfolio", icon: "🎨", color: "bg-pink-600" },
+    { id: "dashboard", name: "Dashboard", icon: "📊", color: "bg-cyan-600" },
+    
+    // Mobile & PWA
     { id: "mobile_app", name: "App Mobile", icon: Smartphone, color: "bg-green-600" },
-    { id: "api", name: "API Backend", icon: Database, color: "bg-purple-600" },
+    { id: "pwa", name: "PWA", icon: "📱", color: "bg-teal-600" },
+    { id: "react_native", name: "React Native", icon: "⚛️", color: "bg-blue-500" },
+    
+    // Backend & API
+    { id: "rest_api", name: "API REST", icon: Database, color: "bg-purple-600" },
+    { id: "graphql_api", name: "GraphQL API", icon: "🔗", color: "bg-pink-500" },
+    { id: "microservices", name: "Microservices", icon: "🔧", color: "bg-gray-600" },
+    
+    // Blockchain & Web3
+    { id: "smart_contract", name: "Smart Contract", icon: "⛓️", color: "bg-yellow-500" },
+    { id: "dapp", name: "DApp", icon: "🌐", color: "bg-orange-500" },
+    { id: "nft_marketplace", name: "NFT Marketplace", icon: "🖼️", color: "bg-purple-500" },
+    
+    // Gaming
+    { id: "browser_game", name: "Jeu Browser", icon: "🎮", color: "bg-red-500" },
+    { id: "mobile_game", name: "Jeu Mobile", icon: "🕹️", color: "bg-red-600" },
+    
+    // AI & Data
+    { id: "ml_model", name: "Modèle ML", icon: "🤖", color: "bg-green-500" },
+    { id: "chatbot", name: "Chatbot IA", icon: "💬", color: "bg-blue-400" },
+    { id: "data_pipeline", name: "Pipeline Data", icon: "📈", color: "bg-indigo-500" },
+    
+    // Tools & Extensions
+    { id: "cli_tool", name: "Outil CLI", icon: "⌨️", color: "bg-gray-500" },
+    { id: "chrome_extension", name: "Extension Chrome", icon: "🧩", color: "bg-yellow-400" },
+    
+    // Classique
     { id: "landing_page", name: "Landing Page", icon: Code, color: "bg-orange-600" }
   ];
 
