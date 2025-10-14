@@ -223,94 +223,253 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
     return User(**user)
 
 async def generate_app_code_advanced(request: GenerateAppRequest) -> dict:
-    """GÉNÉRATEUR ULTRA-PUISSANT - Génère des applications complètes"""
+    """GÉNÉRATEUR ULTRA-PUISSANT OPTIMISÉ - Génère des applications complètes rapidement"""
     try:
-        # Initialiser le générateur avancé
-        generator = AdvancedCodeGenerator(EMERGENT_LLM_KEY)
-        
         if request.advanced_mode:
-            # MODE AVANCÉ: Génération complète avec architecture
-            generation_request = GenerationRequest(
-                description=request.description,
-                project_type=ProjectType(request.type),
-                framework=Framework(request.framework),
-                database=DatabaseType(request.database) if request.database else None,
-                features=request.features or [],
-                integrations=request.integrations or [],
-                deployment_target=request.deployment_target
-            )
-            
-            try:
-                # Génération complète
-                generated_code = await generator.generate_complete_application(generation_request)
-                
-                # MAPPING INTELLIGENT DES FICHIERS GÉNÉRÉS
-                html_code = ""
-                css_code = ""
-                js_code = ""
-                react_code = ""
-                backend_code = ""
-                
-                # Chercher et mapper les fichiers générés selon leur extension/nom
-                for file_path, content in generated_code.main_files.items():
-                    if not content:
-                        continue
-                        
-                    file_lower = file_path.lower()
-                    
-                    # HTML files
-                    if file_lower.endswith('.html') or 'index.html' in file_lower:
-                        html_code = content
-                    # CSS files
-                    elif file_lower.endswith('.css') or 'style' in file_lower:
-                        css_code = content
-                    # React/JSX files
-                    elif file_lower.endswith('.jsx') or file_lower.endswith('.tsx') or 'app.' in file_lower:
-                        react_code = content
-                    # JavaScript files
-                    elif file_lower.endswith('.js') or file_lower.endswith('.ts'):
-                        js_code = content
-                    # Backend Python files
-                    elif file_lower.endswith('.py') or 'server' in file_lower or 'main' in file_lower:
-                        backend_code = content
-                
-                # Si pas de fichiers spécifiques trouvés, prendre le premier fichier disponible
-                if not any([html_code, css_code, js_code, react_code, backend_code]) and generated_code.main_files:
-                    first_file = list(generated_code.main_files.values())[0]
-                    if request.framework in ['react', 'vue', 'angular']:
-                        react_code = first_file
-                    elif request.framework in ['fastapi', 'django', 'flask']:
-                        backend_code = first_file
-                    else:
-                        html_code = first_file
-                
-                return {
-                    "html": html_code,
-                    "css": css_code,
-                    "js": js_code,
-                    "react": react_code,
-                    "backend": backend_code,
-                    # NOUVEAUX CHAMPS AVANCÉS
-                    "project_structure": generated_code.project_structure,
-                    "package_json": generated_code.package_json,
-                    "requirements_txt": generated_code.requirements_txt,
-                    "dockerfile": generated_code.dockerfile,
-                    "readme": generated_code.readme,
-                    "deployment_config": generated_code.deployment_config,
-                    "all_files": generated_code.main_files
-                }
-            except ValueError as ve:
-                logger.warning(f"ProjectType validation error: {str(ve)}, falling back to basic mode")
-                # Fallback vers génération basique si problème d'enum
-                return await generate_app_code_basic(request.description, request.type, request.framework)
+            # MODE AVANCÉ OPTIMISÉ: Génération ciblée avec timeout court
+            return await generate_advanced_optimized(request)
         else:
             # MODE RAPIDE: Génération basique (compatibilité)
             return await generate_app_code_basic(request.description, request.type, request.framework)
             
     except Exception as e:
         logger.error(f"Error in advanced generation: {str(e)}")
-        # Fallback vers génération basique
+        # Fallback vers génération basique TOUJOURS
         return await generate_app_code_basic(request.description, request.type, request.framework)
+
+async def generate_advanced_optimized(request: GenerateAppRequest) -> dict:
+    """Génération avancée optimisée avec timeout et structure intelligente"""
+    try:
+        # Génération concurrente optimisée
+        tasks = []
+        
+        # Task 1: Fichier principal selon le framework
+        if request.framework == "react":
+            tasks.append(generate_react_component(request))
+        elif request.framework in ["fastapi", "django", "flask"]:
+            tasks.append(generate_backend_file(request))
+        else:
+            tasks.append(generate_html_file(request))
+        
+        # Task 2: Fichier CSS en parallèle
+        tasks.append(generate_css_file(request))
+        
+        # Task 3: Configuration en parallèle
+        tasks.append(generate_config_files(request))
+        
+        # Exécution concurrente avec timeout global de 15s
+        results = await asyncio.wait_for(
+            asyncio.gather(*tasks, return_exceptions=True),
+            timeout=15.0
+        )
+        
+        # Traitement des résultats
+        main_file = results[0] if len(results) > 0 and not isinstance(results[0], Exception) else ""
+        css_content = results[1] if len(results) > 1 and not isinstance(results[1], Exception) else ""
+        config_content = results[2] if len(results) > 2 and not isinstance(results[2], Exception) else {}
+        
+        # Mapping intelligent selon le framework
+        html_code = ""
+        css_code = css_content
+        js_code = ""
+        react_code = ""
+        backend_code = ""
+        
+        if request.framework == "react":
+            react_code = main_file
+            html_code = generate_basic_html_for_react(request)
+        elif request.framework in ["fastapi", "django", "flask"]:
+            backend_code = main_file
+        else:
+            html_code = main_file
+        
+        return {
+            "html": html_code,
+            "css": css_code,
+            "js": js_code,
+            "react": react_code,
+            "backend": backend_code,
+            # Configuration avancée
+            "project_structure": config_content.get("structure", {}),
+            "package_json": config_content.get("package_json", ""),
+            "requirements_txt": config_content.get("requirements", ""),
+            "dockerfile": config_content.get("dockerfile", ""),
+            "readme": config_content.get("readme", ""),
+            "deployment_config": config_content.get("deployment", {}),
+            "all_files": {
+                "main_file": main_file,
+                "styles.css": css_content
+            }
+        }
+        
+    except asyncio.TimeoutError:
+        logger.warning("Advanced generation timed out, falling back to basic mode")
+        return await generate_app_code_basic(request.description, request.type, request.framework)
+    except Exception as e:
+        logger.error(f"Advanced generation failed: {str(e)}")
+        return await generate_app_code_basic(request.description, request.type, request.framework)
+
+async def generate_react_component(request: GenerateAppRequest) -> str:
+    """Génère un composant React optimisé"""
+    chat = LlmChat(
+        api_key=EMERGENT_LLM_KEY,
+        session_id=f"react-{uuid.uuid4()}",
+        system_message="Tu es un expert React. Génère UNIQUEMENT du code JSX, rien d'autre."
+    ).with_model("openai", "gpt-4o")
+    
+    prompt = f"""Génère un composant React complet pour: {request.description}
+
+Type: {request.type}
+Features: {', '.join(request.features or [])}
+
+EXIGENCES:
+- Composant React moderne avec hooks
+- Code prêt pour production
+- Design responsive et accessible
+- Fonctionnalités demandées incluses
+- Gestion d'état avec useState/useEffect
+
+Réponds UNIQUEMENT avec le code JSX, pas de markdown."""
+    
+    response = await chat.send_message(UserMessage(text=prompt))
+    return response.strip().replace('```jsx', '').replace('```javascript', '').replace('```', '').strip()
+
+async def generate_backend_file(request: GenerateAppRequest) -> str:
+    """Génère un fichier backend optimisé"""
+    chat = LlmChat(
+        api_key=EMERGENT_LLM_KEY,
+        session_id=f"backend-{uuid.uuid4()}",
+        system_message="Tu es un expert backend. Génère UNIQUEMENT du code Python, rien d'autre."
+    ).with_model("openai", "gpt-4o")
+    
+    framework_name = {"fastapi": "FastAPI", "django": "Django", "flask": "Flask"}.get(request.framework, "FastAPI")
+    
+    prompt = f"""Génère une API {framework_name} complète pour: {request.description}
+
+Type: {request.type}
+Database: {request.database or 'mongodb'}
+Features: {', '.join(request.features or [])}
+
+EXIGENCES:
+- API REST complète et fonctionnelle
+- Modèles de données appropriés
+- Endpoints CRUD essentiels
+- Gestion d'erreurs et validation
+- Configuration CORS
+- Code prêt pour production
+
+Réponds UNIQUEMENT avec le code Python, pas de markdown."""
+    
+    response = await chat.send_message(UserMessage(text=prompt))
+    return response.strip().replace('```python', '').replace('```', '').strip()
+
+async def generate_html_file(request: GenerateAppRequest) -> str:
+    """Génère un fichier HTML optimisé"""
+    chat = LlmChat(
+        api_key=EMERGENT_LLM_KEY,
+        session_id=f"html-{uuid.uuid4()}",
+        system_message="Tu es un expert HTML/CSS. Génère UNIQUEMENT du HTML, rien d'autre."
+    ).with_model("openai", "gpt-4o")
+    
+    prompt = f"""Génère une page HTML complète pour: {request.description}
+
+Type: {request.type}
+Features: {', '.join(request.features or [])}
+
+EXIGENCES:
+- HTML5 sémantique et accessible
+- Design moderne et responsive
+- Fonctionnalités demandées incluses
+- Optimisé pour le SEO
+- Prêt pour production
+
+Réponds UNIQUEMENT avec le code HTML complet, pas de markdown."""
+    
+    response = await chat.send_message(UserMessage(text=prompt))
+    return response.strip().replace('```html', '').replace('```', '').strip()
+
+async def generate_css_file(request: GenerateAppRequest) -> str:
+    """Génère un fichier CSS optimisé"""
+    chat = LlmChat(
+        api_key=EMERGENT_LLM_KEY,
+        session_id=f"css-{uuid.uuid4()}",
+        system_message="Tu es un expert CSS. Génère UNIQUEMENT du CSS, rien d'autre."
+    ).with_model("openai", "gpt-4o")
+    
+    prompt = f"""Génère des styles CSS complets pour: {request.description}
+
+Type: {request.type}
+Framework: {request.framework}
+
+EXIGENCES:
+- CSS moderne et responsive
+- Design professionnel et attrayant
+- Animations et transitions fluides
+- Compatible avec tous navigateurs
+- Performance optimisée
+- Mobile-first approach
+
+Réponds UNIQUEMENT avec le code CSS, pas de markdown."""
+    
+    response = await chat.send_message(UserMessage(text=prompt))
+    return response.strip().replace('```css', '').replace('```', '').strip()
+
+async def generate_config_files(request: GenerateAppRequest) -> dict:
+    """Génère les fichiers de configuration en parallèle"""
+    config = {}
+    
+    # Structure du projet
+    if request.framework == "react":
+        config["structure"] = {
+            "src/App.jsx": "Composant principal React",
+            "src/index.js": "Point d'entrée",
+            "public/index.html": "HTML template",
+            "src/styles/App.css": "Styles principaux",
+            "package.json": "Configuration npm"
+        }
+        config["package_json"] = json.dumps({
+            "name": f"vectort-{request.type}",
+            "version": "1.0.0",
+            "dependencies": {
+                "react": "^18.2.0",
+                "react-dom": "^18.2.0",
+                "axios": "^1.6.0"
+            },
+            "scripts": {
+                "start": "react-scripts start",
+                "build": "react-scripts build"
+            }
+        }, indent=2)
+    elif request.framework in ["fastapi", "django", "flask"]:
+        config["requirements"] = "fastapi==0.104.1\nuvicorn==0.24.0\npydantic==2.5.0"
+        config["structure"] = {
+            "main.py": "Application principale",
+            "models.py": "Modèles de données",
+            "requirements.txt": "Dépendances Python"
+        }
+    
+    # Dockerfile simple
+    config["dockerfile"] = f"FROM python:3.11-slim\nWORKDIR /app\nCOPY . .\nRUN pip install -r requirements.txt\nEXPOSE 8000"
+    
+    # README
+    config["readme"] = f"# {request.description}\n\nApplication générée par Vectort.io\n\n## Installation\n\n```bash\nnpm install\nnpm start\n```"
+    
+    return config
+
+def generate_basic_html_for_react(request: GenerateAppRequest) -> str:
+    """Génère un HTML de base pour React"""
+    return f"""<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{request.type.replace('_', ' ').title()}</title>
+</head>
+<body>
+    <div id="root"></div>
+    <script src="/static/js/bundle.js"></script>
+</body>
+</html>"""
 
 async def generate_app_code_basic(description: str, app_type: str, framework: str) -> dict:
     """Génération basique pour compatibilité"""
