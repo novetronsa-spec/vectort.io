@@ -24,7 +24,7 @@ load_dotenv(ROOT_DIR / '.env')
 
 # Configuration
 mongo_url = os.environ['MONGO_URL']
-DB_NAME = os.environ.get('DB_NAME', 'codex_db')
+DB_NAME = os.environ.get('DB_NAME', 'vectort_db')
 JWT_SECRET = os.environ.get('JWT_SECRET', 'your-super-secret-key-change-this-in-production')
 JWT_ALGORITHM = "HS256"
 JWT_EXPIRATION_HOURS = 24
