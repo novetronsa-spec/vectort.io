@@ -449,7 +449,7 @@ async def generate_config_files(request: GenerateAppRequest) -> dict:
         }
     
     # Dockerfile simple
-    config["dockerfile"] = f"FROM python:3.11-slim\nWORKDIR /app\nCOPY . .\nRUN pip install -r requirements.txt\nEXPOSE 8000"
+    config["dockerfile"] = "FROM python:3.11-slim\nWORKDIR /app\nCOPY . .\nRUN pip install -r requirements.txt\nEXPOSE 8000"
     
     # README
     config["readme"] = f"# {request.description}\n\nApplication générée par Vectort.io\n\n## Installation\n\n```bash\nnpm install\nnpm start\n```"
