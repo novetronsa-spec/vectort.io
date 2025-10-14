@@ -295,8 +295,8 @@ export default function LandingPage() {
 
           {/* Build Interface */}
           <div className="max-w-2xl mx-auto">
-            <Textarea
-              placeholder="Describe what you want to build..."
+            <VoiceTextarea
+              placeholder="Décrivez ce que vous voulez construire... 🎤 Cliquez sur le micro pour parler"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               className="w-full h-32 bg-gray-900 border-gray-700 text-white placeholder-gray-500 text-lg resize-none mb-6"
