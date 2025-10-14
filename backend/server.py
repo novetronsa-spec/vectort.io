@@ -273,7 +273,7 @@ async def generate_app_code(description: str, app_type: str, framework: str) -> 
 # Routes
 @api_router.get("/")
 async def root():
-    return {"message": "Codex API - Where ideas become reality"}
+    return {"message": "Vectort API - AI-powered application generation"}
 
 # Authentication routes
 @api_router.post("/auth/register", response_model=Token)
