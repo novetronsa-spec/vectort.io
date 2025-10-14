@@ -132,11 +132,19 @@ const VoiceTextarea = ({
 
       {/* Indicateur d'état vocal */}
       {isListening && (
-        <div className="absolute -bottom-6 left-0 right-0">
-          <div className="flex items-center justify-center space-x-2 text-xs text-green-600">
-            <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
-            <span>Écoute en cours... Parlez maintenant</span>
-            <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+        <div className="absolute -bottom-8 left-0 right-0">
+          <div className="flex items-center justify-center space-x-3 text-sm text-green-400 bg-green-50 dark:bg-green-900/30 rounded-lg py-2 px-4 border border-green-200 dark:border-green-700">
+            <div className="flex space-x-1">
+              <div className="w-2 h-2 bg-green-500 rounded-full animate-bounce"></div>
+              <div className="w-2 h-2 bg-green-500 rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
+              <div className="w-2 h-2 bg-green-500 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+            </div>
+            <span className="font-medium">🎤 Écoute active - Parlez maintenant...</span>
+            <div className="flex space-x-1">
+              <div className="w-2 h-2 bg-green-500 rounded-full animate-bounce" style={{animationDelay: '0.3s'}}></div>
+              <div className="w-2 h-2 bg-green-500 rounded-full animate-bounce" style={{animationDelay: '0.4s'}}></div>
+              <div className="w-2 h-2 bg-green-500 rounded-full animate-bounce" style={{animationDelay: '0.5s'}}></div>
+            </div>
           </div>
         </div>
       )}
