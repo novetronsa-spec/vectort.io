@@ -137,7 +137,7 @@ export default function AuthPage() {
 
         <Card className="bg-gray-900 border-gray-700">
           <CardHeader>
-            <CardTitle className="text-white text-center">Rejoignez Codex</CardTitle>
+            <CardTitle className="text-white text-center">Rejoignez Vectort</CardTitle>
             <CardDescription className="text-gray-400 text-center">
               Créez des applications incroyables avec Vectort
             </CardDescription>
