@@ -2094,6 +2094,8 @@ if __name__ == "__main__":
             success = tester.run_corrections_tests()
         elif sys.argv[1] == "--final-advanced":
             success = tester.run_final_advanced_generation_tests()
+        elif sys.argv[1] == "--vectort-100":
+            success = tester.run_vectort_100_percent_tests()
         else:
             success = tester.run_all_tests()
     else:
