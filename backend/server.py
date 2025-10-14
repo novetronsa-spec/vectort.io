@@ -521,14 +521,22 @@ async def generate_project_code(
         # Generate code using ADVANCED AI
         code_data = await generate_app_code_advanced(request)
         
-        # Create generated app record
+        # Create generated app record with ADVANCED features
         generated_app = GeneratedApp(
             project_id=project_id,
             html_code=code_data.get("html"),
             css_code=code_data.get("css"),
             js_code=code_data.get("js"),
             react_code=code_data.get("react"),
-            backend_code=code_data.get("backend")
+            backend_code=code_data.get("backend"),
+            # NOUVEAUX CHAMPS AVANCÉS
+            project_structure=code_data.get("project_structure"),
+            package_json=code_data.get("package_json"),
+            requirements_txt=code_data.get("requirements_txt"),
+            dockerfile=code_data.get("dockerfile"),
+            readme=code_data.get("readme"),
+            deployment_config=code_data.get("deployment_config"),
+            all_files=code_data.get("all_files")
         )
         
         # Save to database
