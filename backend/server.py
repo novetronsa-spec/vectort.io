@@ -176,6 +176,14 @@ class GeneratedApp(BaseModel):
     js_code: Optional[str] = None
     react_code: Optional[str] = None
     backend_code: Optional[str] = None
+    # NOUVEAUX CHAMPS POUR GÉNÉRATION AVANCÉE
+    project_structure: Optional[dict] = None
+    package_json: Optional[str] = None
+    requirements_txt: Optional[str] = None
+    dockerfile: Optional[str] = None
+    readme: Optional[str] = None
+    deployment_config: Optional[dict] = None
+    all_files: Optional[dict] = None  # Tous les fichiers générés
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
 
