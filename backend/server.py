@@ -242,12 +242,52 @@ async def generate_app_code_advanced(request: GenerateAppRequest) -> dict:
                 # Génération complète
                 generated_code = await generator.generate_complete_application(generation_request)
                 
+                # MAPPING INTELLIGENT DES FICHIERS GÉNÉRÉS
+                html_code = ""
+                css_code = ""
+                js_code = ""
+                react_code = ""
+                backend_code = ""
+                
+                # Chercher et mapper les fichiers générés selon leur extension/nom
+                for file_path, content in generated_code.main_files.items():
+                    if not content:
+                        continue
+                        
+                    file_lower = file_path.lower()
+                    
+                    # HTML files
+                    if file_lower.endswith('.html') or 'index.html' in file_lower:
+                        html_code = content
+                    # CSS files
+                    elif file_lower.endswith('.css') or 'style' in file_lower:
+                        css_code = content
+                    # React/JSX files
+                    elif file_lower.endswith('.jsx') or file_lower.endswith('.tsx') or 'app.' in file_lower:
+                        react_code = content
+                    # JavaScript files
+                    elif file_lower.endswith('.js') or file_lower.endswith('.ts'):
+                        js_code = content
+                    # Backend Python files
+                    elif file_lower.endswith('.py') or 'server' in file_lower or 'main' in file_lower:
+                        backend_code = content
+                
+                # Si pas de fichiers spécifiques trouvés, prendre le premier fichier disponible
+                if not any([html_code, css_code, js_code, react_code, backend_code]) and generated_code.main_files:
+                    first_file = list(generated_code.main_files.values())[0]
+                    if request.framework in ['react', 'vue', 'angular']:
+                        react_code = first_file
+                    elif request.framework in ['fastapi', 'django', 'flask']:
+                        backend_code = first_file
+                    else:
+                        html_code = first_file
+                
                 return {
-                    "html": generated_code.main_files.get("index.html", ""),
-                    "css": generated_code.main_files.get("styles.css", ""),
-                    "js": generated_code.main_files.get("main.js", ""),
-                    "react": generated_code.main_files.get("App.jsx", ""),
-                    "backend": generated_code.main_files.get("server.py", ""),
+                    "html": html_code,
+                    "css": css_code,
+                    "js": js_code,
+                    "react": react_code,
+                    "backend": backend_code,
                     # NOUVEAUX CHAMPS AVANCÉS
                     "project_structure": generated_code.project_structure,
                     "package_json": generated_code.package_json,
