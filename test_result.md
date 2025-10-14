@@ -463,13 +463,16 @@ backend:
     implemented: true
     working: false
     file: "backend/ai_generators/advanced_generator.py"
-    stuck_count: 1
+    stuck_count: 2
     priority: "high"
     needs_retesting: false
     status_history:
         - working: false
           agent: "testing"
           comment: "❌ MAPPING SYSTEM ISSUES: File extension mapping partially functional - JSX→react_code ✅, CSS→css_code ✅, but HTML→html_code ❌, Python→backend_code ❌. Fallback mechanism not working (all_files field empty). The intelligent mapping system in lines 246-284 of generate_app_code_advanced() needs fixes to ensure ALL file types are properly mapped and fallback works when specific extensions not found."
+        - working: false
+          agent: "testing"
+          comment: "❌ MAPPING INTELLIGENCE CONFIRMED ISSUES: Testing shows 75% mapping success (3/4 fields: html_code ✅, css_code ✅, react_code ✅, backend_code ❌). Framework-specific mapping incomplete - React components mapping correctly but FastAPI backend code not being generated/mapped properly. The generate_advanced_optimized() function in lines 278-284 needs fixes to ensure backend_code field is populated when framework='react' but backend generation is requested. Current mapping logic missing backend file generation in concurrent tasks."
 
   - task: "Default Structure Generation"
     implemented: true
