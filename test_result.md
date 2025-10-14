@@ -490,13 +490,16 @@ backend:
     implemented: true
     working: false
     file: "backend/ai_generators/advanced_generator.py"
-    stuck_count: 1
+    stuck_count: 2
     priority: "high"
     needs_retesting: false
     status_history:
         - working: false
           agent: "testing"
           comment: "❌ PERFORMANCE ISSUES: Advanced mode generation exceeds 20s target (timing out at 25-30s). The AdvancedCodeGenerator is too complex with multiple sequential LLM calls causing timeouts. Basic mode performs well (13.5s average) but advanced mode needs optimization. Timeout handling in _generate_main_files (lines 206-237) needs improvement."
+        - working: false
+          agent: "testing"
+          comment: "❌ PERFORMANCE CRITICAL FAILURE: Confirmed 28.8s generation time vs <20s target (44% over limit). Advanced mode with concurrent generation (React + CSS + Config) working but overall timeout exceeded due to sequential LLM calls in generate_advanced_optimized(). The 15s timeout per task in asyncio.wait_for() is insufficient for complex e-commerce generation. Need to optimize LLM calls, reduce prompt complexity, or implement better caching to achieve <20s target for 100% functionality."
 
 frontend:
   - task: "Landing Page Load and Design"
