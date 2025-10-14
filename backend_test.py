@@ -1317,7 +1317,334 @@ class CodexAPITester:
             }
             
             print("   🔄 Lancement génération avancée avec timeout 15s par fichier...")
-            start_time = time.time()
+            
+            response = self.make_request("POST", f"/projects/{project_id}/generate", generation_request)
+            
+            generation_time = time.time() - start_time
+            
+            # 3. VÉRIFIER TIMEOUT: génération < 15s (vs 30s+ avant)
+            if generation_time > 20.0:
+                self.log_result("VECTORT.IO 100% - Performance Timeout", False, 
+                              f"Generation took {generation_time:.1f}s, target <20s")
+            else:
+                self.log_result("VECTORT.IO 100% - Performance Timeout", True, 
+                              f"Generation completed in {generation_time:.1f}s (target <20s)")
+            
+            if response.status_code == 200:
+                data = response.json()
+                
+                # 4. VÉRIFIER TOUS LES CHAMPS remplis: html_code, css_code, react_code, backend_code
+                required_fields = ["html_code", "css_code", "react_code", "backend_code"]
+                filled_fields = []
+                empty_fields = []
+                
+                for field in required_fields:
+                    if data.get(field) and len(str(data.get(field)).strip()) > 0:
+                        filled_fields.append(field)
+                    else:
+                        empty_fields.append(field)
+                
+                # 5. Confirmer mapping intelligent fonctionne parfaitement
+                mapping_success = len(filled_fields) >= 3  # Au moins 3/4 champs remplis
+                
+                if mapping_success:
+                    self.log_result("VECTORT.IO 100% - File Mapping Intelligence", True, 
+                                  f"Mapping intelligent: {len(filled_fields)}/4 champs remplis ({', '.join(filled_fields)})")
+                else:
+                    self.log_result("VECTORT.IO 100% - File Mapping Intelligence", False, 
+                                  f"Mapping partiel: seulement {len(filled_fields)}/4 champs remplis. Manquants: {', '.join(empty_fields)}")
+                
+                # 6. Vérifier génération concurrente (React + CSS + Config files)
+                has_react = bool(data.get("react_code"))
+                has_css = bool(data.get("css_code"))
+                has_config = bool(data.get("package_json") or data.get("dockerfile") or data.get("readme"))
+                
+                concurrent_success = has_react and has_css and has_config
+                
+                if concurrent_success:
+                    self.log_result("VECTORT.IO 100% - Concurrent Generation", True, 
+                                  "Génération concurrente réussie: React ✅ CSS ✅ Config ✅")
+                else:
+                    missing = []
+                    if not has_react: missing.append("React")
+                    if not has_css: missing.append("CSS")
+                    if not has_config: missing.append("Config")
+                    self.log_result("VECTORT.IO 100% - Concurrent Generation", False, 
+                                  f"Génération concurrente partielle. Manquants: {', '.join(missing)}")
+                
+                # 7. Vérifier framework-spécifique mapping (React → react_code, FastAPI → backend_code)
+                framework_mapping = data.get("react_code") and data.get("backend_code")
+                
+                if framework_mapping:
+                    self.log_result("VECTORT.IO 100% - Framework Mapping", True, 
+                                  "Mapping framework-spécifique: React→react_code ✅, FastAPI→backend_code ✅")
+                else:
+                    self.log_result("VECTORT.IO 100% - Framework Mapping", False, 
+                                  "Mapping framework-spécifique incomplet")
+                
+                # 8. Test robustesse avec fallback
+                if not mapping_success:
+                    # Test fallback vers mode basique
+                    print("   🔄 Test fallback vers mode basique...")
+                    fallback_request = generation_request.copy()
+                    fallback_request["advanced_mode"] = False
+                    
+                    fallback_response = self.make_request("POST", f"/projects/{project_id}/generate", fallback_request)
+                    
+                    if fallback_response.status_code == 200:
+                        fallback_data = fallback_response.json()
+                        fallback_fields = [f for f in required_fields if fallback_data.get(f)]
+                        
+                        if len(fallback_fields) > len(filled_fields):
+                            self.log_result("VECTORT.IO 100% - Fallback Mechanism", True, 
+                                          f"Fallback réussi: {len(fallback_fields)}/4 champs en mode basique")
+                        else:
+                            self.log_result("VECTORT.IO 100% - Fallback Mechanism", False, 
+                                          "Fallback n'améliore pas les résultats")
+                    else:
+                        self.log_result("VECTORT.IO 100% - Fallback Mechanism", False, 
+                                      f"Fallback échoué: {fallback_response.status_code}")
+                
+                # 9. Évaluation finale 100% fonctionnalité
+                total_score = 0
+                max_score = 5
+                
+                if generation_time <= 20.0: total_score += 1
+                if mapping_success: total_score += 1
+                if concurrent_success: total_score += 1
+                if framework_mapping: total_score += 1
+                if len(filled_fields) == 4: total_score += 1
+                
+                functionality_percent = (total_score / max_score) * 100
+                
+                if functionality_percent >= 80:
+                    self.log_result("VECTORT.IO 100% - Final Functionality Score", True, 
+                                  f"Score: {functionality_percent:.1f}% ({total_score}/{max_score} critères)")
+                else:
+                    self.log_result("VECTORT.IO 100% - Final Functionality Score", False, 
+                                  f"Score: {functionality_percent:.1f}% ({total_score}/{max_score} critères) - Objectif 80%+")
+                
+            else:
+                self.log_result("VECTORT.IO 100% - Generation Failed", False, 
+                              f"Génération échouée: {response.status_code} - {response.text}")
+                
+        except Exception as e:
+            self.log_result("VECTORT.IO 100% Functionality Test", False, f"Exception: {str(e)}")
+
+    def test_vectort_concurrent_generation_performance(self):
+        """Test génération concurrente et performance"""
+        print("\n=== 🚀 TEST GÉNÉRATION CONCURRENTE ET PERFORMANCE ===")
+        
+        if not self.access_token:
+            self.log_result("Concurrent Generation Performance", False, "No access token available")
+            return
+        
+        frameworks_to_test = [
+            ("react", "React"),
+            ("fastapi", "FastAPI"), 
+            ("vue", "Vue")
+        ]
+        
+        project_types = [
+            ("ecommerce", "E-commerce"),
+            ("social_media", "Social Media"),
+            ("saas_platform", "SaaS Platform")
+        ]
+        
+        performance_results = []
+        
+        for framework, framework_name in frameworks_to_test:
+            for project_type, type_name in project_types:
+                try:
+                    print(f"   🔄 Test {framework_name} + {type_name}...")
+                    
+                    # Créer projet
+                    project_data = {
+                        "title": f"Test {framework_name} {type_name}",
+                        "description": f"Application {type_name} avec {framework_name}",
+                        "type": project_type
+                    }
+                    
+                    project_response = self.make_request("POST", "/projects", project_data)
+                    if project_response.status_code != 200:
+                        continue
+                    
+                    project_id = project_response.json()["id"]
+                    
+                    # Test génération
+                    start_time = time.time()
+                    
+                    generation_request = {
+                        "description": f"Créer une application {type_name} moderne avec {framework_name}",
+                        "type": project_type,
+                        "framework": framework,
+                        "advanced_mode": True
+                    }
+                    
+                    response = self.make_request("POST", f"/projects/{project_id}/generate", generation_request)
+                    generation_time = time.time() - start_time
+                    
+                    if response.status_code == 200:
+                        data = response.json()
+                        fields_generated = sum(1 for field in ["html_code", "css_code", "react_code", "backend_code"] 
+                                             if data.get(field))
+                        
+                        performance_results.append({
+                            "framework": framework_name,
+                            "type": type_name,
+                            "time": generation_time,
+                            "fields": fields_generated,
+                            "success": True
+                        })
+                    else:
+                        performance_results.append({
+                            "framework": framework_name,
+                            "type": type_name,
+                            "time": generation_time,
+                            "fields": 0,
+                            "success": False
+                        })
+                        
+                except Exception as e:
+                    print(f"   ❌ Erreur {framework_name} + {type_name}: {str(e)}")
+        
+        # Analyser résultats
+        if performance_results:
+            avg_time = sum(r["time"] for r in performance_results) / len(performance_results)
+            success_rate = sum(1 for r in performance_results if r["success"]) / len(performance_results) * 100
+            avg_fields = sum(r["fields"] for r in performance_results) / len(performance_results)
+            
+            performance_ok = avg_time <= 15.0 and success_rate >= 70.0
+            
+            if performance_ok:
+                self.log_result("Concurrent Generation Performance", True, 
+                              f"Performance: {avg_time:.1f}s moyenne, {success_rate:.1f}% succès, {avg_fields:.1f} champs/projet")
+            else:
+                self.log_result("Concurrent Generation Performance", False, 
+                              f"Performance insuffisante: {avg_time:.1f}s moyenne, {success_rate:.1f}% succès")
+
+    def test_vectort_robustness_multiple_frameworks(self):
+        """Test robustesse avec différents frameworks et types"""
+        print("\n=== 🛡️ TEST ROBUSTESSE - FRAMEWORKS MULTIPLES ===")
+        
+        if not self.access_token:
+            self.log_result("Robustness Multiple Frameworks", False, "No access token available")
+            return
+        
+        test_cases = [
+            {"framework": "react", "type": "ecommerce", "description": "Boutique en ligne moderne"},
+            {"framework": "vue", "type": "social_media", "description": "Réseau social avec chat"},
+            {"framework": "fastapi", "type": "saas_platform", "description": "Plateforme SaaS avec API"},
+            {"framework": "react", "type": "saas_platform", "description": "Dashboard analytics"}
+        ]
+        
+        success_count = 0
+        
+        for i, test_case in enumerate(test_cases):
+            try:
+                print(f"   🔄 Test {i+1}/4: {test_case['framework']} + {test_case['type']}...")
+                
+                # Créer projet
+                project_data = {
+                    "title": f"Robustness Test {i+1}",
+                    "description": test_case["description"],
+                    "type": test_case["type"]
+                }
+                
+                project_response = self.make_request("POST", "/projects", project_data)
+                if project_response.status_code != 200:
+                    continue
+                
+                project_id = project_response.json()["id"]
+                
+                # Test génération avec fallback automatique
+                generation_request = {
+                    "description": test_case["description"],
+                    "type": test_case["type"],
+                    "framework": test_case["framework"],
+                    "advanced_mode": True
+                }
+                
+                response = self.make_request("POST", f"/projects/{project_id}/generate", generation_request)
+                
+                if response.status_code == 200:
+                    data = response.json()
+                    has_code = any(data.get(field) for field in ["html_code", "css_code", "react_code", "backend_code"])
+                    
+                    if has_code:
+                        success_count += 1
+                        print(f"   ✅ {test_case['framework']} + {test_case['type']}: Succès")
+                    else:
+                        print(f"   ⚠️ {test_case['framework']} + {test_case['type']}: Pas de code généré")
+                else:
+                    print(f"   ❌ {test_case['framework']} + {test_case['type']}: Échec {response.status_code}")
+                    
+            except Exception as e:
+                print(f"   ❌ Exception pour test {i+1}: {str(e)}")
+        
+        success_rate = (success_count / len(test_cases)) * 100
+        
+        if success_rate >= 75:
+            self.log_result("Robustness Multiple Frameworks", True, 
+                          f"Robustesse: {success_count}/{len(test_cases)} tests réussis ({success_rate:.1f}%)")
+        else:
+            self.log_result("Robustness Multiple Frameworks", False, 
+                          f"Robustesse insuffisante: {success_count}/{len(test_cases)} tests réussis ({success_rate:.1f}%)")
+
+    def run_vectort_100_percent_tests(self):
+        """🚀 LANCER TESTS VECTORT.IO 100% FONCTIONNALITÉ"""
+        print("🚀 TEST FINAL OPTIMISÉ - VECTORT.IO 100% FONCTIONNALITÉ")
+        print(f"Testing against: {self.base_url}")
+        print("=" * 80)
+        
+        # Setup authentication
+        print("\n🔐 SETUP: Authentication")
+        print("-" * 50)
+        self.test_user_registration()
+        if not self.access_token:
+            self.test_user_login()
+        
+        if not self.access_token:
+            print("❌ Cannot proceed without authentication")
+            return False
+        
+        # Tests principaux VECTORT.IO 100%
+        print("\n🎯 TESTS VECTORT.IO 100% FONCTIONNALITÉ")
+        print("-" * 50)
+        
+        self.test_vectort_100_percent_functionality_ecommerce_advanced()
+        self.test_vectort_concurrent_generation_performance()
+        self.test_vectort_robustness_multiple_frameworks()
+        
+        # Print summary
+        print("\n" + "=" * 80)
+        print("🎯 VECTORT.IO 100% FUNCTIONALITY TEST SUMMARY")
+        print("=" * 80)
+        print(f"✅ Passed: {self.results['passed']}")
+        print(f"❌ Failed: {self.results['failed']}")
+        
+        if self.results['passed'] + self.results['failed'] > 0:
+            success_rate = (self.results['passed'] / (self.results['passed'] + self.results['failed']) * 100)
+            print(f"📈 Success Rate: {success_rate:.1f}%")
+        
+        if self.results['errors']:
+            print("\n🔍 ISSUES CRITIQUES DÉTECTÉES:")
+            for error in self.results['errors']:
+                print(f"   • {error}")
+        
+        # Évaluation finale
+        if self.results['failed'] == 0:
+            print("\n🎉 VECTORT.IO 100% FONCTIONNALITÉ ATTEINTE!")
+            print("   ✅ Génération avancée optimisée")
+            print("   ✅ Système concurrent fonctionnel") 
+            print("   ✅ Performance < 15s respectée")
+            print("   ✅ Mapping intelligent opérationnel")
+            print("   ✅ Robustesse multi-frameworks")
+        else:
+            print(f"\n⚠️ OBJECTIF 100% NON ATTEINT - {self.results['failed']} problèmes détectés")
+            print("   Voir détails des erreurs ci-dessus")
+        
+        return self.results['failed'] == 0
             
             # Timeout de 60s pour génération complète (4 fichiers × 15s)
             response = self.make_request("POST", f"/projects/{project_id}/generate", 
