@@ -194,9 +194,14 @@ class AdvancedCodeGenerator:
         )
         
         try:
-            return json.loads(response)["structure"]
-        except:
-            return {"src/index.js": "Point d'entrée de l'application"}
+            parsed = json.loads(response)
+            if "structure" in parsed:
+                return parsed["structure"]
+            else:
+                return parsed  # Si la réponse est directement la structure
+        except Exception as e:
+            # Fallback avec structure de base selon le framework
+            return self._get_default_structure(request)
     
     async def _generate_main_files(self, request: GenerationRequest, architecture: Dict) -> Dict[str, str]:
         """Génère le contenu de tous les fichiers principaux"""
