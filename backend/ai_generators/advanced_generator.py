@@ -14,6 +14,7 @@ class ProjectType(Enum):
     # Applications Web
     WEB_APP = "web_app"
     ECOMMERCE = "ecommerce"
+    E_COMMERCE = "ecommerce"  # Alias pour compatibilité
     SOCIAL_MEDIA = "social_media"
     BLOG_CMS = "blog_cms"
     PORTFOLIO = "portfolio"
