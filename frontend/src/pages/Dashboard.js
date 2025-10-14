@@ -210,7 +210,7 @@ ${codeData.backend_code || 'Aucun code backend généré'}
       <header className="border-b border-gray-800 px-6 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
-            <h1 className="text-2xl font-bold">codex</h1>
+            <h1 className="text-2xl font-bold">vectort.io</h1>
             <Badge variant="outline" className="border-green-400 text-green-400">
               Dashboard
             </Badge>
