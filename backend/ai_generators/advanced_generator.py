@@ -715,6 +715,43 @@ if __name__ == "__main__":
     def _get_generic_dockerfile(self) -> str:
         return "# Dockerfile générique - à adapter selon les besoins"
     
+    def _get_default_structure(self, request: GenerationRequest) -> Dict[str, str]:
+        """Génère une structure par défaut selon le type de projet"""
+        if request.framework == Framework.REACT:
+            return {
+                "public/index.html": "HTML principal de l'application React",
+                "src/App.jsx": "Composant React principal",
+                "src/index.js": "Point d'entrée React",
+                "src/components/Header.jsx": "Composant d'en-tête",
+                "src/pages/Home.jsx": "Page d'accueil",
+                "src/styles/App.css": "Styles principaux",
+                "package.json": "Configuration npm",
+                "README.md": "Documentation du projet"
+            }
+        elif request.framework == Framework.VUE:
+            return {
+                "public/index.html": "HTML principal Vue",
+                "src/App.vue": "Composant Vue principal",
+                "src/main.js": "Point d'entrée Vue",
+                "src/components/HelloWorld.vue": "Composant Vue exemple",
+                "src/assets/style.css": "Styles Vue"
+            }
+        elif request.framework == Framework.FASTAPI:
+            return {
+                "main.py": "Application FastAPI principale",
+                "models.py": "Modèles de données",
+                "routes.py": "Routes API",
+                "requirements.txt": "Dépendances Python",
+                "Dockerfile": "Configuration Docker"
+            }
+        else:
+            return {
+                "index.html": "Page HTML principale",
+                "style.css": "Feuille de styles",
+                "script.js": "Code JavaScript",
+                "README.md": "Documentation"
+            }
+    
     def _get_vercel_config(self, request: GenerationRequest) -> Dict:
         return {
             "version": 2,
