@@ -206,7 +206,7 @@ async def generate_app_code(description: str, app_type: str, framework: str) -> 
         # Initialize LLM Chat
         chat = LlmChat(
             api_key=EMERGENT_LLM_KEY,
-            session_id=f"codex-generation-{uuid.uuid4()}",
+            session_id=f"vectort-generation-{uuid.uuid4()}",
             system_message=f"""Tu es un développeur expert qui génère du code de production de haute qualité.
             
             Génère une application {app_type} en {framework} basée sur la description fournie.
