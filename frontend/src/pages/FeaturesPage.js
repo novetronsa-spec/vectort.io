@@ -201,7 +201,7 @@ export default function FeaturesPage() {
             Des <span className="text-green-400">fonctionnalités</span> qui changent tout
           </h1>
           <p className="text-xl text-gray-400 max-w-3xl mx-auto mb-8">
-            Découvrez comment Codex révolutionne la création d'applications avec une suite complète 
+            Découvrez comment Vectort révolutionne la création d'applications avec une suite complète 
             d'outils alimentés par l'intelligence artificielle.
           </p>
           <Badge variant="outline" className="border-green-400 text-green-400 text-lg px-4 py-2">
