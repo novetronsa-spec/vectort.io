@@ -34,28 +34,32 @@ const VoiceTextarea = ({
 
   // Mettre à jour le texte avec la reconnaissance vocale
   const [lastTranscript, setLastTranscript] = useState('');
+  const [voiceTextAdded, setVoiceTextAdded] = useState(false);
   
   useEffect(() => {
-    if (transcript && transcript !== lastTranscript) {
-      // Remplacer l'ancien transcript par le nouveau
-      let newValue = currentValue;
-      
-      // Retirer l'ancien transcript s'il existe
-      if (lastTranscript && currentValue.endsWith(lastTranscript)) {
-        newValue = currentValue.slice(0, -lastTranscript.length);
-      }
-      
-      // Ajouter le nouveau transcript
-      newValue = newValue + (newValue && !newValue.endsWith(' ') ? ' ' : '') + transcript;
-      
-      setCurrentValue(newValue);
-      setLastTranscript(transcript);
-      
-      if (onChange) {
-        onChange({ target: { value: newValue, name: props.name } });
+    if (transcript && transcript.trim()) {
+      // Si c'est un nouveau transcript et pas une répétition
+      if (transcript !== lastTranscript) {
+        let newValue = currentValue;
+        
+        // Si on avait déjà ajouté du texte vocal, le remplacer
+        if (voiceTextAdded && lastTranscript && currentValue.includes(lastTranscript)) {
+          newValue = currentValue.replace(lastTranscript, transcript);
+        } else {
+          // Ajouter le nouveau transcript
+          newValue = currentValue + (currentValue && !currentValue.endsWith(' ') ? ' ' : '') + transcript;
+        }
+        
+        setCurrentValue(newValue);
+        setLastTranscript(transcript);
+        setVoiceTextAdded(true);
+        
+        if (onChange) {
+          onChange({ target: { value: newValue, name: props.name } });
+        }
       }
     }
-  }, [transcript, currentValue, onChange, props.name, lastTranscript]);
+  }, [transcript]);
 
   const handleTextChange = (e) => {
     const newValue = e.target.value;
