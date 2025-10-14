@@ -1645,8 +1645,8 @@ class CodexAPITester:
             print("   Voir détails des erreurs ci-dessus")
         
         return self.results['failed'] == 0
-            
-            if response.status_code == 200:
+
+if __name__ == "__main__":
                 data = response.json()
                 
                 # 3. Vérifier que les fichiers principaux sont générés
