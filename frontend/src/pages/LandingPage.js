@@ -128,8 +128,8 @@ export default function LandingPage() {
           {/* Main heading */}
           <div className="text-center lg:text-left">
             <h1 className="text-6xl lg:text-7xl font-bold mb-4">
-              Where ideas<br />
-              become <span className="text-green-400">reality</span>
+              Transform ideas into<br />
+              <span className="text-green-400">AI-powered</span> applications
             </h1>
             
             <p className="text-gray-400 mb-8">
