@@ -17,6 +17,13 @@ import base64
 import re
 import html
 from emergentintegrations.llm.chat import LlmChat, UserMessage
+from ai_generators.advanced_generator import (
+    AdvancedCodeGenerator, 
+    GenerationRequest, 
+    ProjectType, 
+    Framework, 
+    DatabaseType
+)
 
 
 ROOT_DIR = Path(__file__).parent
