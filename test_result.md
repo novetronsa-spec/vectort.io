@@ -809,25 +809,31 @@ frontend:
     implemented: true
     working: false
     file: "frontend/src/hooks/useSpeechToText.js"
-    stuck_count: 1
+    stuck_count: 2
     priority: "high"
     needs_retesting: false
     status_history:
         - working: false
           agent: "testing"
           comment: "❌ CRITICAL VOICE RECOGNITION ISSUE FOUND: Multiple 'InvalidStateError: Failed to execute 'start' on 'SpeechRecognition': recognition has already started' errors detected during testing. The issue occurs when users click the microphone button rapidly or when the recognition state is not properly managed. This causes the infinite text accumulation problem mentioned in the user's request. The startListening function in useSpeechToText.js needs better state management to prevent starting recognition when it's already active. Manual text input works correctly, but voice functionality has state management issues that need immediate fixing."
+        - working: false
+          agent: "testing"
+          comment: "🚨 FINAL VOICE CORRECTION TEST FAILED: Comprehensive testing confirms the InvalidStateError issue is NOT resolved. Test results: 1) Rapid clicking (10 clicks): 2 InvalidStateError exceptions detected 2) Text accumulation test: 16 InvalidStateError exceptions during rapid cycles 3) Extreme robustness test (20 clicks): 3 InvalidStateError exceptions + 3 page errors. The corrections mentioned in the French review request are NOT implemented. The useSpeechToText.js hook still has critical state management issues where recognition.start() is called when recognition is already active. The readyState check and timeout mechanisms are insufficient to prevent the InvalidStateError. Manual text input works correctly, but voice functionality remains broken for rapid interactions."
 
   - task: "Voice Recognition State Management"
     implemented: true
     working: false
     file: "frontend/src/components/VoiceTextarea.js"
-    stuck_count: 1
+    stuck_count: 2
     priority: "high"
     needs_retesting: false
     status_history:
         - working: false
           agent: "testing"
           comment: "❌ VOICE STATE MANAGEMENT ISSUES: Testing revealed that rapid clicking of the microphone button causes InvalidStateError exceptions. The handleMicClick function doesn't properly check if recognition is already running before attempting to start it again. The isListening state and actual SpeechRecognition state can become desynchronized, leading to the infinite text problem. The visual indicators (animated dots) work correctly, but the underlying state management needs improvement to prevent recognition conflicts."
+        - working: false
+          agent: "testing"
+          comment: "🚨 VOICE STATE MANAGEMENT STILL BROKEN: Final testing confirms the handleMicClick function in VoiceTextarea.js does not properly prevent InvalidStateError. The 100ms timeout and state checks are insufficient. During extreme testing (20 rapid clicks), the component generated multiple InvalidStateError exceptions and page errors. The isListening state becomes desynchronized from the actual SpeechRecognition state. The visual indicators work correctly, but the core state management logic needs a complete rewrite to properly handle rapid user interactions and prevent recognition conflicts. The infinite text accumulation prevention works, but the InvalidStateError issue remains critical."
 
 metadata:
   created_by: "testing_agent"
