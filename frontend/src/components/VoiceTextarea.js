@@ -66,11 +66,21 @@ const VoiceTextarea = ({
   };
 
   const handleMicClick = () => {
+    // Prévenir les clics rapides multiples
     if (isListening) {
       stopListening();
-    } else {
       resetTranscript();
-      startListening();
+    } else {
+      // Reset et nettoyage avant de démarrer
+      resetTranscript();
+      setLastTranscript('');
+      
+      // Démarrer avec un petit délai pour éviter les conflits
+      setTimeout(() => {
+        if (!isListening) {
+          startListening();
+        }
+      }, 100);
     }
   };
 
