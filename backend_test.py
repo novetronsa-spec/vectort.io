@@ -1646,8 +1646,10 @@ class CodexAPITester:
         
         return self.results['failed'] == 0
 
+# Clean up - removing duplicate content
+
 if __name__ == "__main__":
-                data = response.json()
+    tester = CodexAPITester()
                 
                 # 3. Vérifier que les fichiers principaux sont générés
                 main_files = {
