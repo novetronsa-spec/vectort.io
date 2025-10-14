@@ -323,7 +323,7 @@ export default function AuthPage() {
           <Card className="mt-6 bg-green-900 border-green-600">
             <CardContent className="pt-6">
               <p className="text-sm text-green-100">
-                <span className="font-medium">Votre idée pour Vectort :</span> "{description}"
+                <span className="font-medium">Votre idée :</span> "{description}" - Nous allons la transformer avec Vectort !
               </p>
             </CardContent>
           </Card>
