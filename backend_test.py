@@ -2099,7 +2099,7 @@ if __name__ == "__main__":
         else:
             success = tester.run_all_tests()
     else:
-        # Run final advanced generation tests by default for this review
-        success = tester.run_final_advanced_generation_tests()
+        # Default: Run VECTORT.IO 100% functionality tests as requested
+        success = tester.run_vectort_100_percent_tests()
     
     sys.exit(0 if success else 1)
