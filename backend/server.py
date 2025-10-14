@@ -149,7 +149,12 @@ class UserStats(BaseModel):
 class GenerateAppRequest(BaseModel):
     description: str
     type: str = "web_app"
-    framework: str = "react"
+    framework: str = "react" 
+    database: Optional[str] = "mongodb"
+    features: Optional[List[str]] = []
+    integrations: Optional[List[str]] = []
+    deployment_target: str = "vercel"
+    advanced_mode: bool = False  # Mode avancé pour génération complète
     
     @field_validator('description')
     @classmethod
@@ -159,8 +164,8 @@ class GenerateAppRequest(BaseModel):
         # Nettoyer et échapper le contenu
         sanitized = html.escape(value.strip())
         # Limiter la taille
-        if len(sanitized) > 5000:
-            raise ValueError('La description ne peut pas dépasser 5000 caractères')
+        if len(sanitized) > 10000:  # Augmenté pour projets complexes
+            raise ValueError('La description ne peut pas dépasser 10000 caractères')
         return sanitized
 
 class GeneratedApp(BaseModel):
