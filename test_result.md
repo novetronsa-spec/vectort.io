@@ -849,15 +849,14 @@ metadata:
 
 test_plan:
   current_focus:
-    - "VECTORT.IO 100% Functionality Test - E-commerce Advanced Mode"
-    - "File Mapping Intelligence System"
-    - "Generation Performance and Timeout Management"
+    - "Voice Recognition Error Handling - InvalidStateError Fix"
+    - "Voice Recognition State Management"
   stuck_tasks:
     - "VECTORT.IO 100% Functionality Test - E-commerce Advanced Mode"
     - "File Mapping Intelligence System" 
     - "Generation Performance and Timeout Management"
   test_all: false
-  test_priority: "vectort_100_percent_functionality"
+  test_priority: "voice_recognition_validation"
 
 agent_communication:
     - agent: "testing"
