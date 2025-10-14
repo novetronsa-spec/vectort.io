@@ -452,27 +452,131 @@ ${codeData.backend_code || 'Aucun code backend généré'}
                   className="min-h-32 bg-gray-800 border-gray-600 text-white resize-none"
                 />
                 
-                <div>
+                {/* Toggle Mode Avancé */}
+                <div className="mb-6">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-lg font-medium">Mode de génération</h3>
+                    <div className="flex items-center space-x-3">
+                      <span className={`text-sm ${!advancedMode ? 'text-green-400' : 'text-gray-400'}`}>
+                        Rapide
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => setAdvancedMode(!advancedMode)}
+                        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                          advancedMode ? 'bg-green-600' : 'bg-gray-600'
+                        }`}
+                      >
+                        <span
+                          className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                            advancedMode ? 'translate-x-6' : 'translate-x-1'
+                          }`}
+                        />
+                      </button>
+                      <span className={`text-sm ${advancedMode ? 'text-green-400' : 'text-gray-400'}`}>
+                        Avancé
+                      </span>
+                    </div>
+                  </div>
+                  <p className="text-sm text-gray-400 mt-2">
+                    {advancedMode 
+                      ? "🚀 Génération complète avec architecture, fichiers de config, déploiement..." 
+                      : "⚡ Génération rapide des fichiers principaux"
+                    }
+                  </p>
+                </div>
+
+                {/* Type de projet */}
+                <div className="mb-6">
                   <h3 className="text-lg font-medium mb-4">Type de projet</h3>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3 max-h-80 overflow-y-auto">
                     {projectTypes.map((type) => {
                       const Icon = type.icon;
+                      const isSelected = selectedProjectType === type.id;
                       return (
                         <Card 
                           key={type.id} 
-                          className="bg-gray-800 border-gray-600 hover:border-green-400 cursor-pointer transition-colors p-4"
+                          onClick={() => setSelectedProjectType(type.id)}
+                          className={`cursor-pointer transition-all p-3 ${
+                            isSelected 
+                              ? 'bg-green-600 border-green-400' 
+                              : 'bg-gray-800 border-gray-600 hover:border-green-400'
+                          }`}
                         >
                           <div className="text-center">
-                            <div className={`p-3 rounded-lg ${type.color} inline-block mb-2`}>
-                              <Icon className="h-6 w-6 text-white" />
+                            <div className={`p-2 rounded-lg ${isSelected ? 'bg-green-700' : type.color} inline-block mb-2`}>
+                              {typeof type.icon === 'string' ? (
+                                <span className="text-lg">{type.icon}</span>
+                              ) : (
+                                <Icon className="h-5 w-5 text-white" />
+                              )}
                             </div>
-                            <div className="text-sm font-medium">{type.name}</div>
+                            <div className="text-xs font-medium">{type.name}</div>
                           </div>
                         </Card>
                       );
                     })}
                   </div>
                 </div>
+
+                {/* Options avancées */}
+                {advancedMode && (
+                  <div className="space-y-6 p-4 bg-gray-800 rounded-lg border border-green-400">
+                    <h3 className="text-lg font-medium text-green-400">⚡ Options Avancées</h3>
+                    
+                    {/* Framework */}
+                    <div>
+                      <label className="text-sm font-medium mb-2 block">Framework</label>
+                      <select
+                        value={selectedFramework}
+                        onChange={(e) => setSelectedFramework(e.target.value)}
+                        className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white"
+                      >
+                        {(frameworks[selectedProjectType] || frameworks.web_app).map(fw => (
+                          <option key={fw} value={fw}>{fw}</option>
+                        ))}
+                      </select>
+                    </div>
+
+                    {/* Base de données */}
+                    <div>
+                      <label className="text-sm font-medium mb-2 block">Base de données</label>
+                      <select
+                        value={selectedDatabase}
+                        onChange={(e) => setSelectedDatabase(e.target.value)}
+                        className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white"
+                      >
+                        {databases.map(db => (
+                          <option key={db} value={db}>{db}</option>
+                        ))}
+                      </select>
+                    </div>
+
+                    {/* Fonctionnalités */}
+                    <div>
+                      <label className="text-sm font-medium mb-2 block">Fonctionnalités à inclure</label>
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-2 max-h-32 overflow-y-auto">
+                        {availableFeatures.map(feature => (
+                          <label key={feature} className="flex items-center space-x-2 text-sm">
+                            <input
+                              type="checkbox"
+                              checked={selectedFeatures.includes(feature)}
+                              onChange={(e) => {
+                                if (e.target.checked) {
+                                  setSelectedFeatures([...selectedFeatures, feature]);
+                                } else {
+                                  setSelectedFeatures(selectedFeatures.filter(f => f !== feature));
+                                }
+                              }}
+                              className="rounded bg-gray-700 border-gray-600 text-green-600"
+                            />
+                            <span className="text-gray-300">{feature}</span>
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
 
                 <Button 
                   onClick={createProject}
