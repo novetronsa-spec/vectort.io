@@ -33,15 +33,29 @@ const VoiceTextarea = ({
   }, [value]);
 
   // Mettre à jour le texte avec la reconnaissance vocale
+  const [lastTranscript, setLastTranscript] = useState('');
+  
   useEffect(() => {
-    if (transcript) {
-      const newValue = currentValue + (currentValue ? ' ' : '') + transcript;
+    if (transcript && transcript !== lastTranscript) {
+      // Remplacer l'ancien transcript par le nouveau
+      let newValue = currentValue;
+      
+      // Retirer l'ancien transcript s'il existe
+      if (lastTranscript && currentValue.endsWith(lastTranscript)) {
+        newValue = currentValue.slice(0, -lastTranscript.length);
+      }
+      
+      // Ajouter le nouveau transcript
+      newValue = newValue + (newValue && !newValue.endsWith(' ') ? ' ' : '') + transcript;
+      
       setCurrentValue(newValue);
+      setLastTranscript(transcript);
+      
       if (onChange) {
         onChange({ target: { value: newValue, name: props.name } });
       }
     }
-  }, [transcript, currentValue, onChange, props.name]);
+  }, [transcript, currentValue, onChange, props.name, lastTranscript]);
 
   const handleTextChange = (e) => {
     const newValue = e.target.value;
