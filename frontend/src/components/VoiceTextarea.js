@@ -91,6 +91,7 @@ const VoiceTextarea = ({
   const handleClearVoice = () => {
     resetTranscript();
     setLastTranscript('');
+    setVoiceTextAdded(false);
     stopListening();
   };
 
