@@ -421,7 +421,11 @@ class AdvancedCodeGenerator:
     
     async def _generate_documentation(self, request: GenerationRequest, architecture: Dict) -> str:
         """Génère une documentation complète"""
-        chat = LlmChat(api_key=self.api_key, session_id="docs")
+        chat = LlmChat(
+            api_key=self.api_key, 
+            session_id="docs",
+            system_message="Tu es un expert en documentation technique."
+        )
         
         prompt = f"""
         Génère un README.md COMPLET et professionnel pour ce projet:
