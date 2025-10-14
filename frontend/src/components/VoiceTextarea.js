@@ -76,6 +76,7 @@ const VoiceTextarea = ({
 
   const handleClearVoice = () => {
     resetTranscript();
+    setLastTranscript('');
     stopListening();
   };
 
