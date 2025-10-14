@@ -676,6 +676,54 @@ frontend:
           agent: "testing"
           comment: "✅ AI generation interface fully operational. Backend logs confirm successful GPT-4o API calls, project creation, and code generation. Multiple project types supported (task management, e-commerce, portfolio). Status management working (draft→building→completed). Code retrieval and preview functionality operational."
 
+  - task: "Voice Functionality - Landing Page"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/pages/LandingPage.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "testing"
+          comment: "Need to test voice functionality on landing page: microphone button in 'Décrivez ce que vous voulez construire' area, placeholder mentions voice feature, visual states, tooltips, and accessibility"
+
+  - task: "Voice Functionality - Dashboard"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/pages/Dashboard.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "testing"
+          comment: "Need to test voice functionality on dashboard: microphone in project description area, placeholder encourages voice usage, integration with project creation workflow"
+
+  - task: "Voice Component Integration"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/components/VoiceTextarea.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "testing"
+          comment: "Need to test VoiceTextarea component: microphone button clickability, visual states (normal, hover, active, listening), tooltips display, speech recognition functionality, browser support detection"
+
+  - task: "Voice UX and Responsive Design"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/components/VoiceTextarea.js"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "testing"
+          comment: "Need to test voice functionality UX: buttons don't break design, visual indicators positioned correctly, responsive on mobile, manual text input still works, help messages and guidance display correctly"
+
 metadata:
   created_by: "testing_agent"
   version: "1.0"
