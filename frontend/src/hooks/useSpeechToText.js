@@ -27,7 +27,8 @@ export const useSpeechToText = () => {
         let finalTranscript = '';
         let interimTranscript = '';
 
-        for (let i = event.resultIndex; i < event.results.length; i++) {
+        // Parcourir TOUS les résultats depuis le début pour éviter l'accumulation
+        for (let i = 0; i < event.results.length; i++) {
           const result = event.results[i];
           if (result.isFinal) {
             finalTranscript += result[0].transcript;
@@ -36,6 +37,7 @@ export const useSpeechToText = () => {
           }
         }
 
+        // Mettre à jour UNIQUEMENT avec le nouveau contenu
         setTranscript(finalTranscript + interimTranscript);
       };
 
