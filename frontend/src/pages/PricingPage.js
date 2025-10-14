@@ -12,7 +12,7 @@ export default function PricingPage() {
     {
       name: "Starter",
       price: "Gratuit",
-      description: "Parfait pour débuter avec Codex",
+      description: "Parfait pour débuter avec Vectort",
       icon: Zap,
       color: "text-green-400",
       bgColor: "from-green-400/10 to-green-600/10",
