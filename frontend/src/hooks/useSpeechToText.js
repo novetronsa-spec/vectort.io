@@ -15,9 +15,10 @@ export const useSpeechToText = () => {
       recognitionRef.current = new SpeechRecognition();
       
       const recognition = recognitionRef.current;
-      recognition.continuous = true;
+      recognition.continuous = false; // Changé à false pour éviter l'accumulation
       recognition.interimResults = true;
       recognition.lang = 'fr-FR'; // Français par défaut, peut être changé
+      recognition.maxAlternatives = 1; // Une seule alternative pour éviter la confusion
 
       recognition.onstart = () => {
         setIsListening(true);
