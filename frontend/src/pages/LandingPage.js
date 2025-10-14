@@ -296,11 +296,25 @@ export default function LandingPage() {
           {/* Build Interface */}
           <div className="max-w-2xl mx-auto">
             <VoiceTextarea
-              placeholder="Décrivez ce que vous voulez construire... 🎤 Cliquez sur le micro pour parler"
+              placeholder="Décrivez ce que vous voulez construire... 🎤 Cliquez sur le microphone pour parler directement !"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="w-full h-32 bg-gray-900 border-gray-700 text-white placeholder-gray-500 text-lg resize-none mb-6"
+              className="w-full h-32 bg-gray-900 border-gray-700 text-white placeholder-gray-500 text-lg resize-none mb-8"
             />
+            
+            {/* Aide pour la fonctionnalité vocale */}
+            <div className="text-center mb-6">
+              <p className="text-sm text-gray-400 mb-2">
+                💡 <span className="font-medium text-green-400">Nouveau !</span> Utilisez votre voix pour décrire vos idées
+              </p>
+              <div className="flex justify-center items-center space-x-4 text-xs text-gray-500">
+                <span>🎤 Parlez naturellement</span>
+                <span>•</span>
+                <span>🤖 IA comprend et génère</span>
+                <span>•</span>
+                <span>⚡ Plus rapide que de taper</span>
+              </div>
+            </div>
             
             <Button 
               onClick={handleStartBuilding}
