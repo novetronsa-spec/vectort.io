@@ -202,22 +202,175 @@ class AdvancedCodeGenerator:
         """Génère le contenu de tous les fichiers principaux"""
         files = {}
         
-        # Génération en parallèle pour optimiser les performances
-        tasks = []
-        for file_path in list(architecture.keys())[:10]:  # Limite pour éviter les timeouts
+        # Sélectionner les fichiers les plus importants d'abord
+        priority_files = []
+        for file_path in list(architecture.keys())[:8]:  # Limite réduite
             if self._should_generate_file(file_path):
-                task = self._generate_single_file(request, file_path, architecture[file_path])
-                tasks.append((file_path, task))
+                priority_files.append((file_path, architecture[file_path]))
         
-        # Attendre tous les résultats
-        for file_path, task in tasks:
+        # Génération séquentielle pour éviter les timeouts
+        for file_path, file_desc in priority_files[:5]:  # Encore plus limité
             try:
-                content = await task
+                content = await asyncio.wait_for(
+                    self._generate_single_file(request, file_path, file_desc),
+                    timeout=15.0  # Timeout par fichier
+                )
                 files[file_path] = content
+                
+                # Ajouter un délai entre les générations pour éviter le rate limiting
+                await asyncio.sleep(0.5)
+                
+            except asyncio.TimeoutError:
+                files[file_path] = f"// Timeout lors de la génération de {file_path}"
             except Exception as e:
                 files[file_path] = f"// Erreur de génération: {str(e)}"
         
+        # S'assurer qu'on a au moins les fichiers de base
+        if not files:
+            files = await self._generate_basic_files(request)
+        
         return files
+    
+    async def _generate_basic_files(self, request: GenerationRequest) -> Dict[str, str]:
+        """Génère les fichiers de base en cas d'échec de la génération avancée"""
+        basic_files = {}
+        
+        if request.framework.value in ['react', 'vue', 'angular']:
+            basic_files["App.jsx"] = await self._generate_basic_react_app(request)
+            basic_files["index.html"] = await self._generate_basic_html(request)
+            basic_files["styles.css"] = await self._generate_basic_css(request)
+        elif request.framework.value in ['fastapi', 'django', 'flask']:
+            basic_files["main.py"] = await self._generate_basic_backend(request)
+        
+        return basic_files
+    
+    async def _generate_basic_react_app(self, request: GenerationRequest) -> str:
+        """Génère un composant React de base"""
+        return f"""
+import React from 'react';
+import './styles.css';
+
+function App() {{
+  return (
+    <div className="app">
+      <header className="app-header">
+        <h1>{request.project_type.value.replace('_', ' ').title()}</h1>
+        <p>{request.description[:200]}...</p>
+      </header>
+      <main className="app-main">
+        <p>Application générée par Vectort.io</p>
+        <p>Prête à être personnalisée selon vos besoins.</p>
+      </main>
+    </div>
+  );
+}}
+
+export default App;
+"""
+    
+    async def _generate_basic_html(self, request: GenerationRequest) -> str:
+        """Génère un HTML de base"""
+        return f"""
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{request.project_type.value.replace('_', ' ').title()}</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="root">
+        <h1>{request.project_type.value.replace('_', ' ').title()}</h1>
+        <p>{request.description[:200]}...</p>
+        <p>Application générée par Vectort.io - Prête pour la production!</p>
+    </div>
+    <script src="main.js"></script>
+</body>
+</html>
+"""
+    
+    async def _generate_basic_css(self, request: GenerationRequest) -> str:
+        """Génère un CSS de base"""
+        return """
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background-color: #f4f4f4;
+}
+
+.app, #root {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.app-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding: 2rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 10px;
+}
+
+.app-main {
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+p {
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+}
+"""
+    
+    async def _generate_basic_backend(self, request: GenerationRequest) -> str:
+        """Génère un backend de base"""
+        return f"""
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+
+app = FastAPI(title="{request.project_type.value.replace('_', ' ').title()}")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_credentials=True,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+@app.get("/")
+async def root():
+    return {{
+        "message": "API générée par Vectort.io",
+        "project_type": "{request.project_type.value}",
+        "description": "{request.description[:100]}..."
+    }}
+
+@app.get("/health")
+async def health_check():
+    return {{"status": "healthy"}}
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)
+"""
     
     async def _generate_single_file(self, request: GenerationRequest, file_path: str, file_desc: str) -> str:
         """Génère le contenu d'un fichier spécifique"""
