@@ -1645,3 +1645,22 @@ class CodexAPITester:
             print("   Voir détails des erreurs ci-dessus")
         
         return self.results['failed'] == 0
+if __name__ == "__main__":
+    tester = CodexAPITester()
+    
+    # Check if we should run specific tests
+    if len(sys.argv) > 1:
+        if sys.argv[1] == "--corrections":
+            success = tester.run_corrections_tests()
+        elif sys.argv[1] == "--final-advanced":
+            success = tester.run_final_advanced_generation_tests()
+        elif sys.argv[1] == "--vectort-100":
+            success = tester.run_vectort_100_percent_tests()
+        else:
+            success = tester.run_all_tests()
+    else:
+        # Default: Run VECTORT.IO 100% functionality tests as requested
+        success = tester.run_vectort_100_percent_tests()
+    
+    # Exit with appropriate code
+    sys.exit(0 if success else 1)
