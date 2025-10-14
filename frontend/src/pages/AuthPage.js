@@ -139,7 +139,7 @@ export default function AuthPage() {
           <CardHeader>
             <CardTitle className="text-white text-center">Rejoignez Codex</CardTitle>
             <CardDescription className="text-gray-400 text-center">
-              Créez des applications incroyables avec l'IA
+              Créez des applications incroyables avec Vectort
             </CardDescription>
           </CardHeader>
           <CardContent>
