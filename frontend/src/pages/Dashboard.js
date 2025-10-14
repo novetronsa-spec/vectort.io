@@ -42,11 +42,35 @@ export default function Dashboard() {
   );
   const [isCreating, setIsCreating] = useState(false);
   const [currentTab, setCurrentTab] = useState("projects");
+  const [advancedMode, setAdvancedMode] = useState(false);
+  const [selectedProjectType, setSelectedProjectType] = useState("web_app");
+  const [selectedFramework, setSelectedFramework] = useState("react");
+  const [selectedDatabase, setSelectedDatabase] = useState("mongodb");
+  const [selectedFeatures, setSelectedFeatures] = useState([]);
   const [stats, setStats] = useState({
     totalProjects: 0,
     activeProjects: 0,
     totalViews: 0
   });
+
+  const frameworks = {
+    web_app: ["react", "vue", "angular", "nextjs", "svelte"],
+    ecommerce: ["react", "nextjs", "vue", "nuxt"],
+    social_media: ["react", "nextjs", "vue"],
+    saas_platform: ["react", "nextjs", "angular"],
+    mobile_app: ["react_native", "flutter", "ionic"],
+    rest_api: ["fastapi", "django", "flask", "express", "nestjs"],
+    smart_contract: ["solidity"],
+    ml_model: ["fastapi", "django", "flask"]
+  };
+
+  const databases = ["mongodb", "postgresql", "mysql", "firebase", "supabase"];
+  
+  const availableFeatures = [
+    "Authentication", "Payment Processing", "Real-time Chat", "File Upload",
+    "Email Notifications", "Push Notifications", "Analytics", "SEO Optimization",
+    "Admin Dashboard", "Multi-language", "Dark/Light Theme", "API Documentation"
+  ];
 
   useEffect(() => {
     fetchProjects();
