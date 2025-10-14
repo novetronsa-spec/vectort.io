@@ -61,18 +61,31 @@ export const useSpeechToText = () => {
   const startListening = () => {
     if (recognitionRef.current && !isListening) {
       setTranscript('');
-      recognitionRef.current.start();
+      try {
+        recognitionRef.current.start();
+      } catch (error) {
+        console.error('Erreur lors du démarrage de la reconnaissance:', error);
+        setIsListening(false);
+      }
     }
   };
 
   const stopListening = () => {
     if (recognitionRef.current && isListening) {
-      recognitionRef.current.stop();
+      try {
+        recognitionRef.current.stop();
+      } catch (error) {
+        console.error('Erreur lors de l\'arrêt de la reconnaissance:', error);
+        setIsListening(false);
+      }
     }
   };
 
   const resetTranscript = () => {
     setTranscript('');
+    if (recognitionRef.current && isListening) {
+      stopListening();
+    }
   };
 
   return {
