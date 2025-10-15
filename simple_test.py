@@ -7,7 +7,7 @@ import requests
 import json
 import time
 
-BASE_URL = "https://emergent-clone-151.preview.emergentagent.com/api"
+BASE_URL = "https://codecraft-125.preview.emergentagent.com/api"
 
 def test_basic_generation():
     # Register user

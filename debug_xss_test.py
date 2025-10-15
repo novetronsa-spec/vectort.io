@@ -6,7 +6,7 @@ Debug XSS Protection - Check what's actually being stored
 import requests
 import json
 
-BASE_URL = "https://emergent-clone-151.preview.emergentagent.com/api"
+BASE_URL = "https://codecraft-125.preview.emergentagent.com/api"
 
 # Setup test user
 test_user = {

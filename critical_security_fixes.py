@@ -8,7 +8,7 @@ import requests
 import json
 import time
 
-BASE_URL = "https://emergent-clone-151.preview.emergentagent.com/api"
+BASE_URL = "https://codecraft-125.preview.emergentagent.com/api"
 
 def test_xss_vulnerability():
     """Test if XSS vulnerability still exists after understanding the issue"""
