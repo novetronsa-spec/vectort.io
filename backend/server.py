@@ -199,6 +199,77 @@ class GeneratedApp(BaseModel):
     all_files: Optional[dict] = None  # Tous les fichiers générés
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
+# Modèles pour le système de crédits et paiements
+class CreditPackage(BaseModel):
+    id: str
+    name: str
+    credits: int
+    price: float  # IMPORTANT: Float pour Stripe
+    currency: str = "usd"
+    description: str
+
+class CreditBalance(BaseModel):
+    free_credits: float
+    monthly_credits: float
+    purchased_credits: float
+    total_available: float
+    subscription_plan: str
+
+class PurchaseRequest(BaseModel):
+    package_id: str
+    origin_url: str  # Pour créer les URLs dynamiques
+
+class PaymentTransaction(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    user_id: str
+    session_id: str
+    amount: float
+    currency: str
+    credits: int
+    package_id: str
+    payment_status: str = "pending"  # pending, completed, failed, expired
+    status: str = "initiated"  # initiated, processing, completed, failed
+    metadata: Dict[str, str] = Field(default_factory=dict)
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    updated_at: datetime = Field(default_factory=datetime.utcnow)
+
+class CreditTransaction(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    user_id: str
+    amount: int  # Positif pour ajout, négatif pour déduction
+    type: str  # purchase, usage, bonus, monthly_reset
+    description: str
+    project_id: Optional[str] = None
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+# Définition des packages de crédits (SECURITY: côté serveur uniquement)
+CREDIT_PACKAGES = {
+    "starter": CreditPackage(
+        id="starter",
+        name="Starter",
+        credits=100,
+        price=20.0,
+        currency="usd",
+        description="100 crédits pour commencer"
+    ),
+    "standard": CreditPackage(
+        id="standard",
+        name="Standard",
+        credits=250,
+        price=50.0,
+        currency="usd",
+        description="250 crédits - Meilleure valeur"
+    ),
+    "pro": CreditPackage(
+        id="pro",
+        name="Pro",
+        credits=400,
+        price=80.0,
+        currency="usd",
+        description="400 crédits - Maximum d'économies"
+    )
+}
+
 
 # Utility functions
 def verify_password(plain_password, hashed_password):
