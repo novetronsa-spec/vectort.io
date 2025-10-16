@@ -692,8 +692,8 @@ ${codeData.backend_code || 'Aucun code backend généré'}
                   <h3 className="text-lg font-medium mb-4">Type de projet</h3>
                   <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3 max-h-80 overflow-y-auto">
                     {projectTypes.map((type) => {
-                      const Icon = type.icon;
                       const isSelected = selectedProjectType === type.id;
+                      const IconComponent = typeof type.icon === 'string' ? null : type.icon;
                       return (
                         <Card 
                           key={type.id} 
@@ -709,7 +709,7 @@ ${codeData.backend_code || 'Aucun code backend généré'}
                               {typeof type.icon === 'string' ? (
                                 <span className="text-lg">{type.icon}</span>
                               ) : (
-                                <Icon className="h-5 w-5 text-white" />
+                                IconComponent && <IconComponent className="h-5 w-5 text-white" />
                               )}
                             </div>
                             <div className="text-xs font-medium">{type.name}</div>
