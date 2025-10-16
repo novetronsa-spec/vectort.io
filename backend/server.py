@@ -908,6 +908,31 @@ async def generate_project_code(
             detail="Project not found"
         )
     
+    # Calculer le coût en crédits selon le mode
+    credit_cost = 2 if not request.advanced_mode else 4  # Quick: 2, Advanced: 4
+    
+    # Vérifier et déduire les crédits AVANT la génération
+    user_credits = await get_user_credit_balance(current_user.id)
+    if user_credits.total_available < credit_cost:
+        raise HTTPException(
+            status_code=status.HTTP_402_PAYMENT_REQUIRED,
+            detail=f"Crédits insuffisants. Vous avez {user_credits.total_available} crédits, {credit_cost} requis. Veuillez recharger vos crédits."
+        )
+    
+    # Déduire les crédits
+    deduction_success = await deduct_credits(
+        current_user.id, 
+        credit_cost, 
+        f"Génération {'avancée' if request.advanced_mode else 'rapide'} - {request.type}",
+        project_id
+    )
+    
+    if not deduction_success:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Erreur lors de la déduction des crédits"
+        )
+    
     # Update project status
     await db.projects.update_one(
         {"id": project_id},
@@ -945,9 +970,20 @@ async def generate_project_code(
             {"$set": {"status": "completed", "updated_at": datetime.utcnow()}}
         )
         
+        logger.info(f"Génération réussie pour le projet {project_id}. {credit_cost} crédits déduits.")
+        
         return generated_app
         
     except Exception as e:
+        # En cas d'erreur, rembourser les crédits
+        await add_credits(
+            current_user.id,
+            credit_cost,
+            "refund",
+            f"Remboursement - Erreur de génération pour {project_id}"
+        )
+        logger.error(f"Erreur de génération, {credit_cost} crédits remboursés à l'utilisateur {current_user.id}")
+        
         # Update project status to error
         await db.projects.update_one(
             {"id": project_id},
