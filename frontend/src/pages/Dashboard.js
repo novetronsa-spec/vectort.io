@@ -83,6 +83,22 @@ export default function Dashboard() {
   useEffect(() => {
     fetchProjects();
     fetchUserStats();
+    fetchCredits();
+    
+    // Vérifier si retour de paiement
+    const params = new URLSearchParams(location.search);
+    const paymentStatus = params.get('payment');
+    const sessionId = params.get('session_id');
+    
+    if (paymentStatus === 'success' && sessionId) {
+      pollPaymentStatus(sessionId);
+    } else if (paymentStatus === 'cancelled') {
+      toast({
+        title: "Paiement annulé",
+        description: "Votre paiement a été annulé.",
+        variant: "destructive"
+      });
+    }
   }, []);
 
   const fetchProjects = async () => {
