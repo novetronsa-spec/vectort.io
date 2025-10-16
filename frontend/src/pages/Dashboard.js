@@ -60,6 +60,8 @@ export default function Dashboard() {
     subscription_plan: "free"
   });
   const [showCreditModal, setShowCreditModal] = useState(false);
+  const [uploadedFiles, setUploadedFiles] = useState([]);
+  const [isUltraMode, setIsUltraMode] = useState(false);
 
   const frameworks = {
     web_app: ["react", "vue", "angular", "nextjs", "svelte"],
