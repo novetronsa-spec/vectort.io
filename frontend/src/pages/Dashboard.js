@@ -533,15 +533,21 @@ ${codeData.backend_code || 'Aucun code backend généré'}
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {projects.map((project) => {
-                  const ProjectIcon = projectTypes.find(t => t.id === project.type)?.icon || Code;
-                  const iconColor = projectTypes.find(t => t.id === project.type)?.color || "bg-gray-600";
+                  const projectTypeData = projectTypes.find(t => t.id === project.type);
+                  const ProjectIcon = projectTypeData?.icon || Code;
+                  const iconColor = projectTypeData?.color || "bg-gray-600";
+                  const isIconString = typeof ProjectIcon === 'string';
                   
                   return (
                     <Card key={project.id} className="bg-gray-900 border-gray-700 hover:border-green-400 transition-colors">
                       <CardHeader>
                         <div className="flex items-center justify-between">
                           <div className={`p-2 rounded-lg ${iconColor}`}>
-                            <ProjectIcon className="h-5 w-5 text-white" />
+                            {isIconString ? (
+                              <span className="text-lg">{ProjectIcon}</span>
+                            ) : (
+                              <ProjectIcon className="h-5 w-5 text-white" />
+                            )}
                           </div>
                           <div className="flex space-x-1">
                             {project.status === 'completed' && (
