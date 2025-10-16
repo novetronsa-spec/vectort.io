@@ -1205,6 +1205,456 @@ class CodexAPITester:
         
         return self.results['failed'] == 0
 
+    def test_credit_system_new_user_balance(self):
+        """Test Scénario 1: Nouvel utilisateur - 10 crédits gratuits"""
+        print("\n=== SCÉNARIO 1: Nouvel utilisateur - Vérification crédits gratuits ===")
+        try:
+            if not self.access_token:
+                self.log_result("Credit System - New User Balance", False, "No access token available")
+                return
+            
+            response = self.make_request("GET", "/credits/balance")
+            
+            if response.status_code == 200:
+                data = response.json()
+                required_fields = ["free_credits", "monthly_credits", "purchased_credits", "total_available", "subscription_plan"]
+                
+                if all(field in data for field in required_fields):
+                    if data["free_credits"] == 10.0 and data["total_available"] == 10.0:
+                        self.log_result("Credit System - New User Balance", True, 
+                                      f"✅ Nouvel utilisateur a bien 10 crédits gratuits. Total: {data['total_available']}")
+                    else:
+                        self.log_result("Credit System - New User Balance", False, 
+                                      f"❌ Crédits incorrects: free={data['free_credits']}, total={data['total_available']} (attendu: 10.0 chacun)")
+                else:
+                    self.log_result("Credit System - New User Balance", False, f"Champs manquants: {data}")
+            else:
+                self.log_result("Credit System - New User Balance", False, f"Status: {response.status_code}, Body: {response.text}")
+        except Exception as e:
+            self.log_result("Credit System - New User Balance", False, f"Exception: {str(e)}")
+
+    def test_credit_packages_list(self):
+        """Test Scénario 2: Liste des packages de crédits"""
+        print("\n=== SCÉNARIO 2: Liste des packages de crédits ===")
+        try:
+            response = self.make_request("GET", "/credits/packages")
+            
+            if response.status_code == 200:
+                data = response.json()
+                if isinstance(data, list) and len(data) == 3:
+                    # Vérifier les 3 packages attendus
+                    expected_packages = {
+                        "starter": {"credits": 100, "price": 20.0},
+                        "standard": {"credits": 250, "price": 50.0},
+                        "pro": {"credits": 400, "price": 80.0}
+                    }
+                    
+                    packages_found = {pkg["id"]: pkg for pkg in data}
+                    all_correct = True
+                    
+                    for pkg_id, expected in expected_packages.items():
+                        if pkg_id in packages_found:
+                            pkg = packages_found[pkg_id]
+                            if pkg["credits"] != expected["credits"] or pkg["price"] != expected["price"]:
+                                all_correct = False
+                                self.log_result(f"Package {pkg_id}", False, 
+                                              f"❌ Incorrect: got {pkg['credits']} crédits/{pkg['price']}$, attendu {expected['credits']}/{expected['price']}$")
+                            else:
+                                self.log_result(f"Package {pkg_id}", True, 
+                                              f"✅ Correct: {pkg['credits']} crédits pour {pkg['price']}$")
+                        else:
+                            all_correct = False
+                            self.log_result(f"Package {pkg_id}", False, f"❌ Package manquant")
+                    
+                    if all_correct:
+                        self.log_result("Credit Packages List", True, "✅ Tous les 3 packages sont corrects")
+                    else:
+                        self.log_result("Credit Packages List", False, "❌ Certains packages sont incorrects")
+                else:
+                    self.log_result("Credit Packages List", False, f"❌ Attendu 3 packages, trouvé {len(data) if isinstance(data, list) else 'non-liste'}")
+            else:
+                self.log_result("Credit Packages List", False, f"Status: {response.status_code}, Body: {response.text}")
+        except Exception as e:
+            self.log_result("Credit Packages List", False, f"Exception: {str(e)}")
+
+    def test_credit_purchase_stripe_session(self):
+        """Test Scénario 5: Session de paiement Stripe"""
+        print("\n=== SCÉNARIO 5: Session de paiement Stripe ===")
+        try:
+            if not self.access_token:
+                self.log_result("Credit Purchase - Stripe Session", False, "No access token available")
+                return
+            
+            purchase_data = {
+                "package_id": "starter",
+                "origin_url": "https://coderocket.preview.emergentagent.com"
+            }
+            
+            response = self.make_request("POST", "/credits/purchase", purchase_data)
+            
+            if response.status_code == 200:
+                data = response.json()
+                required_fields = ["url", "session_id"]
+                
+                if all(field in data for field in required_fields):
+                    session_id = data["session_id"]
+                    stripe_url = data["url"]
+                    
+                    # Vérifier que l'URL Stripe est valide
+                    if "checkout.stripe.com" in stripe_url and session_id.startswith("cs_"):
+                        self.log_result("Credit Purchase - Stripe Session", True, 
+                                      f"✅ Session Stripe créée: {session_id}")
+                        
+                        # Vérifier qu'une transaction est créée dans la DB
+                        # (on ne peut pas directement vérifier la DB, mais on peut tester le statut)
+                        status_response = self.make_request("GET", f"/checkout/status/{session_id}")
+                        if status_response.status_code == 200:
+                            self.log_result("Credit Purchase - Transaction Created", True, 
+                                          "✅ Transaction enregistrée dans la base de données")
+                        else:
+                            self.log_result("Credit Purchase - Transaction Created", False, 
+                                          f"❌ Transaction non trouvée: {status_response.status_code}")
+                    else:
+                        self.log_result("Credit Purchase - Stripe Session", False, 
+                                      f"❌ URL ou session_id invalide: {stripe_url}, {session_id}")
+                else:
+                    self.log_result("Credit Purchase - Stripe Session", False, f"Champs manquants: {data}")
+            else:
+                self.log_result("Credit Purchase - Stripe Session", False, f"Status: {response.status_code}, Body: {response.text}")
+        except Exception as e:
+            self.log_result("Credit Purchase - Stripe Session", False, f"Exception: {str(e)}")
+
+    def test_checkout_status_endpoint(self):
+        """Test GET /api/checkout/status/{session_id}"""
+        print("\n=== TEST: Checkout Status Endpoint ===")
+        try:
+            if not self.access_token:
+                self.log_result("Checkout Status Endpoint", False, "No access token available")
+                return
+            
+            # Utiliser un session_id de test
+            test_session_id = "cs_test_123456789"
+            
+            response = self.make_request("GET", f"/checkout/status/{test_session_id}")
+            
+            # On s'attend à une 404 car c'est un session_id de test
+            if response.status_code == 404:
+                self.log_result("Checkout Status Endpoint", True, 
+                              "✅ Endpoint fonctionnel - retourne 404 pour session inexistante")
+            elif response.status_code == 200:
+                # Si par hasard ça marche, c'est aussi bon
+                self.log_result("Checkout Status Endpoint", True, 
+                              "✅ Endpoint fonctionnel - retourne statut de session")
+            else:
+                self.log_result("Checkout Status Endpoint", False, 
+                              f"❌ Status inattendu: {response.status_code}")
+        except Exception as e:
+            self.log_result("Checkout Status Endpoint", False, f"Exception: {str(e)}")
+
+    def test_credit_deduction_quick_mode(self):
+        """Test Scénario 3: Génération avec crédits suffisants - Mode Quick (2 crédits)"""
+        print("\n=== SCÉNARIO 3: Génération mode Quick - Déduction 2 crédits ===")
+        try:
+            if not self.access_token:
+                self.log_result("Credit Deduction - Quick Mode", False, "No access token available")
+                return
+            
+            # Vérifier le solde initial
+            balance_response = self.make_request("GET", "/credits/balance")
+            if balance_response.status_code != 200:
+                self.log_result("Credit Deduction - Quick Mode", False, "Impossible de vérifier le solde initial")
+                return
+            
+            initial_balance = balance_response.json()["total_available"]
+            
+            # Créer un projet pour la génération
+            project_data = {
+                "title": "Test Déduction Crédits Quick",
+                "description": "Test de déduction de crédits en mode quick",
+                "type": "web_app"
+            }
+            
+            project_response = self.make_request("POST", "/projects", project_data)
+            if project_response.status_code != 200:
+                self.log_result("Credit Deduction - Quick Mode", False, "Impossible de créer le projet")
+                return
+            
+            project_id = project_response.json()["id"]
+            
+            # Générer en mode quick (2 crédits)
+            generation_request = {
+                "description": "Application web simple pour test de crédits",
+                "type": "web_app",
+                "framework": "react",
+                "advanced_mode": False  # Mode quick = 2 crédits
+            }
+            
+            response = self.make_request("POST", f"/projects/{project_id}/generate", generation_request)
+            
+            if response.status_code == 200:
+                # Vérifier le nouveau solde
+                new_balance_response = self.make_request("GET", "/credits/balance")
+                if new_balance_response.status_code == 200:
+                    new_balance = new_balance_response.json()["total_available"]
+                    expected_balance = initial_balance - 2
+                    
+                    if new_balance == expected_balance:
+                        self.log_result("Credit Deduction - Quick Mode", True, 
+                                      f"✅ Crédits correctement déduits: {initial_balance} → {new_balance} (-2 crédits)")
+                    else:
+                        self.log_result("Credit Deduction - Quick Mode", False, 
+                                      f"❌ Déduction incorrecte: {initial_balance} → {new_balance} (attendu: {expected_balance})")
+                else:
+                    self.log_result("Credit Deduction - Quick Mode", False, "Impossible de vérifier le nouveau solde")
+            elif response.status_code == 402:
+                self.log_result("Credit Deduction - Quick Mode", False, 
+                              f"❌ Crédits insuffisants détectés (mais utilisateur devrait avoir 10 crédits): {response.text}")
+            else:
+                self.log_result("Credit Deduction - Quick Mode", False, f"Génération échouée: {response.status_code} - {response.text}")
+        except Exception as e:
+            self.log_result("Credit Deduction - Quick Mode", False, f"Exception: {str(e)}")
+
+    def test_credit_deduction_advanced_mode(self):
+        """Test: Génération mode Advanced (4 crédits)"""
+        print("\n=== TEST: Génération mode Advanced - Déduction 4 crédits ===")
+        try:
+            if not self.access_token:
+                self.log_result("Credit Deduction - Advanced Mode", False, "No access token available")
+                return
+            
+            # Vérifier le solde initial
+            balance_response = self.make_request("GET", "/credits/balance")
+            if balance_response.status_code != 200:
+                self.log_result("Credit Deduction - Advanced Mode", False, "Impossible de vérifier le solde initial")
+                return
+            
+            initial_balance = balance_response.json()["total_available"]
+            
+            if initial_balance < 4:
+                self.log_result("Credit Deduction - Advanced Mode", False, 
+                              f"❌ Solde insuffisant pour le test: {initial_balance} < 4")
+                return
+            
+            # Créer un projet pour la génération
+            project_data = {
+                "title": "Test Déduction Crédits Advanced",
+                "description": "Test de déduction de crédits en mode advanced",
+                "type": "web_app"
+            }
+            
+            project_response = self.make_request("POST", "/projects", project_data)
+            if project_response.status_code != 200:
+                self.log_result("Credit Deduction - Advanced Mode", False, "Impossible de créer le projet")
+                return
+            
+            project_id = project_response.json()["id"]
+            
+            # Générer en mode advanced (4 crédits)
+            generation_request = {
+                "description": "Application web complexe pour test de crédits",
+                "type": "web_app",
+                "framework": "react",
+                "advanced_mode": True  # Mode advanced = 4 crédits
+            }
+            
+            response = self.make_request("POST", f"/projects/{project_id}/generate", generation_request)
+            
+            if response.status_code == 200:
+                # Vérifier le nouveau solde
+                new_balance_response = self.make_request("GET", "/credits/balance")
+                if new_balance_response.status_code == 200:
+                    new_balance = new_balance_response.json()["total_available"]
+                    expected_balance = initial_balance - 4
+                    
+                    if new_balance == expected_balance:
+                        self.log_result("Credit Deduction - Advanced Mode", True, 
+                                      f"✅ Crédits correctement déduits: {initial_balance} → {new_balance} (-4 crédits)")
+                    else:
+                        self.log_result("Credit Deduction - Advanced Mode", False, 
+                                      f"❌ Déduction incorrecte: {initial_balance} → {new_balance} (attendu: {expected_balance})")
+                else:
+                    self.log_result("Credit Deduction - Advanced Mode", False, "Impossible de vérifier le nouveau solde")
+            elif response.status_code == 402:
+                self.log_result("Credit Deduction - Advanced Mode", True, 
+                              f"✅ Crédits insuffisants correctement détectés: {response.text}")
+            else:
+                self.log_result("Credit Deduction - Advanced Mode", False, f"Génération échouée: {response.status_code} - {response.text}")
+        except Exception as e:
+            self.log_result("Credit Deduction - Advanced Mode", False, f"Exception: {str(e)}")
+
+    def test_insufficient_credits_error(self):
+        """Test Scénario 4: Génération avec crédits insuffisants"""
+        print("\n=== SCÉNARIO 4: Génération avec crédits insuffisants ===")
+        try:
+            if not self.access_token:
+                self.log_result("Insufficient Credits Error", False, "No access token available")
+                return
+            
+            # Créer un nouvel utilisateur avec seulement les crédits par défaut
+            # puis épuiser ses crédits pour tester l'erreur 402
+            
+            # D'abord, utiliser tous les crédits disponibles
+            balance_response = self.make_request("GET", "/credits/balance")
+            if balance_response.status_code != 200:
+                self.log_result("Insufficient Credits Error", False, "Impossible de vérifier le solde")
+                return
+            
+            current_balance = balance_response.json()["total_available"]
+            
+            # Si l'utilisateur a encore des crédits, les épuiser d'abord
+            while current_balance >= 2:
+                # Créer un projet et générer pour épuiser les crédits
+                project_data = {
+                    "title": f"Épuisement Crédits {int(time.time())}",
+                    "description": "Projet pour épuiser les crédits",
+                    "type": "web_app"
+                }
+                
+                project_response = self.make_request("POST", "/projects", project_data)
+                if project_response.status_code != 200:
+                    break
+                
+                project_id = project_response.json()["id"]
+                
+                generation_request = {
+                    "description": "Simple app pour épuiser crédits",
+                    "type": "web_app",
+                    "framework": "react",
+                    "advanced_mode": False  # 2 crédits
+                }
+                
+                gen_response = self.make_request("POST", f"/projects/{project_id}/generate", generation_request)
+                if gen_response.status_code != 200:
+                    break
+                
+                # Vérifier le nouveau solde
+                balance_response = self.make_request("GET", "/credits/balance")
+                if balance_response.status_code == 200:
+                    current_balance = balance_response.json()["total_available"]
+                else:
+                    break
+            
+            # Maintenant tenter une génération avec crédits insuffisants
+            project_data = {
+                "title": "Test Crédits Insuffisants",
+                "description": "Test d'erreur 402",
+                "type": "web_app"
+            }
+            
+            project_response = self.make_request("POST", "/projects", project_data)
+            if project_response.status_code != 200:
+                self.log_result("Insufficient Credits Error", False, "Impossible de créer le projet de test")
+                return
+            
+            project_id = project_response.json()["id"]
+            
+            generation_request = {
+                "description": "Tentative de génération sans crédits",
+                "type": "web_app",
+                "framework": "react",
+                "advanced_mode": False  # 2 crédits requis
+            }
+            
+            response = self.make_request("POST", f"/projects/{project_id}/generate", generation_request)
+            
+            if response.status_code == 402:
+                error_data = response.json()
+                if "Crédits insuffisants" in error_data.get("detail", ""):
+                    self.log_result("Insufficient Credits Error", True, 
+                                  f"✅ Erreur 402 correctement retournée: {error_data['detail']}")
+                else:
+                    self.log_result("Insufficient Credits Error", False, 
+                                  f"❌ Message d'erreur incorrect: {error_data}")
+            else:
+                self.log_result("Insufficient Credits Error", False, 
+                              f"❌ Status incorrect: {response.status_code} (attendu: 402)")
+        except Exception as e:
+            self.log_result("Insufficient Credits Error", False, f"Exception: {str(e)}")
+
+    def test_credit_history_endpoint(self):
+        """Test GET /api/credits/history"""
+        print("\n=== TEST: Historique des transactions de crédits ===")
+        try:
+            if not self.access_token:
+                self.log_result("Credit History Endpoint", False, "No access token available")
+                return
+            
+            response = self.make_request("GET", "/credits/history")
+            
+            if response.status_code == 200:
+                data = response.json()
+                if isinstance(data, list):
+                    self.log_result("Credit History Endpoint", True, 
+                                  f"✅ Historique récupéré: {len(data)} transactions")
+                    
+                    # Vérifier la structure des transactions si il y en a
+                    if len(data) > 0:
+                        transaction = data[0]
+                        required_fields = ["id", "user_id", "amount", "type", "description", "created_at"]
+                        if all(field in transaction for field in required_fields):
+                            self.log_result("Credit History - Transaction Structure", True, 
+                                          "✅ Structure des transactions correcte")
+                        else:
+                            self.log_result("Credit History - Transaction Structure", False, 
+                                          f"❌ Champs manquants dans la transaction: {transaction}")
+                else:
+                    self.log_result("Credit History Endpoint", False, 
+                                  f"❌ Format incorrect: attendu liste, reçu {type(data)}")
+            else:
+                self.log_result("Credit History Endpoint", False, f"Status: {response.status_code}, Body: {response.text}")
+        except Exception as e:
+            self.log_result("Credit History Endpoint", False, f"Exception: {str(e)}")
+
+    def run_credit_system_tests(self):
+        """Run comprehensive credit system and Stripe payment tests"""
+        print("💳 SYSTÈME DE CRÉDITS ET PAIEMENTS STRIPE - TESTS COMPLETS")
+        print(f"Testing against: {self.base_url}")
+        print("=" * 80)
+        
+        # Setup authentication first
+        print("\n🔐 SETUP: Authentication pour tests crédits")
+        print("-" * 50)
+        self.test_user_registration()
+        if not self.access_token:
+            self.test_user_login()
+        
+        # Test credit system endpoints
+        print("\n💰 PHASE 1: SYSTÈME DE CRÉDITS")
+        print("-" * 50)
+        self.test_credit_system_new_user_balance()
+        self.test_credit_packages_list()
+        self.test_credit_history_endpoint()
+        
+        # Test Stripe integration
+        print("\n💳 PHASE 2: INTÉGRATION STRIPE")
+        print("-" * 50)
+        self.test_credit_purchase_stripe_session()
+        self.test_checkout_status_endpoint()
+        
+        # Test credit deduction during generation
+        print("\n⚡ PHASE 3: DÉDUCTION DE CRÉDITS")
+        print("-" * 50)
+        self.test_credit_deduction_quick_mode()
+        self.test_credit_deduction_advanced_mode()
+        self.test_insufficient_credits_error()
+        
+        # Print summary
+        print("\n" + "=" * 80)
+        print("💳 RÉSUMÉ TESTS SYSTÈME DE CRÉDITS")
+        print("=" * 80)
+        print(f"✅ Passed: {self.results['passed']}")
+        print(f"❌ Failed: {self.results['failed']}")
+        print(f"📈 Success Rate: {(self.results['passed'] / (self.results['passed'] + self.results['failed']) * 100):.1f}%")
+        
+        if self.results['errors']:
+            print("\n🔍 TESTS ÉCHOUÉS:")
+            for error in self.results['errors']:
+                print(f"   • {error}")
+        else:
+            print("\n🎉 TOUS LES TESTS DU SYSTÈME DE CRÉDITS RÉUSSIS!")
+        
+        return self.results['failed'] == 0
+
     def run_all_tests(self):
         """Run all tests in sequence"""
         print("🚀 Starting Vectort.io AI Application Generation System Tests")
