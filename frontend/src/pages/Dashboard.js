@@ -380,6 +380,28 @@ ${codeData.backend_code || 'Aucun code backend généré'}
           </div>
           
           <div className="flex items-center space-x-4">
+            {/* Affichage des crédits */}
+            <div className="flex items-center space-x-2 border border-gray-700 rounded-lg px-4 py-2 bg-gray-900">
+              <div className="text-sm">
+                <div className="flex items-center space-x-2">
+                  <span className="text-gray-400">Crédits:</span>
+                  <span className="text-green-400 font-bold">{Math.floor(credits.total_available)}</span>
+                </div>
+                <div className="text-xs text-gray-500">
+                  Gratuits: {Math.floor(credits.free_credits)} | Achetés: {Math.floor(credits.purchased_credits)}
+                </div>
+              </div>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => setShowCreditModal(true)}
+                className="ml-2 border-green-500 text-green-400 hover:bg-green-600 hover:text-white"
+              >
+                <Plus className="h-3 w-3 mr-1" />
+                Recharger
+              </Button>
+            </div>
+            
             <span className="text-gray-400">Bienvenue, {user?.full_name}</span>
             <Button variant="ghost" size="sm">
               <Settings className="h-4 w-4" />
