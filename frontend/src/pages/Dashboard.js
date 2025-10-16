@@ -195,6 +195,48 @@ export default function Dashboard() {
     }
   };
 
+  // Gestion de l'upload de fichiers
+  const handleFileUpload = (files) => {
+    setUploadedFiles(files);
+    toast({
+      title: "Fichiers ajoutés",
+      description: `${files.length} fichier(s) attaché(s) au projet`,
+    });
+  };
+
+  // Gestion de GitHub Save
+  const handleGithubSave = (description, files) => {
+    toast({
+      title: "Save to GitHub",
+      description: "Fonctionnalité GitHub en cours de développement. Bientôt disponible !",
+    });
+  };
+
+  // Gestion de Fork
+  const handleFork = (description) => {
+    toast({
+      title: "Fork du projet",
+      description: "Fonctionnalité Fork en cours de développement. Bientôt disponible !",
+    });
+  };
+
+  // Gestion du mode Ultra
+  const handleUltraMode = (enabled) => {
+    setIsUltraMode(enabled);
+    if (enabled) {
+      setAdvancedMode(true); // Active aussi le mode avancé
+      toast({
+        title: "⚡ Mode Ultra Activé !",
+        description: "Génération maximale avec toutes les optimisations",
+      });
+    } else {
+      toast({
+        title: "Mode Ultra Désactivé",
+        description: "Retour au mode normal",
+      });
+    }
+  };
+
   const createProject = async () => {
     if (!newProjectDescription.trim()) {
       toast({
