@@ -304,6 +304,115 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
         raise credentials_exception
     return User(**user)
 
+# Fonctions utilitaires pour la gestion des crédits
+async def get_user_credit_balance(user_id: str) -> CreditBalance:
+    """Récupère le solde de crédits d'un utilisateur"""
+    user = await db.users.find_one({"id": user_id})
+    if not user:
+        raise HTTPException(status_code=404, detail="Utilisateur non trouvé")
+    
+    return CreditBalance(
+        free_credits=user.get("credits_free", 0.0),
+        monthly_credits=user.get("credits_monthly", 0.0),
+        purchased_credits=user.get("credits_topup", 0.0),
+        total_available=user.get("credits_total", 0.0),
+        subscription_plan=user.get("subscription_plan", "free")
+    )
+
+async def deduct_credits(user_id: str, amount: int, description: str, project_id: Optional[str] = None) -> bool:
+    """Déduit des crédits du compte utilisateur"""
+    user = await db.users.find_one({"id": user_id})
+    if not user:
+        return False
+    
+    total_credits = user.get("credits_total", 0.0)
+    if total_credits < amount:
+        return False
+    
+    # Déduire d'abord des crédits gratuits, puis mensuels, puis achetés
+    free_credits = user.get("credits_free", 0.0)
+    monthly_credits = user.get("credits_monthly", 0.0)
+    purchased_credits = user.get("credits_topup", 0.0)
+    
+    remaining = amount
+    
+    if free_credits >= remaining:
+        free_credits -= remaining
+        remaining = 0
+    elif free_credits > 0:
+        remaining -= free_credits
+        free_credits = 0
+    
+    if remaining > 0 and monthly_credits >= remaining:
+        monthly_credits -= remaining
+        remaining = 0
+    elif remaining > 0 and monthly_credits > 0:
+        remaining -= monthly_credits
+        monthly_credits = 0
+    
+    if remaining > 0:
+        purchased_credits -= remaining
+    
+    new_total = free_credits + monthly_credits + purchased_credits
+    
+    # Mettre à jour l'utilisateur
+    await db.users.update_one(
+        {"id": user_id},
+        {
+            "$set": {
+                "credits_free": free_credits,
+                "credits_monthly": monthly_credits,
+                "credits_topup": purchased_credits,
+                "credits_total": new_total,
+                "updated_at": datetime.utcnow()
+            }
+        }
+    )
+    
+    # Enregistrer la transaction
+    transaction = CreditTransaction(
+        user_id=user_id,
+        amount=-amount,
+        type="usage",
+        description=description,
+        project_id=project_id
+    )
+    await db.credit_transactions.insert_one(transaction.dict())
+    
+    return True
+
+async def add_credits(user_id: str, amount: int, transaction_type: str, description: str) -> bool:
+    """Ajoute des crédits au compte utilisateur"""
+    user = await db.users.find_one({"id": user_id})
+    if not user:
+        return False
+    
+    # Ajouter aux crédits achetés
+    purchased_credits = user.get("credits_topup", 0.0) + amount
+    total_credits = user.get("credits_free", 0.0) + user.get("credits_monthly", 0.0) + purchased_credits
+    
+    await db.users.update_one(
+        {"id": user_id},
+        {
+            "$set": {
+                "credits_topup": purchased_credits,
+                "credits_total": total_credits,
+                "updated_at": datetime.utcnow()
+            }
+        }
+    )
+    
+    # Enregistrer la transaction
+    transaction = CreditTransaction(
+        user_id=user_id,
+        amount=amount,
+        type=transaction_type,
+        description=description
+    )
+    await db.credit_transactions.insert_one(transaction.dict())
+    
+    return True
+
 async def generate_app_code_advanced(request: GenerateAppRequest) -> dict:
     """GÉNÉRATEUR ULTRA-PUISSANT OPTIMISÉ - Génère des applications complètes rapidement"""
     try:
