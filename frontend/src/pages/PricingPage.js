@@ -136,61 +136,90 @@ export default function PricingPage() {
         {/* Hero Section */}
         <div className="text-center mb-16">
           <h1 className="text-5xl font-bold mb-4">
-            Choisissez votre <span className="text-green-400">plan</span>
+            Rechargez vos <span className="text-green-400">crédits</span>
           </h1>
           <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-            Des plans flexibles pour tous vos besoins de création. 
-            Commencez gratuitement, évoluez quand vous voulez.
+            Achetez des crédits pour générer vos applications avec l'IA. 
+            Aucun abonnement, pas d'expiration.
           </p>
           
           <div className="flex items-center justify-center mt-8 space-x-4">
             <Badge variant="outline" className="border-green-400 text-green-400">
-              ✨ 30 jours d'essai gratuit
+              ✨ 10 crédits gratuits à l'inscription
             </Badge>
             <Badge variant="outline" className="border-blue-400 text-blue-400">
-              🔒 Sans engagement
+              🔒 Paiement sécurisé par Stripe
+            </Badge>
+            <Badge variant="outline" className="border-purple-400 text-purple-400">
+              ⚡ Pas d'expiration
             </Badge>
           </div>
         </div>
 
+        {/* Credit Usage Info */}
+        <div className="max-w-3xl mx-auto mb-12">
+          <Card className="bg-gradient-to-br from-green-900/30 to-gray-900 border-green-700">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-center space-x-8 text-center">
+                <div>
+                  <div className="text-3xl font-bold text-green-400">2</div>
+                  <div className="text-sm text-gray-400">crédits</div>
+                  <div className="text-xs text-gray-500 mt-1">Génération rapide</div>
+                </div>
+                <div className="h-12 w-px bg-gray-700"></div>
+                <div>
+                  <div className="text-3xl font-bold text-purple-400">4</div>
+                  <div className="text-sm text-gray-400">crédits</div>
+                  <div className="text-xs text-gray-500 mt-1">Génération avancée</div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
         {/* Pricing Cards */}
         <div className="grid md:grid-cols-3 gap-8 mb-16">
-          {plans.map((plan, index) => {
-            const Icon = plan.icon;
+          {creditPackages.map((pkg, index) => {
+            const Icon = pkg.icon;
             return (
               <Card 
-                key={plan.name}
-                className={`relative bg-gray-900 ${plan.borderColor} ${
-                  plan.popular ? 'ring-2 ring-purple-400 scale-105' : 'border-gray-700'
+                key={pkg.name}
+                className={`relative bg-gray-900 ${pkg.borderColor} ${
+                  pkg.popular ? 'ring-2 ring-purple-400 scale-105' : 'border-gray-700'
                 } hover:border-green-400 transition-all duration-300`}
               >
-                {plan.popular && (
+                {pkg.popular && (
                   <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
                     <Badge className="bg-purple-600 text-white px-4 py-1">
-                      Le plus populaire
+                      POPULAIRE
                     </Badge>
                   </div>
                 )}
                 
                 <CardHeader className="text-center pb-8">
-                  <div className={`w-16 h-16 mx-auto rounded-2xl bg-gradient-to-br ${plan.bgColor} flex items-center justify-center mb-4`}>
-                    <Icon className={`h-8 w-8 ${plan.color}`} />
+                  <div className={`w-16 h-16 mx-auto rounded-2xl bg-gradient-to-br ${pkg.bgColor} flex items-center justify-center mb-4`}>
+                    <Icon className={`h-8 w-8 ${pkg.color}`} />
                   </div>
                   
-                  <CardTitle className="text-2xl text-white">{plan.name}</CardTitle>
-                  <CardDescription className="text-gray-400">{plan.description}</CardDescription>
+                  <CardTitle className="text-2xl text-white">{pkg.name}</CardTitle>
+                  <CardDescription className="text-gray-400">{pkg.description}</CardDescription>
                   
                   <div className="mt-6">
+                    <div className="text-5xl font-bold text-white mb-2">{pkg.credits}</div>
+                    <div className="text-gray-400 mb-3">crédits</div>
                     <div className="flex items-baseline justify-center">
-                      <span className="text-4xl font-bold text-white">{plan.price}</span>
-                      {plan.period && <span className="text-gray-400 ml-2">{plan.period}</span>}
+                      <span className="text-3xl font-bold text-green-400">${pkg.price}</span>
+                      <span className="text-gray-400 ml-1">.00</span>
                     </div>
+                    {pkg.savings && (
+                      <div className="text-xs text-green-400 mt-2">{pkg.savings}</div>
+                    )}
                   </div>
                 </CardHeader>
 
                 <CardContent className="space-y-6">
                   <div className="space-y-3">
-                    {plan.features.map((feature, idx) => (
+                    {pkg.features.map((feature, idx) => (
                       <div key={idx} className="flex items-center space-x-3">
                         <Check className="h-5 w-5 text-green-400 flex-shrink-0" />
                         <span className="text-gray-300">{feature}</span>
@@ -198,29 +227,16 @@ export default function PricingPage() {
                     ))}
                   </div>
 
-                  {plan.limitations && (
-                    <div className="pt-4 border-t border-gray-800">
-                      <p className="text-xs text-gray-500 mb-2">Limitations :</p>
-                      {plan.limitations.map((limitation, idx) => (
-                        <p key={idx} className="text-xs text-gray-500">
-                          • {limitation}
-                        </p>
-                      ))}
-                    </div>
-                  )}
-
                   <Button 
                     onClick={() => navigate("/auth")}
-                    variant={plan.buttonVariant}
+                    variant={pkg.buttonVariant}
                     className={`w-full py-6 text-lg font-medium ${
-                      plan.popular 
+                      pkg.popular 
                         ? 'bg-purple-600 hover:bg-purple-700 text-white' 
-                        : plan.buttonVariant === 'outline' 
-                          ? 'border-green-400 text-green-400 hover:bg-green-400 hover:text-black'
-                          : 'bg-green-600 hover:bg-green-700'
+                        : 'border-green-400 text-green-400 hover:bg-green-400 hover:text-black'
                     }`}
                   >
-                    {plan.buttonText}
+                    {pkg.buttonText}
                   </Button>
                 </CardContent>
               </Card>
