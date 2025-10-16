@@ -13,7 +13,7 @@ from typing import Dict, Any, List
 import sys
 
 # Configuration
-BASE_URL = "https://codecraft-125.preview.emergentagent.com/api"
+BASE_URL = "https://coderocket.preview.emergentagent.com/api"
 CONCURRENT_USERS = 10
 LOAD_TEST_DURATION = 30  # seconds
 

@@ -10,7 +10,7 @@ import time
 from typing import Dict, Any, Optional
 
 # Configuration
-BASE_URL = "https://codecraft-125.preview.emergentagent.com/api"
+BASE_URL = "https://coderocket.preview.emergentagent.com/api"
 TEST_USER = {
     "email": f"final.test.{int(time.time())}@vectort.io",
     "password": "FinalTest123!",
