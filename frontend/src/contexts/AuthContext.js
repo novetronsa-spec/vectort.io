@@ -19,6 +19,43 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [token, setToken] = useState(localStorage.getItem("token"));
 
+  // Intercepteur axios pour ajouter le token à chaque requête
+  useEffect(() => {
+    const requestInterceptor = axios.interceptors.request.use(
+      (config) => {
+        const currentToken = localStorage.getItem("token");
+        if (currentToken && config.url?.includes(BACKEND_URL)) {
+          config.headers.Authorization = `Bearer ${currentToken}`;
+        }
+        return config;
+      },
+      (error) => {
+        return Promise.reject(error);
+      }
+    );
+
+    const responseInterceptor = axios.interceptors.response.use(
+      (response) => response,
+      (error) => {
+        // Si le token est invalide ou expiré, déconnecter l'utilisateur
+        if (error.response?.status === 401) {
+          console.error("Token invalide ou expiré, déconnexion...");
+          localStorage.removeItem("token");
+          setToken(null);
+          setUser(null);
+          delete axios.defaults.headers.common["Authorization"];
+        }
+        return Promise.reject(error);
+      }
+    );
+
+    // Cleanup interceptors on unmount
+    return () => {
+      axios.interceptors.request.eject(requestInterceptor);
+      axios.interceptors.response.eject(responseInterceptor);
+    };
+  }, []);
+
   useEffect(() => {
     const initAuth = async () => {
       if (token) {
