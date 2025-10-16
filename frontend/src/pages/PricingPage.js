@@ -3,104 +3,105 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "../components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
 import { Badge } from "../components/ui/badge";
-import { Check, ArrowLeft, Zap, Crown, Rocket } from "lucide-react";
+import { Check, ArrowLeft, Zap, Star, Sparkles, CreditCard } from "lucide-react";
 
 export default function PricingPage() {
   const navigate = useNavigate();
 
-  const plans = [
+  const creditPackages = [
     {
       name: "Starter",
-      price: "Gratuit",
-      description: "Parfait pour débuter avec Vectort",
+      credits: 100,
+      price: 20,
+      description: "Parfait pour commencer",
       icon: Zap,
       color: "text-green-400",
       bgColor: "from-green-400/10 to-green-600/10",
       borderColor: "border-green-400/50",
       features: [
-        "3 projets par mois",
-        "Templates de base",
-        "Support communauté",
-        "Déploiement sur sous-domaine",
-        "Stockage 1GB"
+        "100 crédits",
+        "~50 générations rapides",
+        "~25 générations avancées",
+        "Pas d'expiration",
+        "Tous les types de projets",
+        "24+ frameworks supportés"
       ],
-      limitations: [
-        "Pas de domaine personnalisé",
-        "Watermark Vectort",
-        "Support standard"
-      ],
-      buttonText: "Commencer gratuitement",
+      savings: null,
+      buttonText: "Acheter 100 crédits",
       buttonVariant: "outline"
     },
     {
-      name: "Pro",
-      price: "29€",
-      period: "/mois",
-      description: "Pour les créateurs sérieux",
-      icon: Crown,
+      name: "Standard",
+      credits: 250,
+      price: 50,
+      description: "Meilleure valeur",
+      icon: Star,
       color: "text-purple-400",
       bgColor: "from-purple-400/10 to-purple-600/10",
       borderColor: "border-purple-400/50",
       popular: true,
       features: [
-        "Projets illimités",
-        "Tous les templates premium",
-        "IA avancée (GPT-4, Claude)",
-        "Domaine personnalisé",
-        "Stockage 50GB",
-        "Support prioritaire",
-        "Analytics avancés",
-        "Collaborateurs (5 max)",
-        "Déploiement automatique",
-        "SSL gratuit"
+        "250 crédits",
+        "~125 générations rapides",
+        "~62 générations avancées",
+        "Pas d'expiration",
+        "Tous les types de projets",
+        "Mode avancé illimité",
+        "Support prioritaire"
       ],
-      buttonText: "Démarrer l'essai Pro",
+      savings: "Économisez $12.50",
+      buttonText: "Acheter 250 crédits",
       buttonVariant: "default"
     },
     {
-      name: "Enterprise",
-      price: "199€",
-      period: "/mois",
-      description: "Pour les équipes et entreprises",
-      icon: Rocket,
+      name: "Pro",
+      credits: 400,
+      price: 80,
+      description: "Maximum d'économies",
+      icon: Sparkles,
       color: "text-orange-400",
       bgColor: "from-orange-400/10 to-orange-600/10",
       borderColor: "border-orange-400/50",
       features: [
-        "Tout de Pro +",
-        "Équipe illimitée",
-        "IA personnalisée",
-        "Intégrations avancées",
-        "Stockage 500GB",
-        "Support dédié 24/7",
-        "SLA 99.9%",
-        "Sauvegardes automatiques",
-        "Environnements multiples",
-        "API dédiée",
-        "Formation équipe",
-        "Déploiement on-premise"
+        "400 crédits",
+        "~200 générations rapides",
+        "~100 générations avancées",
+        "Pas d'expiration",
+        "Tous les types de projets",
+        "Génération prioritaire",
+        "Support dédié",
+        "Accès anticipé aux features"
       ],
-      buttonText: "Contacter l'équipe",
+      savings: "Économisez $20.00",
+      buttonText: "Acheter 400 crédits",
       buttonVariant: "outline"
     }
   ];
 
   const faqs = [
     {
-      question: "Puis-je changer de plan à tout moment ?",
-      answer: "Oui, vous pouvez upgrader ou downgrader votre plan à tout moment. Les changements sont effectifs immédiatement."
+      question: "Comment fonctionnent les crédits ?",
+      answer: "Chaque génération d'application consomme des crédits. Les générations rapides coûtent 2 crédits, les générations avancées coûtent 4 crédits. Vous recevez 10 crédits gratuits à l'inscription."
     },
     {
-      question: "Que se passe-t-il si je dépasse les limites de mon plan ?",
-      answer: "Nous vous notifierons avant d'atteindre les limites. Vous pouvez soit upgrader votre plan soit attendre le prochain cycle."
+      question: "Les crédits expirent-ils ?",
+      answer: "Non ! Tous les crédits achetés n'expirent jamais. Vous pouvez les utiliser quand vous voulez, à votre rythme."
+    },
+    {
+      question: "Puis-je acheter des crédits plusieurs fois ?",
+      answer: "Oui, vous pouvez acheter autant de packages que vous le souhaitez. Tous les crédits s'accumulent dans votre compte."
+    },
+    {
+      question: "Que se passe-t-il si je manque de crédits pendant une génération ?",
+      answer: "L'application vérifie votre solde avant chaque génération. Si vous n'avez pas assez de crédits, vous serez invité à recharger votre compte."
     },
     {
       question: "Y a-t-il une garantie de remboursement ?",
-      answer: "Oui, nous offrons une garantie de remboursement de 30 jours sur tous nos plans payants."
+      answer: "Oui, nous offrons une garantie de remboursement de 30 jours sur tous les achats de crédits."
     },
     {
-      question: "Les prix incluent-ils la TVA ?",
-      answer: "Les prix affichés sont hors taxes. La TVA applicable sera ajoutée lors du checkout selon votre localisation."
+      question: "Le paiement est-il sécurisé ?",
+      answer: "Oui, tous les paiements sont traités de manière sécurisée via Stripe, un leader mondial du paiement en ligne. Nous ne stockons jamais vos informations de carte bancaire."
     }
   ];
 
