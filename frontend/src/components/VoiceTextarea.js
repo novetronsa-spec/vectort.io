@@ -11,6 +11,11 @@ const VoiceTextarea = ({
   placeholder, 
   className,
   disabled = false,
+  onFileUpload,
+  onGithubSave,
+  onFork,
+  onUltraMode,
+  showAdvancedTools = false,
   ...props 
 }) => {
   const { 
@@ -23,6 +28,9 @@ const VoiceTextarea = ({
   } = useSpeechToText();
   
   const [currentValue, setCurrentValue] = useState(value || '');
+  const [uploadedFiles, setUploadedFiles] = useState([]);
+  const [isUltraMode, setIsUltraMode] = useState(false);
+  const fileInputRef = useRef(null);
   const textareaRef = useRef(null);
 
   // Synchroniser avec la valeur externe
