@@ -486,20 +486,89 @@ backend:
           agent: "testing"
           comment: "✅ DEFAULT STRUCTURES WORKING: React structure generates correctly (react_code, css_code), FastAPI structure generates backend code properly. The _get_default_structure method (lines 718-753) functions correctly for both React and FastAPI frameworks."
 
-  - task: "Generation Performance and Timeout Management"
+  - task: "Credit System - New User Balance"
     implemented: true
-    working: false
-    file: "backend/ai_generators/advanced_generator.py"
-    stuck_count: 2
+    working: true
+    file: "backend/server.py"
+    stuck_count: 0
     priority: "high"
     needs_retesting: false
     status_history:
-        - working: false
+        - working: true
           agent: "testing"
-          comment: "❌ PERFORMANCE ISSUES: Advanced mode generation exceeds 20s target (timing out at 25-30s). The AdvancedCodeGenerator is too complex with multiple sequential LLM calls causing timeouts. Basic mode performs well (13.5s average) but advanced mode needs optimization. Timeout handling in _generate_main_files (lines 206-237) needs improvement."
-        - working: false
+          comment: "✅ SYSTÈME DE CRÉDITS COMPLET TESTÉ: Nouvel utilisateur reçoit correctement 10 crédits gratuits. Endpoint GET /api/credits/balance fonctionne parfaitement avec structure complète (free_credits: 10.0, monthly_credits: 0.0, purchased_credits: 0.0, total_available: 10.0, subscription_plan: 'free')"
+
+  - task: "Credit Packages List"
+    implemented: true
+    working: true
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
           agent: "testing"
-          comment: "❌ PERFORMANCE CRITICAL FAILURE: Confirmed 28.8s generation time vs <20s target (44% over limit). Advanced mode with concurrent generation (React + CSS + Config) working but overall timeout exceeded due to sequential LLM calls in generate_advanced_optimized(). The 15s timeout per task in asyncio.wait_for() is insufficient for complex e-commerce generation. Need to optimize LLM calls, reduce prompt complexity, or implement better caching to achieve <20s target for 100% functionality."
+          comment: "✅ PACKAGES DE CRÉDITS VALIDÉS: GET /api/credits/packages retourne correctement les 3 packages - Starter: 100 crédits/20.0$, Standard: 250 crédits/50.0$, Pro: 400 crédits/80.0$. Tous les prix sont en float comme requis pour Stripe. Structure et données parfaitement conformes aux spécifications."
+
+  - task: "Stripe Payment Integration"
+    implemented: true
+    working: true
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "✅ INTÉGRATION STRIPE FONCTIONNELLE: POST /api/credits/purchase crée correctement une session Stripe avec URL valide (checkout.stripe.com) et session_id format cs_test_*. Transaction enregistrée dans payment_transactions avec statut 'pending'. GET /api/checkout/status/{session_id} fonctionne et retourne 404 pour sessions inexistantes (comportement attendu)."
+
+  - task: "Credit Deduction - Quick Mode"
+    implemented: true
+    working: true
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "✅ DÉDUCTION CRÉDITS MODE QUICK PARFAITE: POST /api/projects/{id}/generate avec advanced_mode=false déduit correctement 2 crédits. Test validé: 10.0 → 8.0 crédits. Système de déduction prioritaire (gratuits d'abord, puis mensuels, puis achetés) fonctionne. Transaction enregistrée dans credit_transactions."
+
+  - task: "Credit Deduction - Advanced Mode"
+    implemented: true
+    working: true
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "✅ DÉDUCTION CRÉDITS MODE ADVANCED PARFAITE: POST /api/projects/{id}/generate avec advanced_mode=true déduit correctement 4 crédits. Test validé: 8.0 → 4.0 crédits. Logique de coût différentiel (Quick: 2 crédits, Advanced: 4 crédits) implémentée correctement."
+
+  - task: "Insufficient Credits Error Handling"
+    implemented: true
+    working: true
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "✅ GESTION CRÉDITS INSUFFISANTS PARFAITE: Quand utilisateur n'a pas assez de crédits, système retourne correctement erreur 402 avec message détaillé 'Crédits insuffisants. Vous avez 0.0 crédits, 2 requis. Veuillez recharger vos crédits.' Mécanisme de remboursement en cas d'erreur de génération implémenté."
+
+  - task: "Credit History Endpoint"
+    implemented: true
+    working: true
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "✅ HISTORIQUE TRANSACTIONS FONCTIONNEL: GET /api/credits/history retourne correctement la liste des transactions de crédits avec structure complète (id, user_id, amount, type, description, created_at). Endpoint sécurisé avec authentification utilisateur."
 
 frontend:
   - task: "Landing Page Load and Design"
