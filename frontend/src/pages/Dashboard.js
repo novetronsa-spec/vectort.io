@@ -646,6 +646,11 @@ ${codeData.backend_code || 'Aucun code backend généré'}
                   value={newProjectDescription}
                   onChange={(e) => setNewProjectDescription(e.target.value)}
                   className="min-h-32 bg-gray-800 border-gray-600 text-white resize-none"
+                  showAdvancedTools={true}
+                  onFileUpload={handleFileUpload}
+                  onGithubSave={handleGithubSave}
+                  onFork={handleFork}
+                  onUltraMode={handleUltraMode}
                 />
                 
                 {/* Toggle Mode Avancé */}
