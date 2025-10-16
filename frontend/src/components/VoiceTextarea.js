@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Textarea } from './ui/textarea';
 import { Button } from './ui/button';
-import { Mic, MicOff, Volume2 } from 'lucide-react';
+import { Mic, MicOff, Volume2, Paperclip, Github, GitFork, Zap, X, Upload, FileText } from 'lucide-react';
 import { useSpeechToText } from '../hooks/useSpeechToText';
 import { cn } from '../lib/utils';
 
