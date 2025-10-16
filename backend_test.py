@@ -2106,11 +2106,13 @@ if __name__ == "__main__":
             success = tester.run_final_advanced_generation_tests()
         elif sys.argv[1] == "--vectort-100":
             success = tester.run_vectort_100_percent_tests()
+        elif sys.argv[1] == "--credits":
+            success = tester.run_credit_system_tests()
         else:
             success = tester.run_all_tests()
     else:
-        # Default: Run VECTORT.IO 100% functionality tests as requested
-        success = tester.run_vectort_100_percent_tests()
+        # Default: Run credit system tests as requested in the review
+        success = tester.run_credit_system_tests()
     
     # Exit with appropriate code
     sys.exit(0 if success else 1)
