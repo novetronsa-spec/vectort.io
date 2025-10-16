@@ -109,6 +109,48 @@ const VoiceTextarea = ({
     stopListening();
   };
 
+  // Gestion de l'upload de fichiers
+  const handleFileClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (e) => {
+    const files = Array.from(e.target.files || []);
+    if (files.length > 0) {
+      setUploadedFiles(prev => [...prev, ...files]);
+      if (onFileUpload) {
+        onFileUpload(files);
+      }
+    }
+  };
+
+  const removeFile = (index) => {
+    setUploadedFiles(prev => prev.filter((_, i) => i !== index));
+  };
+
+  // Gestion de GitHub Save
+  const handleGithubSave = () => {
+    if (onGithubSave) {
+      onGithubSave(currentValue, uploadedFiles);
+    }
+  };
+
+  // Gestion de Fork
+  const handleFork = () => {
+    if (onFork) {
+      onFork(currentValue);
+    }
+  };
+
+  // Gestion du mode Ultra
+  const handleUltraToggle = () => {
+    const newUltraMode = !isUltraMode;
+    setIsUltraMode(newUltraMode);
+    if (onUltraMode) {
+      onUltraMode(newUltraMode);
+    }
+  };
+
   return (
     <div className="relative">
       <Textarea
