@@ -1066,6 +1066,234 @@ async def preview_project(
     return HTMLResponse(content=preview_html)
 
 
+# ============================================
+# ENDPOINTS SYSTÈME DE CRÉDITS ET PAIEMENTS
+# ============================================
+
+@api_router.get("/credits/balance", response_model=CreditBalance)
+async def get_credit_balance(current_user: User = Depends(get_current_user)):
+    """Récupère le solde de crédits de l'utilisateur"""
+    return await get_user_credit_balance(current_user.id)
+
+@api_router.get("/credits/packages", response_model=List[CreditPackage])
+async def get_credit_packages():
+    """Récupère la liste des packages de crédits disponibles"""
+    return list(CREDIT_PACKAGES.values())
+
+@api_router.post("/credits/purchase", response_model=CheckoutSessionResponse)
+async def purchase_credits(
+    purchase_request: PurchaseRequest,
+    http_request: Request,
+    current_user: User = Depends(get_current_user)
+):
+    """Crée une session de checkout Stripe pour l'achat de crédits"""
+    
+    # Valider le package
+    if purchase_request.package_id not in CREDIT_PACKAGES:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Package invalide. Packages disponibles: {', '.join(CREDIT_PACKAGES.keys())}"
+        )
+    
+    package = CREDIT_PACKAGES[purchase_request.package_id]
+    
+    # Initialiser Stripe Checkout
+    webhook_url = f"{purchase_request.origin_url}/api/webhook/stripe"
+    stripe_checkout = StripeCheckout(api_key=STRIPE_API_KEY, webhook_url=webhook_url)
+    
+    # Créer les URLs de succès et d'annulation
+    success_url = f"{purchase_request.origin_url}/dashboard?payment=success&session_id={{CHECKOUT_SESSION_ID}}"
+    cancel_url = f"{purchase_request.origin_url}/dashboard?payment=cancelled"
+    
+    # Préparer la requête de checkout
+    checkout_request = CheckoutSessionRequest(
+        amount=package.price,
+        currency=package.currency,
+        success_url=success_url,
+        cancel_url=cancel_url,
+        metadata={
+            "user_id": current_user.id,
+            "package_id": package.id,
+            "credits": str(package.credits),
+            "user_email": current_user.email
+        }
+    )
+    
+    # Créer la session Stripe
+    try:
+        session = await stripe_checkout.create_checkout_session(checkout_request)
+        
+        # Enregistrer la transaction dans la base de données
+        payment_transaction = PaymentTransaction(
+            user_id=current_user.id,
+            session_id=session.session_id,
+            amount=package.price,
+            currency=package.currency,
+            credits=package.credits,
+            package_id=package.id,
+            payment_status="pending",
+            status="initiated",
+            metadata={
+                "user_email": current_user.email,
+                "package_name": package.name
+            }
+        )
+        
+        await db.payment_transactions.insert_one(payment_transaction.dict())
+        
+        logger.info(f"Session de paiement créée pour l'utilisateur {current_user.id}: {session.session_id}")
+        
+        return session
+        
+    except Exception as e:
+        logger.error(f"Erreur lors de la création de la session Stripe: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Erreur lors de la création de la session de paiement"
+        )
+
+@api_router.get("/checkout/status/{session_id}", response_model=CheckoutStatusResponse)
+async def get_checkout_status(
+    session_id: str,
+    current_user: User = Depends(get_current_user)
+):
+    """Vérifie le statut d'une session de checkout Stripe"""
+    
+    # Vérifier que la transaction appartient à l'utilisateur
+    transaction = await db.payment_transactions.find_one({
+        "session_id": session_id,
+        "user_id": current_user.id
+    })
+    
+    if not transaction:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Transaction non trouvée"
+        )
+    
+    # Si déjà traitée, retourner le statut depuis la DB
+    if transaction.get("payment_status") == "paid":
+        return CheckoutStatusResponse(
+            status="complete",
+            payment_status="paid",
+            amount_total=int(transaction.get("amount") * 100),  # Convertir en centimes
+            currency=transaction.get("currency"),
+            metadata=transaction.get("metadata", {})
+        )
+    
+    # Sinon, vérifier auprès de Stripe
+    try:
+        # Initialiser Stripe (webhook_url n'est pas nécessaire ici)
+        stripe_checkout = StripeCheckout(api_key=STRIPE_API_KEY, webhook_url="")
+        checkout_status = await stripe_checkout.get_checkout_status(session_id)
+        
+        # Si le paiement est réussi et pas encore traité
+        if checkout_status.payment_status == "paid" and transaction.get("payment_status") != "paid":
+            # Mettre à jour la transaction
+            await db.payment_transactions.update_one(
+                {"session_id": session_id},
+                {
+                    "$set": {
+                        "payment_status": "paid",
+                        "status": "completed",
+                        "updated_at": datetime.utcnow()
+                    }
+                }
+            )
+            
+            # Ajouter les crédits à l'utilisateur
+            credits_to_add = transaction.get("credits", 0)
+            await add_credits(
+                current_user.id,
+                credits_to_add,
+                "purchase",
+                f"Achat de {credits_to_add} crédits - Package {transaction.get('package_id')}"
+            )
+            
+            logger.info(f"Paiement confirmé pour {current_user.id}: +{credits_to_add} crédits")
+        
+        return checkout_status
+        
+    except Exception as e:
+        logger.error(f"Erreur lors de la vérification du statut Stripe: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Erreur lors de la vérification du statut de paiement"
+        )
+
+@api_router.post("/webhook/stripe")
+async def stripe_webhook(request: Request):
+    """Webhook pour recevoir les événements Stripe"""
+    
+    try:
+        # Lire le corps de la requête
+        body = await request.body()
+        signature = request.headers.get("Stripe-Signature")
+        
+        if not signature:
+            raise HTTPException(status_code=400, detail="Signature Stripe manquante")
+        
+        # Initialiser Stripe
+        stripe_checkout = StripeCheckout(api_key=STRIPE_API_KEY, webhook_url="")
+        
+        # Traiter le webhook
+        webhook_response = await stripe_checkout.handle_webhook(body, signature)
+        
+        logger.info(f"Webhook Stripe reçu: {webhook_response.event_type} - {webhook_response.session_id}")
+        
+        # Traiter selon le type d'événement
+        if webhook_response.event_type == "checkout.session.completed" and webhook_response.payment_status == "paid":
+            session_id = webhook_response.session_id
+            metadata = webhook_response.metadata
+            
+            # Trouver la transaction
+            transaction = await db.payment_transactions.find_one({"session_id": session_id})
+            
+            if transaction and transaction.get("payment_status") != "paid":
+                user_id = metadata.get("user_id")
+                credits = int(metadata.get("credits", 0))
+                
+                # Mettre à jour la transaction
+                await db.payment_transactions.update_one(
+                    {"session_id": session_id},
+                    {
+                        "$set": {
+                            "payment_status": "paid",
+                            "status": "completed",
+                            "updated_at": datetime.utcnow()
+                        }
+                    }
+                )
+                
+                # Ajouter les crédits
+                await add_credits(
+                    user_id,
+                    credits,
+                    "purchase",
+                    f"Achat de {credits} crédits via webhook"
+                )
+                
+                logger.info(f"Webhook traité: +{credits} crédits ajoutés à {user_id}")
+        
+        return {"status": "success"}
+        
+    except Exception as e:
+        logger.error(f"Erreur webhook Stripe: {str(e)}")
+        raise HTTPException(status_code=400, detail=str(e))
+
+@api_router.get("/credits/history", response_model=List[CreditTransaction])
+async def get_credit_history(
+    current_user: User = Depends(get_current_user),
+    limit: int = 50
+):
+    """Récupère l'historique des transactions de crédits"""
+    transactions = await db.credit_transactions.find(
+        {"user_id": current_user.id}
+    ).sort("created_at", -1).limit(limit).to_list(length=limit)
+    
+    return [CreditTransaction(**t) for t in transactions]
+
+
 # Include the router in the main app
 app.include_router(api_router)
 
