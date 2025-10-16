@@ -153,6 +153,16 @@ const VoiceTextarea = ({
 
   return (
     <div className="relative">
+      {/* Hidden file input */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        multiple
+        className="hidden"
+        onChange={handleFileChange}
+        accept=".txt,.md,.json,.js,.jsx,.ts,.tsx,.py,.html,.css,.pdf,.doc,.docx"
+      />
+      
       <Textarea
         ref={textareaRef}
         value={currentValue}
@@ -162,13 +172,80 @@ const VoiceTextarea = ({
         className={cn(
           "pr-24", // Espace pour les boutons
           isListening && "border-green-500 ring-1 ring-green-500",
+          isUltraMode && "border-purple-500 ring-2 ring-purple-500 bg-purple-900/10",
           className
         )}
         {...props}
       />
       
-      {/* Boutons de contrôle vocal */}
-      <div className="absolute right-2 top-2 flex space-x-1">
+      {/* Barre d'outils principale */}
+      <div className="absolute right-2 top-2 flex items-center space-x-1">
+        {/* Bouton Upload de fichiers */}
+        {showAdvancedTools && (
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={handleFileClick}
+            disabled={disabled}
+            className="h-8 w-8 p-1 text-gray-500 hover:text-blue-600"
+            title="Attacher des fichiers"
+          >
+            <Paperclip className="h-4 w-4" />
+          </Button>
+        )}
+
+        {/* Bouton GitHub Save */}
+        {showAdvancedTools && (
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={handleGithubSave}
+            disabled={disabled || !currentValue.trim()}
+            className="h-8 w-8 p-1 text-gray-500 hover:text-gray-900 dark:hover:text-white"
+            title="Save to GitHub"
+          >
+            <Github className="h-4 w-4" />
+          </Button>
+        )}
+
+        {/* Bouton Fork */}
+        {showAdvancedTools && (
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={handleFork}
+            disabled={disabled || !currentValue.trim()}
+            className="h-8 w-8 p-1 text-gray-500 hover:text-orange-600"
+            title="Fork ce projet"
+          >
+            <GitFork className="h-4 w-4" />
+          </Button>
+        )}
+
+        {/* Bouton Ultra Mode */}
+        {showAdvancedTools && (
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={handleUltraToggle}
+            disabled={disabled}
+            className={cn(
+              "h-8 w-8 p-1",
+              isUltraMode 
+                ? "text-purple-500 hover:text-purple-600 bg-purple-50 dark:bg-purple-900/30" 
+                : "text-gray-500 hover:text-purple-600"
+            )}
+            title={isUltraMode ? "Désactiver le mode Ultra" : "Activer le mode Ultra"}
+          >
+            <Zap className={cn("h-4 w-4", isUltraMode && "animate-pulse")} />
+          </Button>
+        )}
+        
+        {/* Boutons de contrôle vocal */}
         {isSupported ? (
           <>
             <Button
@@ -180,7 +257,7 @@ const VoiceTextarea = ({
               className={cn(
                 "h-8 w-8 p-1",
                 isListening 
-                  ? "text-red-500 hover:text-red-600 bg-red-50 hover:bg-red-100" 
+                  ? "text-red-500 hover:text-red-600 bg-red-50 dark:bg-red-900/30 hover:bg-red-100" 
                   : "text-gray-500 hover:text-green-600",
                 isProcessing && "opacity-50 cursor-not-allowed"
               )}
@@ -222,8 +299,47 @@ const VoiceTextarea = ({
         )}
       </div>
 
+      {/* Liste des fichiers uploadés */}
+      {uploadedFiles.length > 0 && (
+        <div className="mt-2 space-y-1">
+          {uploadedFiles.map((file, index) => (
+            <div 
+              key={index} 
+              className="flex items-center justify-between bg-gray-100 dark:bg-gray-800 rounded px-3 py-2 text-sm"
+            >
+              <div className="flex items-center space-x-2">
+                <FileText className="h-4 w-4 text-blue-500" />
+                <span className="text-gray-700 dark:text-gray-300">{file.name}</span>
+                <span className="text-gray-500 text-xs">
+                  ({(file.size / 1024).toFixed(1)} KB)
+                </span>
+              </div>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={() => removeFile(index)}
+                className="h-6 w-6 p-0 text-gray-500 hover:text-red-600"
+              >
+                <X className="h-3 w-3" />
+              </Button>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Indicateur Mode Ultra */}
+      {isUltraMode && (
+        <div className="absolute -bottom-8 left-0 right-0">
+          <div className="flex items-center justify-center space-x-2 text-sm text-purple-400 bg-purple-50 dark:bg-purple-900/30 rounded-lg py-2 px-4 border border-purple-200 dark:border-purple-700">
+            <Zap className="h-4 w-4 animate-pulse" />
+            <span className="font-medium">⚡ Mode Ultra Activé - Génération maximale</span>
+          </div>
+        </div>
+      )}
+
       {/* Indicateur d'état vocal */}
-      {isListening && (
+      {isListening && !isUltraMode && (
         <div className="absolute -bottom-8 left-0 right-0">
           <div className="flex items-center justify-center space-x-3 text-sm text-green-400 bg-green-50 dark:bg-green-900/30 rounded-lg py-2 px-4 border border-green-200 dark:border-green-700">
             <div className="flex space-x-1">
@@ -242,7 +358,7 @@ const VoiceTextarea = ({
       )}
 
       {/* Affichage du transcript en cours */}
-      {transcript && !isListening && (
+      {transcript && !isListening && !isUltraMode && (
         <div className="absolute -bottom-6 left-0 right-0">
           <div className="text-xs text-gray-500 bg-gray-100 dark:bg-gray-800 rounded px-2 py-1">
             <span className="font-medium">Transcrit:</span> {transcript.substring(0, 50)}...
