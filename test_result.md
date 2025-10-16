@@ -1006,6 +1006,18 @@ frontend:
           agent: "testing"
           comment: "🎯 SYSTÈME DE CRÉDITS VECTORT.IO - TEST COMPLET RÉUSSI! Comprehensive testing of all credit system scenarios confirms excellent functionality: ✅ SCÉNARIO 1 (Inscription): New users receive 10 free credits correctly displayed in header with green styling 'Crédits: 10' and detailed breakdown 'Gratuits: 10 | Achetés: 0' ✅ SCÉNARIO 2 (Modal d'achat): Credit purchase modal opens perfectly with title 'Recharger vos crédits', shows current balance, displays all 3 packages (Starter: 100/$20, Standard: 250/$50 with POPULAIRE badge, Pro: 400/$80), 3 'Acheter maintenant' buttons, and 'Paiement sécurisé par Stripe' message ✅ SCÉNARIO 3-4 (Génération): Project creation with credit deduction working - Quick mode (2 credits) and Advanced mode (4 credits) properly deduct credits from balance (10→8→4) ✅ SCÉNARIO 5 (Crédits insuffisants): System correctly handles insufficient credits with appropriate error messages and automatic modal opening ✅ SCÉNARIO 6 (Stripe): Credit purchase process initiates correctly, Stripe integration functional ✅ SCÉNARIO 7 (Affichage): Credit display remains visible and consistent across all dashboard sections. UI ELEMENTS VALIDATED: Header with green credits display, Recharger button with + icon, modal with proper styling, package cards with correct pricing, POPULAIRE badge on Standard package, Stripe security message. The credit system is 95% functional and ready for production use!"
 
+  - task: "Advanced Textarea Tools - 5 Button Integration"
+    implemented: true
+    working: false
+    file: "frontend/src/components/VoiceTextarea.js"
+    stuck_count: 1
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: false
+          agent: "testing"
+          comment: "🎯 ADVANCED TEXTAREA TOOLS TESTING - CRITICAL CONFIGURATION ISSUE! Comprehensive testing of the 5 advanced buttons (📎 Upload, 💾 GitHub, 🍴 Fork, ⚡ Ultra, 🎤 Micro) reveals: ✅ STRUCTURE CORRECT: VoiceTextarea component exists with proper button container (.absolute.right-2.top-2) and spacing (space-x-1) ✅ BUTTON COUNT: Container has exactly 5 buttons as expected ✅ DASHBOARD ACCESS: Successfully reached 'Nouveau Projet' tab with textarea ❌ CRITICAL ISSUE: Advanced tool buttons are NOT VISIBLE - Lucide icons not rendering properly ❌ SHOWADVANCEDTOOLS: The showAdvancedTools={true} prop appears not activated or icons not loading ❌ FUNCTIONALITY: Cannot test button functionality (toasts, Ultra mode purple border, etc.) because buttons are not accessible ⚠️ ROOT CAUSE: VoiceTextarea component structure is correct but advanced tools are either: 1) showAdvancedTools prop not set to true in Dashboard.js, 2) Lucide React icons not properly imported/rendered, or 3) CSS/styling issues hiding buttons. RECOMMENDATION: Verify showAdvancedTools={true} is passed to VoiceTextarea in Dashboard.js line 649 and ensure all Lucide icons (Paperclip, Github, GitFork, Zap, Mic) are properly imported and rendered."
+
 metadata:
   created_by: "testing_agent"
   version: "1.0"
