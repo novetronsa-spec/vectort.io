@@ -19,6 +19,7 @@ import base64
 import re
 import html
 from emergentintegrations.llm.chat import LlmChat, UserMessage
+from emergentintegrations.payments.stripe.checkout import StripeCheckout, CheckoutSessionResponse, CheckoutStatusResponse, CheckoutSessionRequest
 from ai_generators.advanced_generator import (
     AdvancedCodeGenerator, 
     GenerationRequest, 
@@ -26,6 +27,8 @@ from ai_generators.advanced_generator import (
     Framework, 
     DatabaseType
 )
+from fastapi import Request
+from typing import Dict
 
 
 ROOT_DIR = Path(__file__).parent
