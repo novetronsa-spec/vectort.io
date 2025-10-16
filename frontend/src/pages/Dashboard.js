@@ -52,6 +52,14 @@ export default function Dashboard() {
     activeProjects: 0,
     totalViews: 0
   });
+  const [credits, setCredits] = useState({
+    free_credits: 10,
+    monthly_credits: 0,
+    purchased_credits: 0,
+    total_available: 10,
+    subscription_plan: "free"
+  });
+  const [showCreditModal, setShowCreditModal] = useState(false);
 
   const frameworks = {
     web_app: ["react", "vue", "angular", "nextjs", "svelte"],
