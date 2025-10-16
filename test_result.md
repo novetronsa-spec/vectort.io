@@ -1044,14 +1044,12 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Voice Recognition Error Handling - InvalidStateError Fix"
-    - "Voice Recognition State Management"
+    - "Critical Code Generation Validation - French Requirements"
   stuck_tasks:
     - "VECTORT.IO 100% Functionality Test - E-commerce Advanced Mode"
     - "File Mapping Intelligence System" 
-    - "Generation Performance and Timeout Management"
   test_all: false
-  test_priority: "voice_recognition_validation"
+  test_priority: "critical_validation_complete"
 
 agent_communication:
     - agent: "testing"
