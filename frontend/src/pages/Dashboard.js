@@ -203,6 +203,18 @@ export default function Dashboard() {
       return;
     }
 
+    // Vérifier les crédits avant de créer le projet
+    const creditCost = advancedMode ? 4 : 2;
+    if (credits.total_available < creditCost) {
+      toast({
+        title: "Crédits insuffisants",
+        description: `Vous avez besoin de ${creditCost} crédits pour cette génération. Rechargez vos crédits pour continuer.`,
+        variant: "destructive"
+      });
+      setShowCreditModal(true);
+      return;
+    }
+
     setIsCreating(true);
     try {
       // Create the project first
@@ -217,7 +229,7 @@ export default function Dashboard() {
       
       toast({
         title: "Projet créé !",
-        description: `Génération ${advancedMode ? 'avancée' : 'rapide'} en cours...`,
+        description: `Génération ${advancedMode ? 'avancée' : 'rapide'} en cours... (${creditCost} crédits)`,
       });
 
       // Generate the application code using ADVANCED AI
@@ -233,19 +245,34 @@ export default function Dashboard() {
           advanced_mode: advancedMode
         });
 
+        // Rafraîchir les crédits après la génération
+        await fetchCredits();
+        
         // Refresh projects list to get updated status
         fetchProjects();
         
         toast({
           title: "Application générée !",
-          description: "Votre application a été générée avec succès et est prête à être déployée.",
+          description: `Votre application a été générée avec succès. ${creditCost} crédits utilisés.`,
         });
       } catch (genError) {
-        toast({
-          title: "Génération échouée",
-          description: "Le projet a été créé mais la génération du code a échoué.",
-          variant: "destructive"
-        });
+        // Si l'erreur est liée aux crédits insuffisants
+        if (genError.response?.status === 402) {
+          toast({
+            title: "Crédits insuffisants",
+            description: genError.response?.data?.detail || "Crédits insuffisants pour cette génération.",
+            variant: "destructive"
+          });
+          setShowCreditModal(true);
+        } else {
+          toast({
+            title: "Génération échouée",
+            description: "Le projet a été créé mais la génération du code a échoué.",
+            variant: "destructive"
+          });
+        }
+        // Rafraîchir les crédits même en cas d'erreur
+        await fetchCredits();
       }
 
       setNewProjectDescription("");
