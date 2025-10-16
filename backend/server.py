@@ -38,6 +38,7 @@ JWT_SECRET = os.environ['JWT_SECRET']  # Obligatoire en production
 JWT_ALGORITHM = "HS256"
 JWT_EXPIRATION_HOURS = 24
 EMERGENT_LLM_KEY = os.environ.get('EMERGENT_LLM_KEY')
+STRIPE_API_KEY = os.environ.get('STRIPE_API_KEY')
 
 # MongoDB connection
 client = AsyncIOMotorClient(mongo_url)
