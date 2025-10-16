@@ -119,6 +119,80 @@ export default function Dashboard() {
     }
   };
 
+  const fetchCredits = async () => {
+    try {
+      const response = await axios.get(`${API}/credits/balance`);
+      setCredits(response.data);
+    } catch (error) {
+      console.error("Erreur lors du chargement des crédits:", error);
+    }
+  };
+
+  const pollPaymentStatus = async (sessionId, attempts = 0) => {
+    const maxAttempts = 5;
+    
+    if (attempts >= maxAttempts) {
+      toast({
+        title: "Vérification du paiement",
+        description: "La vérification prend plus de temps que prévu. Vos crédits seront ajoutés sous peu.",
+      });
+      return;
+    }
+
+    try {
+      const response = await axios.get(`${API}/checkout/status/${sessionId}`);
+      
+      if (response.data.payment_status === 'paid') {
+        await fetchCredits(); // Rafraîchir les crédits
+        toast({
+          title: "Paiement réussi !",
+          description: "Vos crédits ont été ajoutés à votre compte.",
+        });
+        // Nettoyer l'URL
+        navigate('/dashboard', { replace: true });
+        return;
+      } else if (response.data.status === 'expired') {
+        toast({
+          title: "Session expirée",
+          description: "La session de paiement a expiré.",
+          variant: "destructive"
+        });
+        navigate('/dashboard', { replace: true });
+        return;
+      }
+
+      // Continuer à vérifier
+      setTimeout(() => pollPaymentStatus(sessionId, attempts + 1), 2000);
+    } catch (error) {
+      console.error("Erreur lors de la vérification du paiement:", error);
+      toast({
+        title: "Erreur",
+        description: "Erreur lors de la vérification du paiement.",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const purchaseCredits = async (packageId) => {
+    try {
+      const originUrl = window.location.origin;
+      const response = await axios.post(`${API}/credits/purchase`, {
+        package_id: packageId,
+        origin_url: originUrl
+      });
+      
+      // Rediriger vers Stripe
+      window.location.href = response.data.url;
+    } catch (error) {
+      console.error("Erreur lors de l'achat de crédits:", error);
+      toast({
+        title: "Erreur",
+        description: error.response?.data?.detail || "Erreur lors de la création de la session de paiement.",
+        variant: "destructive"
+      });
+    }
+  };
+
   const createProject = async () => {
     if (!newProjectDescription.trim()) {
       toast({
