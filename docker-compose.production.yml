@@ -1,0 +1,75 @@
+version: '3.8'
+
+services:
+  # MongoDB Database
+  mongodb:
+    image: mongo:7.0
+    container_name: vectort_mongodb
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: vectort_admin
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD:-vectort_secure_password_2024}
+    volumes:
+      - /opt/vectort/mongodb:/data/db
+    ports:
+      - "127.0.0.1:27017:27017"
+    networks:
+      - vectort_network
+    command: mongod --quiet --logpath /dev/null
+
+  # Backend FastAPI
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: vectort_backend
+    restart: always
+    environment:
+      - MONGO_URL=mongodb://vectort_admin:${MONGO_PASSWORD:-vectort_secure_password_2024}@mongodb:27017/vectort_db?authSource=admin
+      - DB_NAME=vectort_db
+      - JWT_SECRET=${JWT_SECRET}
+      - EMERGENT_LLM_KEY=${EMERGENT_LLM_KEY}
+      - STRIPE_API_KEY=${STRIPE_API_KEY}
+      - FERNET_ENCRYPTION_KEY=${FERNET_ENCRYPTION_KEY}
+      - GITHUB_CLIENT_ID=${GITHUB_CLIENT_ID}
+      - GITHUB_CLIENT_SECRET=${GITHUB_CLIENT_SECRET}
+      - GITHUB_REDIRECT_URI=https://vectort.io/auth/github/callback
+      - SENDGRID_API_KEY=${SENDGRID_API_KEY}
+      - SENDGRID_FROM_EMAIL=${SENDGRID_FROM_EMAIL}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_S3_BUCKET_NAME=${AWS_S3_BUCKET_NAME}
+      - AWS_REGION=${AWS_REGION}
+      - SLACK_BOT_TOKEN=${SLACK_BOT_TOKEN}
+      - SLACK_SIGNING_SECRET=${SLACK_SIGNING_SECRET}
+      - GOOGLE_SHEETS_CREDENTIALS_JSON=/app/google_credentials.json
+      - AIRTABLE_API_KEY=${AIRTABLE_API_KEY}
+      - AIRTABLE_BASE_ID=${AIRTABLE_BASE_ID}
+    ports:
+      - "127.0.0.1:8001:8001"
+    volumes:
+      - ./backend:/app
+    depends_on:
+      - mongodb
+    networks:
+      - vectort_network
+    command: uvicorn server:app --host 0.0.0.0 --port 8001 --workers 4
+
+  # Frontend React
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: vectort_frontend
+    restart: always
+    environment:
+      - REACT_APP_BACKEND_URL=https://api.vectort.io
+      - NODE_ENV=production
+    ports:
+      - "127.0.0.1:3000:3000"
+    networks:
+      - vectort_network
+
+networks:
+  vectort_network:
+    driver: bridge
