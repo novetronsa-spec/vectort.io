@@ -9,7 +9,7 @@ echo "============================================"
 
 # Variables
 DOMAIN="vectort.io"
-SERVER_IP="156.67.26.106"
+SERVER_IP="31.165.143.145"
 EMAIL="admin@vectort.io"
 
 # Couleurs pour les logs
