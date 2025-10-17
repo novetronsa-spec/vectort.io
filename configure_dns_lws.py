@@ -9,11 +9,11 @@ import sys
 import time
 
 # Configuration
-API_KEY = "3zDaUP2mnBQih1ZyWCYOq9dFgL7wcEltSX4s8kMfAxNoTeJrbH"
+API_KEY = "zvPaiA9UKOXJTFoeHEqCsDSlWw2fR8un6Q3VZYkN75t0hmBbyM"
 LOGIN = "amoa.j.aymar@gmail.com"
 PASSWORD = "@@aaEE7610"
 DOMAIN = "vectort.io"
-SERVER_IP = "156.67.26.106"
+SERVER_IP = "31.165.143.145"
 SERVER_IPV6 = "2a02:c207:2285:5086::1"
 API_BASE_URL = "https://api.lws.net/v1"
 
