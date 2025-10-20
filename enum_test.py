@@ -7,7 +7,7 @@ import requests
 import json
 import time
 
-BASE_URL = "https://coderocket.preview.emergentagent.com/api"
+BASE_URL = "https://aicode-builder-1.preview.emergentagent.com/api"
 
 def test_enum_and_advanced_mode():
     print("🔧 Testing ProjectType Enum and Advanced Mode")

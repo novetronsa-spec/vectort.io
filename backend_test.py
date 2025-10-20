@@ -11,7 +11,7 @@ import time
 from typing import Dict, Any, Optional
 
 # Configuration
-BASE_URL = "https://coderocket.preview.emergentagent.com/api"
+BASE_URL = "https://aicode-builder-1.preview.emergentagent.com/api"
 TEST_USER = {
     "email": f"test.corrections.{int(time.time())}@vectort.io",
     "password": "SecurePass123!",
@@ -1287,7 +1287,7 @@ class CodexAPITester:
             
             purchase_data = {
                 "package_id": "starter",
-                "origin_url": "https://coderocket.preview.emergentagent.com"
+                "origin_url": "https://aicode-builder-1.preview.emergentagent.com"
             }
             
             response = self.make_request("POST", "/credits/purchase", purchase_data)

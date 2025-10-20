@@ -8,7 +8,7 @@ import requests
 import json
 import time
 
-BASE_URL = "https://coderocket.preview.emergentagent.com/api"
+BASE_URL = "https://aicode-builder-1.preview.emergentagent.com/api"
 
 def test_xss_vulnerability():
     """Test if XSS vulnerability still exists after understanding the issue"""

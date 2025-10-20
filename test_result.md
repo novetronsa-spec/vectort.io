@@ -1055,7 +1055,7 @@ agent_communication:
     - agent: "testing"
       message: "Comprehensive backend API testing completed successfully. Fixed critical bcrypt password hashing issue by switching to sha256_crypt. All 12 backend endpoints and error cases are working correctly with 100% test success rate."
     - agent: "testing"
-      message: "Starting comprehensive frontend testing of Codex interface. Will test landing page, authentication flow, dashboard functionality, project management, and backend integration. Testing URL: https://coderocket.preview.emergentagent.com"
+      message: "Starting comprehensive frontend testing of Codex interface. Will test landing page, authentication flow, dashboard functionality, project management, and backend integration. Testing URL: https://aicode-builder-1.preview.emergentagent.com"
     - agent: "testing"
       message: "COMPREHENSIVE FRONTEND TESTING COMPLETED SUCCESSFULLY! All 14 frontend tasks tested and working correctly. Key achievements: ✅ Landing page with dark theme, carousel navigation, and statistics display ✅ Complete authentication flow (registration/login) with proper error handling ✅ Dashboard functionality with project management (create/list/delete) ✅ Analytics tab with user statistics ✅ Responsive design (mobile/tablet/desktop) ✅ Backend integration working perfectly ✅ Error handling for invalid credentials and network issues. The Codex application is fully functional end-to-end."
     - agent: "testing"
