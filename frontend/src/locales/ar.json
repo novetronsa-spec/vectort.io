@@ -1,0 +1,25 @@
+{
+  "common": {
+    "welcome": "مرحبا بك في Vectort",
+    "get_started": "ابدأ",
+    "login": "تسجيل الدخول",
+    "register": "التسجيل",
+    "logout": "تسجيل الخروج",
+    "dashboard": "لوحة التحكم",
+    "projects": "المشاريع",
+    "credits": "الرصيد",
+    "settings": "الإعدادات",
+    "loading": "جاري التحميل...",
+    "error": "خطأ",
+    "success": "نجح",
+    "cancel": "إلغاء",
+    "confirm": "تأكيد",
+    "save": "حفظ",
+    "delete": "حذف",
+    "edit": "تعديل",
+    "create": "إنشاء",
+    "export": "تصدير",
+    "download": "تنزيل",
+    "deploy": "نشر"
+  }
+}

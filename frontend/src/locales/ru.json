@@ -1,0 +1,25 @@
+{
+  "common": {
+    "welcome": "Добро пожаловать в Vectort",
+    "get_started": "Начать",
+    "login": "Войти",
+    "register": "Регистрация",
+    "logout": "Выйти",
+    "dashboard": "Панель",
+    "projects": "Проекты",
+    "credits": "Кредиты",
+    "settings": "Настройки",
+    "loading": "Загрузка...",
+    "error": "Ошибка",
+    "success": "Успех",
+    "cancel": "Отмена",
+    "confirm": "Подтвердить",
+    "save": "Сохранить",
+    "delete": "Удалить",
+    "edit": "Редактировать",
+    "create": "Создать",
+    "export": "Экспорт",
+    "download": "Скачать",
+    "deploy": "Развернуть"
+  }
+}

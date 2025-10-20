@@ -1,0 +1,35 @@
+{
+  "common": {
+    "welcome": "Bienvenido a Vectort",
+    "get_started": "Comenzar",
+    "login": "Iniciar sesión",
+    "register": "Registrarse",
+    "logout": "Cerrar sesión",
+    "dashboard": "Panel",
+    "projects": "Proyectos",
+    "credits": "Créditos",
+    "settings": "Configuración",
+    "loading": "Cargando...",
+    "error": "Error",
+    "success": "Éxito",
+    "cancel": "Cancelar",
+    "confirm": "Confirmar",
+    "save": "Guardar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "create": "Crear",
+    "export": "Exportar",
+    "download": "Descargar",
+    "deploy": "Desplegar"
+  },
+  "auth": {
+    "email": "Correo electrónico",
+    "password": "Contraseña",
+    "full_name": "Nombre completo"
+  },
+  "dashboard": {
+    "my_projects": "Mis Proyectos",
+    "new_project": "Nuevo Proyecto",
+    "credits_balance": "Saldo de Créditos"
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "common": {
+    "welcome": "Benvenuto su Vectort",
+    "get_started": "Inizia",
+    "login": "Accedi",
+    "register": "Registrati",
+    "logout": "Esci",
+    "dashboard": "Cruscotto",
+    "projects": "Progetti",
+    "credits": "Crediti",
+    "settings": "Impostazioni",
+    "loading": "Caricamento...",
+    "error": "Errore",
+    "success": "Successo",
+    "cancel": "Annulla",
+    "confirm": "Conferma",
+    "save": "Salva",
+    "delete": "Elimina",
+    "edit": "Modifica",
+    "create": "Crea",
+    "export": "Esporta",
+    "download": "Scarica",
+    "deploy": "Distribuisci"
+  }
+}

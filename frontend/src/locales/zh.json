@@ -1,0 +1,25 @@
+{
+  "common": {
+    "welcome": "欢迎使用 Vectort",
+    "get_started": "开始使用",
+    "login": "登录",
+    "register": "注册",
+    "logout": "退出",
+    "dashboard": "仪表板",
+    "projects": "项目",
+    "credits": "积分",
+    "settings": "设置",
+    "loading": "加载中...",
+    "error": "错误",
+    "success": "成功",
+    "cancel": "取消",
+    "confirm": "确认",
+    "save": "保存",
+    "delete": "删除",
+    "edit": "编辑",
+    "create": "创建",
+    "export": "导出",
+    "download": "下载",
+    "deploy": "部署"
+  }
+}

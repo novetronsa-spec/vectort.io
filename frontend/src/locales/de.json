@@ -1,0 +1,25 @@
+{
+  "common": {
+    "welcome": "Willkommen bei Vectort",
+    "get_started": "Loslegen",
+    "login": "Anmelden",
+    "register": "Registrieren",
+    "logout": "Abmelden",
+    "dashboard": "Dashboard",
+    "projects": "Projekte",
+    "credits": "Credits",
+    "settings": "Einstellungen",
+    "loading": "Laden...",
+    "error": "Fehler",
+    "success": "Erfolg",
+    "cancel": "Abbrechen",
+    "confirm": "Bestätigen",
+    "save": "Speichern",
+    "delete": "Löschen",
+    "edit": "Bearbeiten",
+    "create": "Erstellen",
+    "export": "Exportieren",
+    "download": "Herunterladen",
+    "deploy": "Bereitstellen"
+  }
+}

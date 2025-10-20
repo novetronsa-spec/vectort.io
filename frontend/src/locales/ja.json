@@ -1,0 +1,25 @@
+{
+  "common": {
+    "welcome": "Vectortへようこそ",
+    "get_started": "始める",
+    "login": "ログイン",
+    "register": "登録",
+    "logout": "ログアウト",
+    "dashboard": "ダッシュボード",
+    "projects": "プロジェクト",
+    "credits": "クレジット",
+    "settings": "設定",
+    "loading": "読み込み中...",
+    "error": "エラー",
+    "success": "成功",
+    "cancel": "キャンセル",
+    "confirm": "確認",
+    "save": "保存",
+    "delete": "削除",
+    "edit": "編集",
+    "create": "作成",
+    "export": "エクスポート",
+    "download": "ダウンロード",
+    "deploy": "デプロイ"
+  }
+}
