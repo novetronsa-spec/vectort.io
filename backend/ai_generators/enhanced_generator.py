@@ -674,11 +674,23 @@ Génère UNIQUEMENT le code, sans explications ni markdown.
         
         # Ajouter les dépendances
         for dep in dependencies.get("dependencies", []):
-            name, version = dep.split("@") if "@" in dep else (dep, "latest")
+            if "@" in dep:
+                parts = dep.split("@")
+                name = parts[0] if parts[0] else parts[1]
+                version = parts[-1]
+            else:
+                name = dep
+                version = "latest"
             package["dependencies"][name] = version
         
         for dep in dependencies.get("devDependencies", []):
-            name, version = dep.split("@") if "@" in dep else (dep, "latest")
+            if "@" in dep:
+                parts = dep.split("@")
+                name = parts[0] if parts[0] else parts[1]
+                version = parts[-1]
+            else:
+                name = dep
+                version = "latest"
             package["devDependencies"][name] = version
         
         return json.dumps(package, indent=2)
