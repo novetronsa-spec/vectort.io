@@ -667,6 +667,24 @@ ${codeData.backend_code || 'Aucun code backend généré'}
                                 >
                                   <Download className="h-4 w-4" />
                                 </Button>
+                                <Button 
+                                  variant="ghost" 
+                                  size="sm"
+                                  onClick={() => openGitHubExport(project)}
+                                  title="Exporter vers GitHub"
+                                  className="text-purple-400 hover:text-purple-300"
+                                >
+                                  <Github className="h-4 w-4" />
+                                </Button>
+                                <Button 
+                                  variant="ghost" 
+                                  size="sm"
+                                  onClick={() => openDeployModal(project)}
+                                  title="Déployer l'application"
+                                  className="text-orange-400 hover:text-orange-300"
+                                >
+                                  <Rocket className="h-4 w-4" />
+                                </Button>
                               </>
                             )}
                             <Button 
