@@ -1114,6 +1114,60 @@ async def preview_project(
     return HTMLResponse(content=preview_html)
 
 
+@api_router.get("/projects/{project_id}/export/zip")
+async def export_project_zip(
+    project_id: str,
+    current_user: User = Depends(get_current_user)
+):
+    """Export le projet généré en ZIP téléchargeable"""
+    # Verify project ownership
+    project = await db.projects.find_one({"id": project_id, "user_id": current_user.id})
+    if not project:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Project not found"
+        )
+    
+    # Get generated code
+    generated_app = await db.generated_apps.find_one({"project_id": project_id})
+    if not generated_app:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Generated code not found. Please generate the project first."
+        )
+    
+    # Créer le ZIP avec l'exporter
+    from exporters.zip_exporter import ZipExporter
+    exporter = ZipExporter()
+    
+    # Déterminer le framework depuis le projet
+    framework = project.get('framework', 'react')
+    
+    # Créer l'archive ZIP
+    zip_buffer = await exporter.create_project_zip(
+        project_title=project.get('title', 'Vectort Project'),
+        generated_code=generated_app,
+        framework=framework,
+        include_config=True
+    )
+    
+    # Préparer le nom du fichier
+    from exporters.zip_exporter import ZipExporter
+    temp_exporter = ZipExporter()
+    safe_name = temp_exporter._sanitize_project_name(project.get('title', 'project'))
+    filename = f"{safe_name}.zip"
+    
+    # Retourner le ZIP
+    from fastapi.responses import StreamingResponse
+    return StreamingResponse(
+        iter([zip_buffer.getvalue()]),
+        media_type="application/zip",
+        headers={
+            "Content-Disposition": f"attachment; filename={filename}"
+        }
+    )
+
+
 # ============================================
 # ENDPOINTS SYSTÈME DE CRÉDITS ET PAIEMENTS
 # ============================================
