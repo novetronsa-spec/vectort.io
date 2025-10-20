@@ -455,7 +455,6 @@ RÈGLES IMPORTANTES:
 Génère UNIQUEMENT le code, sans explications ni markdown.
 """
         
-        from emergentintegrations.llm.chat import UserMessage
         response = await chat.send_message(UserMessage(text=prompt))
         return self._clean_generated_code(response)
     
