@@ -1115,6 +1115,29 @@ ${codeData.backend_code || 'Aucun code backend généré'}
           </div>
         </div>
       )}
+
+      {/* Modals d'export */}
+      {selectedProject && (
+        <>
+          <GitHubExportModal
+            isOpen={showGitHubModal}
+            onClose={() => {
+              setShowGitHubModal(false);
+              setSelectedProject(null);
+            }}
+            projectId={selectedProject.id}
+            projectTitle={selectedProject.title}
+          />
+          <DeploymentModal
+            isOpen={showDeployModal}
+            onClose={() => {
+              setShowDeployModal(false);
+              setSelectedProject(null);
+            }}
+            githubUrl={selectedProject.github_url}
+          />
+        </>
+      )}
     </div>
   );
 }
