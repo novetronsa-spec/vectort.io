@@ -666,6 +666,18 @@ backend:
           agent: "testing"
           comment: "🎯 TESTS CRITIQUES VECTORT.IO RÉUSSIS - GÉNÉRATION DE CODE RÉEL VALIDÉE! Validation complète selon demande française: ✅ AUTHENTIFICATION: Utilisateur créé avec 10 crédits gratuits, JWT fonctionnel, /api/auth/me opérationnel ✅ PROJET: Création réussie avec ID généré ✅ GÉNÉRATION CRITIQUE: VRAI code généré (React: 1368 chars, CSS: 943 chars) - pas du texte! ✅ CRÉDITS: Quick mode -2 crédits (10→8), Advanced mode -4 crédits (6→2) ✅ EMERGENT_LLM_KEY: Configurée, utilisée avec LlmChat, API GPT-4o fonctionnelle ✅ RÉCUPÉRATION: Code stocké et récupérable ✅ MODE AVANCÉ: 8 types fichiers générés (HTML, CSS, React, structure, package.json) 🎉 RÉSULTAT: 17/17 tests réussis (100%) - Système génère VRAI code fonctionnel comme Emergent! Backend logs: LLM calls successful, génération réussie, aucune erreur. PRÊT PRODUCTION!"
 
+  - task: "VECTORT.IO Production API Performance Issues"
+    implemented: true
+    working: false
+    file: "https://api.vectort.io/api"
+    stuck_count: 1
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: false
+          agent: "testing"
+          comment: "🚨 CRITICAL PRODUCTION API PERFORMANCE ISSUES DETECTED! Comprehensive testing of https://api.vectort.io/api reveals severe performance problems: ✅ WORKING: Basic API status (200 OK 'Vectort API Live'), Credit packages endpoint (correct 3 packages returned), Invalid token rejection (401 properly handled) ❌ CRITICAL FAILURES: Authentication endpoints (/auth/register, /auth/login) timing out after 30+ seconds, Stats endpoint (/stats) timing out, All user-dependent endpoints inaccessible due to authentication failures. IMPACT: Users cannot register or login on production site, preventing project generation functionality. ROOT CAUSE ANALYSIS: Likely database performance issues, authentication service bottlenecks, or infrastructure scaling problems. RECOMMENDATION: Immediate investigation of production database performance, authentication service scaling, and implementation of proper API monitoring/alerting. This explains why users report that https://vectort.io is not generating projects - the backend authentication is failing."
+
 frontend:
   - task: "Landing Page Load and Design"
     implemented: true
