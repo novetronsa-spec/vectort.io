@@ -358,7 +358,7 @@ class EnhancedProjectGenerator:
             api_key=self.api_key,
             session_id=f"project-{hash(description)}",
             system_message=self._get_system_message(framework, project_type)
-        ).with_model("openai", "gpt-4o")
+        )
         
         # Génération intelligente par groupes
         file_groups = self._group_files_by_priority(structure.files)
