@@ -64,6 +64,11 @@ export default function Dashboard() {
   const [showCreditModal, setShowCreditModal] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [isUltraMode, setIsUltraMode] = useState(false);
+  
+  // États pour les modals d'export
+  const [showGitHubModal, setShowGitHubModal] = useState(false);
+  const [showDeployModal, setShowDeployModal] = useState(false);
+  const [selectedProject, setSelectedProject] = useState(null);
 
   const frameworks = {
     web_app: ["react", "vue", "angular", "nextjs", "svelte"],
