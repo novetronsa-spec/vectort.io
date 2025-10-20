@@ -5,7 +5,7 @@ Système de génération de projets complets avec structure multi-fichiers
 
 from typing import Dict, List, Optional
 from dataclasses import dataclass
-from emergentintegrations.llm.chat import LlmChat
+from emergentintegrations.llm.chat import LlmChat, UserMessage
 import json
 
 
