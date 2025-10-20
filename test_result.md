@@ -1236,14 +1236,14 @@ metadata:
 
 test_plan:
   current_focus:
-    - "VECTORT.IO 100% Functionality Test - E-commerce Advanced Mode"
-    - "File Mapping Intelligence System"
+    - "Export Interface - New Buttons Integration"
+    - "GitHub Export Modal"
+    - "Deployment Modal"
+    - "Export Buttons Integration"
   stuck_tasks:
-    - "VECTORT.IO 100% Functionality Test - E-commerce Advanced Mode"
-    - "File Mapping Intelligence System"
-    - "VECTORT.IO Production API Performance Issues"
+    - "Export Interface - New Buttons Integration"
   test_all: false
-  test_priority: "advanced_mode_optimization"
+  test_priority: "export_interface_validation"
 
 agent_communication:
     - agent: "testing"
