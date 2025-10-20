@@ -25,6 +25,8 @@ import {
 import { useAuth } from "../contexts/AuthContext";
 import { useToast } from "../hooks/use-toast";
 import VoiceTextarea from "../components/VoiceTextarea";
+import GitHubExportModal from "../components/GitHubExportModal";
+import DeploymentModal from "../components/DeploymentModal";
 import axios from "axios";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
