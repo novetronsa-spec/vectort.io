@@ -694,6 +694,18 @@ backend:
           comment: "🎯 ENVIRONNEMENT LOCAL EMERGENT VALIDÉ À 100%! Comprehensive testing of local backend at http://localhost:8001 confirms complete functionality: ✅ API STATUS: GET /api/ returns 'Vectort API - AI-powered application generation' ✅ AUTHENTICATION FLOW: Register/Login/Auth check working perfectly, new users receive 10 free credits ✅ CREDIT SYSTEM: Balance endpoint shows correct structure, 3 packages (Starter/Standard/Pro) available ✅ PROJECT MANAGEMENT: Create/List/Get operations working correctly ✅ AI GENERATION CRITIQUE: Quick mode generates REAL code - React (1322 chars), CSS (1170 chars), Backend code, credit deduction (10→8) working ✅ ADVANCED MODE: Advanced generation with project structure and configuration files working ✅ CODE RETRIEVAL: GET /projects/{id}/code returns generated code successfully ✅ PREVIEW GENERATION: HTML preview (1536+ chars) with valid DOCTYPE generated ✅ EMERGENT_LLM_KEY: GPT-4o API calls successful, backend logs confirm LiteLLM integration working ✅ MONGODB LOCAL: Database operations, user creation, project storage all functional. SUCCESS RATE: 91.7% (11/12 tests). The local Emergent environment is production-ready for project generation!"
 
 frontend:
+  - task: "Project Preview Authentication Issue"
+    implemented: true
+    working: false
+    file: "frontend/src/pages/Dashboard.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: false
+          agent: "testing"
+          comment: "🚨 CRITICAL AUTHENTICATION BUG REPRODUCED AND IDENTIFIED! User-reported issue 'Not authenticated when clicking on project' has been successfully reproduced and root cause identified: ✅ REPRODUCTION CONFIRMED: Created project, clicked 'Voir l'app' button, confirmed 'Not authenticated' error appears ✅ ROOT CAUSE IDENTIFIED: openPreview() function in Dashboard.js (line 351-354) uses window.open() for direct navigation to /api/projects/{id}/preview without Authorization header ✅ TECHNICAL ANALYSIS: Browser direct navigation doesn't send JWT token stored in localStorage, causing backend to return 401 'detail: Not authenticated' ✅ PROOF: 'Voir le code' button works correctly (uses axios with Authorization header), but preview buttons fail (direct navigation) ✅ JWT TOKEN CONFIRMED: Token properly stored in localStorage and working for AJAX requests. SOLUTION NEEDED: Modify openPreview() function to fetch preview content with Authorization header and display in modal/iframe, or implement server-side authenticated preview URL generation. This is exactly the issue users are experiencing."
+
   - task: "Landing Page Load and Design"
     implemented: true
     working: true
