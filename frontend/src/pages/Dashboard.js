@@ -469,6 +469,16 @@ ${codeData.backend_code || 'Aucun code backend généré'}
     }
   };
 
+  const openGitHubExport = (project) => {
+    setSelectedProject(project);
+    setShowGitHubModal(true);
+  };
+
+  const openDeployModal = (project) => {
+    setSelectedProject(project);
+    setShowDeployModal(true);
+  };
+
   const handleLogout = () => {
     logout();
     navigate("/");
