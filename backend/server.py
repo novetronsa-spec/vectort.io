@@ -474,8 +474,9 @@ async def generate_app_code_advanced(request: GenerateAppRequest) -> dict:
     """GÉNÉRATEUR ULTRA-PUISSANT OPTIMISÉ - Génère des applications complètes rapidement"""
     try:
         if request.advanced_mode:
-            # MODE AVANCÉ OPTIMISÉ: Génération ciblée avec timeout court
-            return await generate_advanced_optimized(request)
+            # MODE AVANCÉ: Utiliser le nouveau générateur multi-fichiers
+            logger.info("Mode avancé activé - Génération multi-fichiers complète")
+            return await generate_complete_multifile_project(request)
         else:
             # MODE RAPIDE: Génération basique (compatibilité)
             return await generate_app_code_basic(request.description, request.type, request.framework)
