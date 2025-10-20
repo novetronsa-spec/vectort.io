@@ -40,6 +40,7 @@ export default function Dashboard() {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, logout } = useAuth();
+  const { t } = useLanguage();
   const { toast } = useToast();
   
   const [projects, setProjects] = useState([]);
