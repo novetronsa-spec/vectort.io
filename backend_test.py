@@ -2286,8 +2286,8 @@ if __name__ == "__main__":
         else:
             success = tester.run_all_tests()
     else:
-        # Default: Run credit system tests as requested in the review
-        success = tester.run_credit_system_tests()
+        # Default: Run Vectort.io production tests as requested in the review
+        success = tester.test_vectort_production_complete()
     
     # Exit with appropriate code
     sys.exit(0 if success else 1)
