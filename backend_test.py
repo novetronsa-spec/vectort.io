@@ -15,7 +15,7 @@ BASE_URL = "https://contabo-setup.preview.emergentagent.com/api"
 TEST_USER = {
     "email": f"test_vectort_{int(time.time())}@example.com",
     "password": "TestPassword123!",
-    "name": f"Test Vectort User {int(time.time())}"  # Changed from full_name to name
+    "full_name": f"Test Vectort User {int(time.time())}"  # Backend expects full_name
 }
 
 class CodexAPITester:
