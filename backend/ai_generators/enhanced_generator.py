@@ -344,6 +344,7 @@ class EnhancedProjectGenerator:
     ) -> Dict[str, str]:
         """
         Génère un projet complet avec tous les fichiers
+        VERSION OPTIMISÉE : Génération parallèle + fichiers essentiels uniquement
         
         Returns:
             Dict avec tous les fichiers générés {chemin: contenu}
@@ -351,7 +352,10 @@ class EnhancedProjectGenerator:
         # Obtenir la structure
         structure = self.get_project_structure(framework, project_type)
         
-        # Générer tous les fichiers
+        # OPTIMISATION : Ne générer que les fichiers essentiels (pas tous)
+        essential_files = self._filter_essential_files(structure.files, framework)
+        
+        # Générer tous les fichiers EN PARALLÈLE
         all_files = {}
         
         chat = LlmChat(
@@ -360,31 +364,107 @@ class EnhancedProjectGenerator:
             system_message=self._get_system_message(framework, project_type)
         )
         
-        # Génération intelligente par groupes
-        file_groups = self._group_files_by_priority(structure.files)
+        # Créer les tasks de génération en PARALLÈLE
+        import asyncio
+        tasks = []
+        file_paths = []
         
-        for priority, files_group in file_groups.items():
-            for file_path, file_desc in files_group.items():
-                try:
-                    content = await self._generate_file_content(
-                        chat=chat,
-                        file_path=file_path,
-                        file_desc=file_desc,
-                        description=description,
-                        framework=framework,
-                        project_type=project_type,
-                        dependencies=structure.dependencies,
-                        existing_files=all_files
-                    )
-                    all_files[file_path] = content
-                except Exception as e:
-                    print(f"Erreur génération {file_path}: {e}")
+        for file_path, file_desc in essential_files.items():
+            task = self._generate_file_content(
+                chat=chat,
+                file_path=file_path,
+                file_desc=file_desc,
+                description=description,
+                framework=framework,
+                project_type=project_type,
+                dependencies=structure.dependencies,
+                existing_files={}  # Pas de context pour paralléliser
+            )
+            tasks.append(task)
+            file_paths.append(file_path)
+        
+        try:
+            # Générer TOUS les fichiers en parallèle avec timeout de 20s
+            results = await asyncio.wait_for(
+                asyncio.gather(*tasks, return_exceptions=True),
+                timeout=20.0
+            )
+            
+            # Traiter les résultats
+            for i, result in enumerate(results):
+                file_path = file_paths[i]
+                if isinstance(result, Exception):
+                    print(f"Erreur génération {file_path}: {result}")
+                    all_files[file_path] = self._get_fallback_content(file_path)
+                else:
+                    all_files[file_path] = result
+                    
+        except asyncio.TimeoutError:
+            print("Timeout génération parallèle, utilisation fallbacks")
+            for file_path in file_paths:
+                if file_path not in all_files:
                     all_files[file_path] = self._get_fallback_content(file_path)
         
-        # Ajouter les fichiers de configuration auto-générés
+        # Ajouter les fichiers de configuration auto-générés (instantané)
         all_files.update(self._generate_config_files(structure, framework))
         
         return all_files
+    
+    def _filter_essential_files(self, all_files: Dict[str, str], framework: str) -> Dict[str, str]:
+        """Filtre pour garder uniquement les fichiers essentiels (MVP)"""
+        
+        essential = {}
+        
+        # Toujours inclure
+        always_include = [
+            'package.json', 'requirements.txt', '.gitignore', 
+            'README.md', '.env.example'
+        ]
+        
+        # Fichiers essentiels par framework
+        if framework == "react":
+            priority_files = [
+                'src/main.jsx', 'src/App.jsx', 'src/index.css',
+                'src/components/Header.jsx', 'src/components/Layout.jsx',
+                'src/pages/Home.jsx',
+                'src/utils/api.js',
+                'public/index.html'
+            ]
+        elif framework == "nextjs":
+            priority_files = [
+                'app/layout.tsx', 'app/page.tsx', 'app/globals.css',
+                'components/Header.tsx',
+                'lib/api.ts',
+                'tsconfig.json'
+            ]
+        elif framework == "fastapi":
+            priority_files = [
+                'main.py', 'config.py',
+                'models/user.py', 'models/database.py',
+                'routers/auth.py',
+                'schemas/user.py',
+                'utils/security.py'
+            ]
+        elif framework == "express":
+            priority_files = [
+                'server.js', 'app.js',
+                'routes/index.js', 'routes/auth.js',
+                'models/User.js',
+                'middleware/auth.js'
+            ]
+        else:
+            priority_files = []
+        
+        # Filtrer les fichiers
+        for file_path, desc in all_files.items():
+            # Toujours inclure les configs
+            if any(x in file_path for x in always_include):
+                essential[file_path] = desc
+            # Inclure les fichiers prioritaires
+            elif file_path in priority_files:
+                essential[file_path] = desc
+        
+        return essential
     
     def _group_files_by_priority(self, files: Dict[str, str]) -> Dict[int, Dict[str, str]]:
         """Groupe les fichiers par priorité de génération"""
