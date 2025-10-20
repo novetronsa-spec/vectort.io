@@ -413,6 +413,63 @@ async def add_credits(user_id: str, amount: int, transaction_type: str, descript
     
     return True
 
+async def generate_complete_multifile_project(request: GenerateAppRequest) -> dict:
+    """
+    NOUVEAU GÉNÉRATEUR - Projets multi-fichiers complets
+    Utilise EnhancedProjectGenerator pour créer une structure complète
+    """
+    try:
+        from ai_generators.enhanced_generator import EnhancedProjectGenerator
+        
+        logger.info(f"Génération multi-fichiers - Framework: {request.framework}, Type: {request.type}")
+        
+        # Initialiser le générateur amélioré
+        generator = EnhancedProjectGenerator(api_key=EMERGENT_LLM_KEY)
+        
+        # Générer le projet complet
+        all_files = await generator.generate_complete_project(
+            description=request.description,
+            framework=request.framework,
+            project_type=request.type,
+            advanced_mode=request.advanced_mode
+        )
+        
+        logger.info(f"Projet généré avec {len(all_files)} fichiers")
+        
+        # Extraire les fichiers principaux pour compatibilité
+        html_code = all_files.get("public/index.html", all_files.get("index.html", ""))
+        css_code = all_files.get("src/index.css", all_files.get("src/styles/App.css", ""))
+        js_code = all_files.get("src/utils/helpers.js", "")
+        react_code = all_files.get("src/App.jsx", all_files.get("src/main.jsx", ""))
+        backend_code = all_files.get("main.py", all_files.get("server.js", ""))
+        
+        # Extraire les configs
+        package_json = all_files.get("package.json", "")
+        requirements_txt = all_files.get("requirements.txt", "")
+        dockerfile = all_files.get("Dockerfile", "")
+        readme = all_files.get("README.md", "")
+        
+        return {
+            "html": html_code,
+            "css": css_code,
+            "js": js_code,
+            "react": react_code,
+            "backend": backend_code,
+            "project_structure": {"files": list(all_files.keys())},
+            "package_json": package_json,
+            "requirements_txt": requirements_txt,
+            "dockerfile": dockerfile,
+            "readme": readme,
+            "deployment_config": {},
+            "all_files": all_files  # TOUS les fichiers générés
+        }
+        
+    except Exception as e:
+        logger.error(f"Erreur génération multi-fichiers: {str(e)}")
+        # Fallback vers génération classique
+        return await generate_app_code_basic(request.description, request.type, request.framework)
+
+
 async def generate_app_code_advanced(request: GenerateAppRequest) -> dict:
     """GÉNÉRATEUR ULTRA-PUISSANT OPTIMISÉ - Génère des applications complètes rapidement"""
     try:
