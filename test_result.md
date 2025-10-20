@@ -729,11 +729,14 @@ backend:
     file: "backend/exporters/deployment_manager.py"
     stuck_count: 0
     priority: "medium"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: "NA"
           agent: "main"
           comment: "✅ SYSTÈME DE DÉPLOIEMENT CRÉÉ: Classes VercelDeployer, NetlifyDeployer, et DeploymentManager pour génération de boutons one-click deploy. Support Vercel, Netlify, Railway, Render. NÉCESSITE TESTS d'intégration."
+        - working: "NA"
+          agent: "testing"
+          comment: "⚠️ DEPLOYMENT MANAGER NON TESTÉ: Système créé mais pas d'endpoints API exposés pour tests. Classes VercelDeployer, NetlifyDeployer disponibles mais pas intégrées dans les routes API. Fonctionnalité disponible pour intégration future mais non accessible via API actuellement."
 
 frontend:
   - task: "Project Preview Authentication Issue"
