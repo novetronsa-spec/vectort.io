@@ -1078,6 +1078,18 @@ frontend:
           agent: "testing"
           comment: "🎯 TÂCHE FINALE VALIDATION FRANÇAISE - RÉSULTATS MIXTES: Test complet selon les exigences françaises révèle: ✅ ERREURS JAVASCRIPT ÉLIMINÉES: Aucune erreur 'Failed to execute createElement' ou 'InvalidCharacterError' détectée pendant tous les tests ✅ INSCRIPTION FONCTIONNELLE: Inscription réussie avec nom complet, email, mot de passe - redirection vers dashboard avec 10 crédits gratuits affichés ✅ CODE STRUCTURE CORRECTE: VoiceTextarea.js montre barre d'outils EN DESSOUS (mt-3, bg-gray-800/50, border) avec 5 boutons (Fichiers, GitHub, Fork, Ultra, Micro) et icônes h-5 w-5 ❌ ACCÈS DASHBOARD LIMITÉ: Session expirée rapidement, empêchant test complet des boutons EN DESSOUS du textarea ❌ BOUTONS NON TESTÉS: Impossible de vérifier positionnement réel, mode Ultra, et fonctionnalité des 5 boutons à cause de problèmes d'authentification ⚠️ STATUT: Code implémenté correctement selon spécifications françaises mais test fonctionnel incomplet à cause de limitations d'accès. Recommandation: Test manuel requis pour validation finale des boutons EN DESSOUS."
 
+  - task: "DIAGNOSTIC COMPLET - Preview Generation Issue"
+    implemented: true
+    working: false
+    file: "backend/server.py"
+    stuck_count: 1
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: false
+          agent: "testing"
+          comment: "🚨 DIAGNOSTIC COMPLET VECTORT.IO - PROBLÈME PREVIEW IDENTIFIÉ! Comprehensive testing reveals: ✅ API BACKEND FONCTIONNEL: All endpoints working (API status, stats, credit packages) ✅ AUTHENTIFICATION COMPLÈTE: Registration successful with full_name field, 10 free credits allocated ✅ GÉNÉRATION IA FONCTIONNELLE: Real code generated successfully (React: 4474 chars, Backend: 716 chars, Total: 5190 chars) ❌ PROBLÈME CRITIQUE PREVIEW: Preview API returns valid HTML structure but with empty content (374 chars total) - missing CSS and JS integration ❌ ROOT CAUSE IDENTIFIED: The preview generation system creates basic HTML template but fails to integrate the generated CSS and JavaScript code into the final HTML output. The AI generates real code but the preview assembly process is broken. IMPACT: Users see 'Impossible de montrer preview' because the preview HTML is technically valid but functionally empty. SOLUTION NEEDED: Fix the preview generation logic in /api/projects/{id}/preview endpoint to properly embed generated CSS and JS code into the HTML template."
+
 metadata:
   created_by: "testing_agent"
   version: "1.0"
