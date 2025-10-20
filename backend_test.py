@@ -15,7 +15,7 @@ BASE_URL = "https://api.vectort.io/api"
 TEST_USER = {
     "email": f"test_vectort_{int(time.time())}@example.com",
     "password": "TestPassword123!",
-    "full_name": f"Test Vectort User {int(time.time())}"
+    "name": f"Test Vectort User {int(time.time())}"  # Changed from full_name to name
 }
 
 class CodexAPITester:
