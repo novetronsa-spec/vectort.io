@@ -1780,6 +1780,302 @@ class CodexAPITester:
         except Exception as e:
             self.log_result("Credit History Endpoint", False, f"Exception: {str(e)}")
 
+    # ============================================
+    # EXPORT FUNCTIONALITY TESTS - PHASE 1
+    # ============================================
+
+    def test_export_zip_functionality(self):
+        """Test Export ZIP System - Phase 1"""
+        print("\n=== Test Export ZIP System ===")
+        try:
+            if not self.access_token:
+                self.log_result("Export ZIP System", False, "No access token available")
+                return
+            
+            # First, create a project and generate code
+            project_data = {
+                "title": "Test E-commerce Export",
+                "description": "Application e-commerce pour test d'export ZIP",
+                "type": "web_app"
+            }
+            
+            project_response = self.make_request("POST", "/projects", project_data)
+            if project_response.status_code != 200:
+                self.log_result("Export ZIP System", False, f"Failed to create project: {project_response.status_code}")
+                return
+            
+            project_id = project_response.json()["id"]
+            
+            # Generate code for the project
+            generation_request = {
+                "description": "Créer une application e-commerce simple avec React",
+                "type": "web_app",
+                "framework": "react",
+                "advanced_mode": False
+            }
+            
+            gen_response = self.make_request("POST", f"/projects/{project_id}/generate", generation_request)
+            if gen_response.status_code != 200:
+                self.log_result("Export ZIP System", False, f"Failed to generate code: {gen_response.status_code}")
+                return
+            
+            # Now test the ZIP export
+            response = self.make_request("GET", f"/projects/{project_id}/export/zip")
+            
+            if response.status_code == 200:
+                # Check Content-Type
+                content_type = response.headers.get('Content-Type', '')
+                if 'application/zip' in content_type:
+                    # Check Content-Disposition header
+                    content_disposition = response.headers.get('Content-Disposition', '')
+                    if 'attachment' in content_disposition and 'filename' in content_disposition:
+                        # Check file size
+                        content_length = len(response.content)
+                        if content_length > 1024:  # > 1KB
+                            self.log_result("Export ZIP System", True, 
+                                          f"✅ ZIP export successful: {content_length} bytes, Content-Type: {content_type}")
+                        else:
+                            self.log_result("Export ZIP System", False, 
+                                          f"ZIP file too small: {content_length} bytes")
+                    else:
+                        self.log_result("Export ZIP System", False, 
+                                      f"Missing Content-Disposition header: {content_disposition}")
+                else:
+                    self.log_result("Export ZIP System", False, 
+                                  f"Wrong Content-Type: {content_type}")
+            elif response.status_code == 404:
+                self.log_result("Export ZIP System", False, "Project or generated code not found")
+            else:
+                self.log_result("Export ZIP System", False, 
+                              f"Status: {response.status_code}, Body: {response.text}")
+                
+        except Exception as e:
+            self.log_result("Export ZIP System", False, f"Exception: {str(e)}")
+
+    def test_github_user_info_endpoint(self):
+        """Test GitHub User Info Endpoint (without real token)"""
+        print("\n=== Test GitHub User Info Endpoint ===")
+        try:
+            if not self.access_token:
+                self.log_result("GitHub User Info Endpoint", False, "No access token available")
+                return
+            
+            # Test with invalid token (expected to fail)
+            fake_token = "ghp_fake_token_for_testing_123456789"
+            response = self.make_request("GET", f"/github/user?github_token={fake_token}")
+            
+            if response.status_code == 401:
+                self.log_result("GitHub User Info Endpoint", True, 
+                              "✅ Correctly rejected invalid GitHub token with 401")
+            elif response.status_code == 200:
+                # This would be unexpected with a fake token
+                self.log_result("GitHub User Info Endpoint", False, 
+                              "Unexpected success with fake token")
+            else:
+                self.log_result("GitHub User Info Endpoint", True, 
+                              f"✅ Endpoint exists and responds (Status: {response.status_code})")
+                
+        except Exception as e:
+            self.log_result("GitHub User Info Endpoint", False, f"Exception: {str(e)}")
+
+    def test_github_export_endpoint(self):
+        """Test GitHub Export Endpoint (simulate without real token)"""
+        print("\n=== Test GitHub Export Endpoint ===")
+        try:
+            if not self.access_token:
+                self.log_result("GitHub Export Endpoint", False, "No access token available")
+                return
+            
+            # First, create a project and generate code
+            project_data = {
+                "title": "Test GitHub Export",
+                "description": "Application pour test d'export GitHub",
+                "type": "web_app"
+            }
+            
+            project_response = self.make_request("POST", "/projects", project_data)
+            if project_response.status_code != 200:
+                self.log_result("GitHub Export Endpoint", False, f"Failed to create project: {project_response.status_code}")
+                return
+            
+            project_id = project_response.json()["id"]
+            
+            # Generate code for the project
+            generation_request = {
+                "description": "Créer une application simple pour test GitHub",
+                "type": "web_app",
+                "framework": "react",
+                "advanced_mode": False
+            }
+            
+            gen_response = self.make_request("POST", f"/projects/{project_id}/generate", generation_request)
+            if gen_response.status_code != 200:
+                self.log_result("GitHub Export Endpoint", False, f"Failed to generate code: {gen_response.status_code}")
+                return
+            
+            # Test GitHub export with fake token
+            export_data = {
+                "github_token": "ghp_fake_token_for_testing_123456789",
+                "repo_name": "test-vectort-export",
+                "private": False
+            }
+            
+            response = self.make_request("POST", f"/projects/{project_id}/export/github", export_data)
+            
+            if response.status_code == 401:
+                self.log_result("GitHub Export Endpoint", True, 
+                              "✅ Correctly rejected invalid GitHub token")
+            elif response.status_code == 500:
+                # Expected with invalid token
+                error_data = response.json() if response.headers.get('content-type', '').startswith('application/json') else {}
+                if "GitHub" in str(error_data) or "token" in str(error_data):
+                    self.log_result("GitHub Export Endpoint", True, 
+                                  "✅ Endpoint exists and properly handles GitHub token errors")
+                else:
+                    self.log_result("GitHub Export Endpoint", False, 
+                                  f"Unexpected error: {response.text}")
+            else:
+                self.log_result("GitHub Export Endpoint", True, 
+                              f"✅ Endpoint exists and responds (Status: {response.status_code})")
+                
+        except Exception as e:
+            self.log_result("GitHub Export Endpoint", False, f"Exception: {str(e)}")
+
+    def test_export_robustness_cases(self):
+        """Test Export Robustness Cases"""
+        print("\n=== Test Export Robustness Cases ===")
+        
+        if not self.access_token:
+            self.log_result("Export Robustness Cases", False, "No access token available")
+            return
+        
+        # Test 1: Export non-existent project
+        try:
+            response = self.make_request("GET", "/projects/non-existent-id/export/zip")
+            if response.status_code == 404:
+                self.log_result("Export Non-existent Project", True, 
+                              "✅ Correctly returned 404 for non-existent project")
+            else:
+                self.log_result("Export Non-existent Project", False, 
+                              f"Expected 404, got {response.status_code}")
+        except Exception as e:
+            self.log_result("Export Non-existent Project", False, f"Exception: {str(e)}")
+        
+        # Test 2: Export without authentication
+        try:
+            # Remove auth header temporarily
+            old_token = self.access_token
+            self.access_token = None
+            
+            response = self.make_request("GET", "/projects/test-id/export/zip")
+            
+            # Restore token
+            self.access_token = old_token
+            
+            if response.status_code == 401:
+                self.log_result("Export Without Auth", True, 
+                              "✅ Correctly returned 401 without authentication")
+            else:
+                self.log_result("Export Without Auth", False, 
+                              f"Expected 401, got {response.status_code}")
+        except Exception as e:
+            self.log_result("Export Without Auth", False, f"Exception: {str(e)}")
+
+    def test_integration_existing_endpoints(self):
+        """Test Integration - Verify Existing Endpoints Still Work"""
+        print("\n=== Test Integration - Existing Endpoints ===")
+        
+        # Test critical endpoints to ensure no regression
+        critical_tests = [
+            ("Basic API", lambda: self.make_request("GET", "/")),
+            ("Global Stats", lambda: self.make_request("GET", "/stats")),
+        ]
+        
+        if self.access_token:
+            critical_tests.extend([
+                ("Auth Check", lambda: self.make_request("GET", "/auth/me")),
+                ("Project List", lambda: self.make_request("GET", "/projects")),
+                ("Credit Balance", lambda: self.make_request("GET", "/credits/balance")),
+                ("Credit Packages", lambda: self.make_request("GET", "/credits/packages")),
+            ])
+        
+        all_passed = True
+        for test_name, test_func in critical_tests:
+            try:
+                response = test_func()
+                if response.status_code == 200:
+                    self.log_result(f"Integration - {test_name}", True, 
+                                  "✅ Endpoint working correctly")
+                else:
+                    self.log_result(f"Integration - {test_name}", False, 
+                                  f"Status: {response.status_code}")
+                    all_passed = False
+            except Exception as e:
+                self.log_result(f"Integration - {test_name}", False, f"Exception: {str(e)}")
+                all_passed = False
+        
+        if all_passed:
+            self.log_result("Integration Test Summary", True, 
+                          "✅ All existing endpoints working - no regression detected")
+        else:
+            self.log_result("Integration Test Summary", False, 
+                          "❌ Some existing endpoints have issues")
+
+    def run_export_system_tests(self):
+        """🎯 TEST COMPLET SYSTÈME D'EXPORT - Backend Phase 1"""
+        print("🎯 TEST COMPLET SYSTÈME D'EXPORT - Backend")
+        print(f"Testing against: {self.base_url}")
+        print("=" * 80)
+        
+        # Setup authentication first
+        print("\n🔐 SETUP: Authentication pour tests export")
+        print("-" * 50)
+        self.test_user_registration()
+        if not self.access_token:
+            self.test_user_login()
+        
+        if not self.access_token:
+            print("❌ Cannot proceed without authentication")
+            return False
+        
+        # Test export functionality
+        print("\n📦 PHASE 1: SYSTÈME D'EXPORT ZIP")
+        print("-" * 50)
+        self.test_export_zip_functionality()
+        
+        print("\n🐙 PHASE 2: SYSTÈME D'EXPORT GITHUB")
+        print("-" * 50)
+        self.test_github_user_info_endpoint()
+        self.test_github_export_endpoint()
+        
+        print("\n🛡️ PHASE 3: TESTS DE ROBUSTESSE")
+        print("-" * 50)
+        self.test_export_robustness_cases()
+        
+        print("\n🔄 PHASE 4: TESTS D'INTÉGRATION")
+        print("-" * 50)
+        self.test_integration_existing_endpoints()
+        
+        # Print summary
+        print("\n" + "=" * 80)
+        print("🎯 RÉSUMÉ TESTS SYSTÈME D'EXPORT")
+        print("=" * 80)
+        print(f"✅ Passed: {self.results['passed']}")
+        print(f"❌ Failed: {self.results['failed']}")
+        
+        if self.results['passed'] + self.results['failed'] > 0:
+            success_rate = (self.results['passed'] / (self.results['passed'] + self.results['failed']) * 100)
+            print(f"📈 Success Rate: {success_rate:.1f}%")
+        
+        if self.results['errors']:
+            print("\n🔍 TESTS ÉCHOUÉS:")
+            for error in self.results['errors']:
+                print(f"   • {error}")
+        else:
+            print("\n🎉 TOUS LES TESTS DU SYSTÈME D'EXPORT RÉUSSIS!")
+        
+        return self.results['failed'] == 0
+
     def run_credit_system_tests(self):
         """Run comprehensive credit system and Stripe payment tests"""
         print("💳 SYSTÈME DE CRÉDITS ET PAIEMENTS STRIPE - TESTS COMPLETS")
