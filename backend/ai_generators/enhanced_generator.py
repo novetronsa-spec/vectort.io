@@ -455,7 +455,7 @@ RÈGLES IMPORTANTES:
 Génère UNIQUEMENT le code, sans explications ni markdown.
 """
         
-        response = await chat.send_message(UserMessage(text=prompt))
+        response = await chat.with_model("openai", "gpt-4o").send_message(UserMessage(text=prompt))
         return self._clean_generated_code(response)
     
     def _build_generation_context(self, existing_files: Dict[str, str], current_file: str) -> str:
