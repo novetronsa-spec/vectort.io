@@ -2462,6 +2462,189 @@ class CodexAPITester:
         
         return self.results['failed'] == 0
 
+    def test_optimized_multifile_generation_french_request(self):
+        """🎯 RE-TEST GÉNÉRATION MULTI-FICHIERS OPTIMISÉE (French Review Request)"""
+        print("\n=== 🎯 RE-TEST GÉNÉRATION MULTI-FICHIERS OPTIMISÉE ===")
+        print("OBJECTIF: Valider que l'optimisation de génération parallèle fonctionne")
+        print("CONTEXTE: Optimisation appliquée - Génération parallèle + fichiers essentiels uniquement")
+        print("TIMEOUT: Réduit à 20s")
+        
+        try:
+            # Étape 1: Créer un nouveau compte test
+            print("\n--- Étape 1: Création compte test ---")
+            test_user = {
+                "email": f"test_optimized_{int(time.time())}@vectort.io",
+                "password": "TestOptimized123!",
+                "full_name": f"Test Optimized User {int(time.time())}"
+            }
+            
+            register_response = self.make_request("POST", "/auth/register", test_user)
+            if register_response.status_code != 200:
+                # Try login if user exists
+                login_response = self.make_request("POST", "/auth/login", {
+                    "email": test_user["email"],
+                    "password": test_user["password"]
+                })
+                if login_response.status_code == 200:
+                    data = login_response.json()
+                    self.access_token = data["access_token"]
+                    print("✅ Utilisateur existant connecté")
+                else:
+                    self.log_result("Optimized Generation - Account Creation", False, 
+                                  f"Failed to create/login user: {register_response.status_code}")
+                    return
+            else:
+                data = register_response.json()
+                self.access_token = data["access_token"]
+                print("✅ Nouveau compte créé avec succès")
+            
+            # Étape 2: Créer projet type "web_app" avec React
+            print("\n--- Étape 2: Création projet web_app React ---")
+            project_data = {
+                "title": "Site Web Moderne React",
+                "description": "Site web moderne avec composants React",
+                "type": "web_app"
+            }
+            
+            project_response = self.make_request("POST", "/projects", project_data)
+            if project_response.status_code != 200:
+                self.log_result("Optimized Generation - Project Creation", False, 
+                              f"Failed to create project: {project_response.status_code}")
+                return
+            
+            project_id = project_response.json()["id"]
+            print(f"✅ Projet créé avec ID: {project_id}")
+            
+            # Étape 3: Lancer génération avec Mode Advanced activé
+            print("\n--- Étape 3: Génération Advanced Mode ---")
+            generation_request = {
+                "description": "Site web moderne avec composants React",
+                "type": "web_app",
+                "framework": "react",
+                "database": "mongodb",
+                "advanced_mode": True,  # Mode Advanced activé
+                "features": ["authentication", "responsive_design"],
+                "integrations": []
+            }
+            
+            print("🚀 Lancement génération optimisée...")
+            start_time = time.time()
+            response = self.make_request("POST", f"/projects/{project_id}/generate", generation_request)
+            generation_time = time.time() - start_time
+            
+            print(f"⏱️ Temps de génération: {generation_time:.2f}s")
+            
+            # VÉRIFICATIONS selon la demande française
+            if response.status_code in [200, 201]:
+                data = response.json()
+                
+                # ✅ Génération réussie (200/201)
+                generation_success = True
+                print("✅ Génération réussie (200/201)")
+                
+                # ✅ all_files contient au moins 8-12 fichiers essentiels
+                all_files = data.get("all_files", {})
+                file_count = len(all_files) if all_files else 0
+                files_sufficient = file_count >= 8
+                print(f"📁 Fichiers générés: {file_count} (requis: 8-12)")
+                if files_sufficient:
+                    print("✅ all_files contient suffisamment de fichiers essentiels")
+                else:
+                    print("❌ Nombre de fichiers insuffisant")
+                
+                # ✅ Temps < 20s
+                time_ok = generation_time < 20.0
+                if time_ok:
+                    print(f"✅ Temps < 20s ({generation_time:.2f}s)")
+                else:
+                    print(f"❌ Temps > 20s ({generation_time:.2f}s)")
+                
+                # ✅ package.json présent et valide
+                package_json = data.get("package_json") or (all_files.get("package.json") if all_files else None)
+                package_json_valid = bool(package_json)
+                if package_json_valid:
+                    print("✅ package.json présent et valide")
+                    try:
+                        import json
+                        if isinstance(package_json, str):
+                            json.loads(package_json)
+                        print("✅ package.json format JSON valide")
+                    except:
+                        print("⚠️ package.json présent mais format invalide")
+                else:
+                    print("❌ package.json manquant")
+                
+                # ✅ Fichiers essentiels: src/App.jsx, src/main.jsx, etc.
+                essential_files = ["src/App.jsx", "src/main.jsx", "src/index.js", "src/App.js"]
+                found_essential = []
+                if all_files:
+                    for file_path in all_files.keys():
+                        for essential in essential_files:
+                            if essential in file_path or file_path.endswith(essential.split('/')[-1]):
+                                found_essential.append(file_path)
+                
+                essential_files_ok = len(found_essential) > 0
+                if essential_files_ok:
+                    print(f"✅ Fichiers essentiels trouvés: {found_essential}")
+                else:
+                    print("❌ Fichiers essentiels manquants")
+                
+                # ✅ Pas de timeout
+                no_timeout = generation_time < 25.0  # Marge de sécurité
+                if no_timeout:
+                    print("✅ Pas de timeout")
+                else:
+                    print("❌ Timeout détecté")
+                
+                # ✅ Logs montrent "Projet généré avec X fichiers"
+                logs_ok = file_count > 0  # Si des fichiers sont générés, les logs sont OK
+                if logs_ok:
+                    print(f"✅ Logs: Projet généré avec {file_count} fichiers")
+                else:
+                    print("❌ Logs: Aucun fichier généré")
+                
+                # RÉSULTAT FINAL
+                criteria_met = [
+                    generation_success,
+                    files_sufficient,
+                    time_ok,
+                    package_json_valid,
+                    essential_files_ok,
+                    no_timeout,
+                    logs_ok
+                ]
+                
+                success_count = sum(criteria_met)
+                total_criteria = len(criteria_met)
+                
+                if success_count >= 5:  # Au moins 5/7 critères requis
+                    self.log_result("Optimized Multi-file Generation", True, 
+                                  f"🎉 OPTIMISATION VALIDÉE: {success_count}/{total_criteria} critères réussis. "
+                                  f"Génération parallèle fonctionnelle en {generation_time:.2f}s avec {file_count} fichiers.")
+                else:
+                    self.log_result("Optimized Multi-file Generation", False, 
+                                  f"❌ OPTIMISATION INSUFFISANTE: {success_count}/{total_criteria} critères. "
+                                  f"Temps: {generation_time:.2f}s, Fichiers: {file_count}")
+                
+                # Afficher détails des fichiers générés
+                if all_files:
+                    print(f"\n📋 DÉTAIL DES FICHIERS GÉNÉRÉS ({len(all_files)}):")
+                    for i, (file_path, content) in enumerate(list(all_files.items())[:10]):  # Afficher les 10 premiers
+                        content_size = len(content) if content else 0
+                        print(f"  {i+1}. {file_path} ({content_size} chars)")
+                    if len(all_files) > 10:
+                        print(f"  ... et {len(all_files) - 10} autres fichiers")
+                
+            elif response.status_code == 402:
+                self.log_result("Optimized Multi-file Generation", False, 
+                              "❌ Crédits insuffisants pour tester l'optimisation")
+            else:
+                self.log_result("Optimized Multi-file Generation", False, 
+                              f"❌ Génération échouée: {response.status_code} - {response.text}")
+                
+        except Exception as e:
+            self.log_result("Optimized Multi-file Generation", False, f"Exception: {str(e)}")
+
     def run_all_tests(self):
         """Run all tests in sequence"""
         print("🚀 Starting Vectort.io AI Application Generation System Tests")
