@@ -2579,11 +2579,13 @@ if __name__ == "__main__":
             success = tester.run_vectort_100_percent_tests()
         elif sys.argv[1] == "--credits":
             success = tester.run_credit_system_tests()
+        elif sys.argv[1] == "--export":
+            success = tester.run_export_system_tests()
         else:
             success = tester.run_all_tests()
     else:
-        # Default: Run Vectort.io production tests as requested in the review
-        success = tester.test_vectort_production_complete()
+        # Default: Run export system tests as requested in the review
+        success = tester.run_export_system_tests()
     
     # Exit with appropriate code
     sys.exit(0 if success else 1)
