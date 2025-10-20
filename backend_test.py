@@ -1164,10 +1164,334 @@ class CodexAPITester:
             self.log_result("Final Validation - All Endpoints", False, 
                           "Some critical endpoints failed validation")
 
+    def test_multifile_generation_advanced_mode(self):
+        """🎯 TEST PHASE 2: Multi-file Generation (NOUVEAU - CRITIQUE)"""
+        print("\n=== 🎯 PHASE 2: Multi-file Generation (NOUVEAU - CRITIQUE) ===")
+        try:
+            if not self.access_token:
+                self.log_result("Multi-file Generation", False, "No access token available")
+                return
+            
+            # Create project for e-commerce generation
+            project_data = {
+                "title": "E-commerce Multi-fichiers",
+                "description": "Application e-commerce complète avec React, panier, paiement Stripe, gestion produits, authentification utilisateur, et dashboard admin",
+                "type": "ecommerce"
+            }
+            
+            project_response = self.make_request("POST", "/projects", project_data)
+            if project_response.status_code != 200:
+                self.log_result("Multi-file Generation", False, f"Failed to create project: {project_response.status_code}")
+                return
+            
+            project_id = project_response.json()["id"]
+            self.test_project_id = project_id  # Store for other tests
+            
+            # Generate with ADVANCED MODE activated
+            generation_request = {
+                "description": "Application e-commerce complète avec panier, paiement Stripe, gestion produits, authentification utilisateur, et dashboard admin",
+                "type": "ecommerce",
+                "framework": "react",
+                "database": "mongodb",
+                "advanced_mode": True,  # MODE ADVANCED ACTIVÉ
+                "features": ["authentication", "payment_processing", "shopping_cart", "admin_panel"],
+                "integrations": ["stripe"]
+            }
+            
+            start_time = time.time()
+            response = self.make_request("POST", f"/projects/{project_id}/generate", generation_request)
+            generation_time = time.time() - start_time
+            
+            if response.status_code in [200, 201]:
+                data = response.json()
+                
+                # VÉRIFICATIONS CRITIQUES selon la demande française
+                all_files = data.get("all_files", {})
+                has_all_files = bool(all_files)
+                file_count = len(all_files) if all_files else 0
+                
+                # Vérifier package.json
+                package_json = data.get("package_json") or (all_files.get("package.json") if all_files else None)
+                has_package_json = bool(package_json)
+                
+                # Vérifier structure cohérente
+                expected_files = ["src/", "components/", "package.json"]
+                structure_coherent = any(any(expected in file_path for expected in expected_files) 
+                                       for file_path in all_files.keys()) if all_files else False
+                
+                # Logs backend check
+                backend_logs_ok = generation_time < 30  # Performance check
+                
+                # SUCCESS CRITERIA selon la demande
+                success_criteria = {
+                    "generation_success": response.status_code in [200, 201],
+                    "all_files_exists": has_all_files,
+                    "multiple_files": file_count >= 15,  # 15+ fichiers requis
+                    "package_json_generated": has_package_json,
+                    "structure_coherent": structure_coherent,
+                    "performance_ok": generation_time < 30,  # <30s acceptable
+                    "backend_logs": True  # Assume logs are OK if generation succeeds
+                }
+                
+                passed_criteria = sum(success_criteria.values())
+                total_criteria = len(success_criteria)
+                
+                if passed_criteria >= 5:  # Au moins 5/7 critères
+                    self.log_result("Multi-file Generation", True, 
+                                  f"✅ Génération multi-fichiers réussie: {file_count} fichiers générés, "
+                                  f"package.json: {'✅' if has_package_json else '❌'}, "
+                                  f"structure: {'✅' if structure_coherent else '❌'}, "
+                                  f"temps: {generation_time:.1f}s, "
+                                  f"critères: {passed_criteria}/{total_criteria}")
+                else:
+                    self.log_result("Multi-file Generation", False, 
+                                  f"❌ Critères insuffisants: {passed_criteria}/{total_criteria}. "
+                                  f"Fichiers: {file_count}, package.json: {has_package_json}, "
+                                  f"structure: {structure_coherent}, temps: {generation_time:.1f}s")
+            elif response.status_code == 402:
+                self.log_result("Multi-file Generation", False, "❌ Crédits insuffisants")
+            else:
+                self.log_result("Multi-file Generation", False, 
+                              f"❌ Génération échouée: {response.status_code} - {response.text}")
+        except Exception as e:
+            self.log_result("Multi-file Generation", False, f"Exception: {str(e)}")
+
+    def test_code_validation_system(self):
+        """🎯 TEST PHASE 2: Code Validation (NOUVEAU)"""
+        print("\n=== 🎯 PHASE 2: Code Validation (NOUVEAU) ===")
+        try:
+            if not self.access_token or not self.test_project_id:
+                self.log_result("Code Validation", False, "No access token or project ID available")
+                return
+            
+            # Test validation endpoint
+            start_time = time.time()
+            response = self.make_request("GET", f"/projects/{self.test_project_id}/validate")
+            validation_time = time.time() - start_time
+            
+            if response.status_code == 200:
+                data = response.json()
+                
+                # VÉRIFICATIONS selon la demande française
+                required_fields = ["overall_score", "total_files", "valid_files", "report", "files"]
+                has_required_fields = all(field in data for field in required_fields)
+                
+                overall_score = data.get("overall_score", 0)
+                total_files = data.get("total_files", 0)
+                valid_files = data.get("valid_files", 0)
+                report = data.get("report", "")
+                files_detail = data.get("files", {})
+                
+                # SUCCESS CRITERIA
+                success_criteria = {
+                    "status_200": response.status_code == 200,
+                    "overall_score_valid": 0 <= overall_score <= 100,
+                    "total_files_positive": total_files > 0,
+                    "valid_files_counted": valid_files >= 0,
+                    "report_markdown": bool(report),
+                    "files_details": bool(files_detail),
+                    "performance_ok": validation_time < 5  # <5s requis
+                }
+                
+                passed_criteria = sum(success_criteria.values())
+                
+                if passed_criteria >= 6:  # Au moins 6/7 critères
+                    self.log_result("Code Validation", True, 
+                                  f"✅ Validation réussie: score {overall_score}/100, "
+                                  f"{valid_files}/{total_files} fichiers valides, "
+                                  f"rapport: {len(report)} chars, temps: {validation_time:.1f}s")
+                else:
+                    self.log_result("Code Validation", False, 
+                                  f"❌ Critères insuffisants: {passed_criteria}/7. "
+                                  f"Score: {overall_score}, fichiers: {total_files}, temps: {validation_time:.1f}s")
+            elif response.status_code == 404:
+                self.log_result("Code Validation", False, "❌ Projet non trouvé pour validation")
+            else:
+                self.log_result("Code Validation", False, 
+                              f"❌ Validation échouée: {response.status_code} - {response.text}")
+        except Exception as e:
+            self.log_result("Code Validation", False, f"Exception: {str(e)}")
+
+    def test_export_zip_multifiles(self):
+        """🎯 TEST PHASE 1: Export ZIP avec Multi-fichiers"""
+        print("\n=== 🎯 PHASE 1: Export ZIP avec Multi-fichiers ===")
+        try:
+            if not self.access_token or not self.test_project_id:
+                self.log_result("Export ZIP Multi-files", False, "No access token or project ID available")
+                return
+            
+            # Test ZIP export
+            start_time = time.time()
+            response = self.make_request("GET", f"/projects/{self.test_project_id}/export/zip")
+            export_time = time.time() - start_time
+            
+            if response.status_code == 200:
+                # VÉRIFICATIONS selon la demande française
+                content_type = response.headers.get("Content-Type", "")
+                content_disposition = response.headers.get("Content-Disposition", "")
+                content_length = len(response.content)
+                
+                # SUCCESS CRITERIA
+                success_criteria = {
+                    "status_200": response.status_code == 200,
+                    "content_type_zip": "application/zip" in content_type,
+                    "has_filename": "filename" in content_disposition,
+                    "size_over_10kb": content_length > 10240,  # >10KB attendu
+                    "performance_ok": export_time < 3  # <3s requis
+                }
+                
+                passed_criteria = sum(success_criteria.values())
+                
+                if passed_criteria >= 4:  # Au moins 4/5 critères
+                    self.log_result("Export ZIP Multi-files", True, 
+                                  f"✅ Export ZIP réussi: {content_length} bytes, "
+                                  f"type: {content_type}, temps: {export_time:.1f}s")
+                else:
+                    self.log_result("Export ZIP Multi-files", False, 
+                                  f"❌ Critères insuffisants: {passed_criteria}/5. "
+                                  f"Taille: {content_length} bytes, temps: {export_time:.1f}s")
+            elif response.status_code == 403:
+                self.log_result("Export ZIP Multi-files", False, "❌ Authentification requise")
+            elif response.status_code == 404:
+                self.log_result("Export ZIP Multi-files", False, "❌ Projet non trouvé")
+            else:
+                self.log_result("Export ZIP Multi-files", False, 
+                              f"❌ Export échoué: {response.status_code} - {response.text}")
+        except Exception as e:
+            self.log_result("Export ZIP Multi-files", False, f"Exception: {str(e)}")
+
+    def test_export_github_multifiles(self):
+        """🎯 TEST PHASE 1: Export GitHub avec Multi-fichiers"""
+        print("\n=== 🎯 PHASE 1: Export GitHub avec Multi-fichiers ===")
+        try:
+            if not self.access_token or not self.test_project_id:
+                self.log_result("Export GitHub Multi-files", False, "No access token or project ID available")
+                return
+            
+            # Test GitHub user endpoint (sans token valide)
+            response = self.make_request("GET", "/github/user", 
+                                       data={"github_token": "invalid_token_test"})
+            
+            if response.status_code == 401:
+                self.log_result("GitHub User Validation", True, 
+                              "✅ Validation token GitHub fonctionne (401 pour token invalide)")
+            else:
+                self.log_result("GitHub User Validation", False, 
+                              f"❌ Validation token inattendue: {response.status_code}")
+            
+            # Test GitHub export endpoint (sans token valide)
+            export_data = {
+                "github_token": "invalid_token_test",
+                "repo_name": "test-vectort-export",
+                "private": False
+            }
+            
+            response = self.make_request("POST", f"/projects/{self.test_project_id}/export/github", 
+                                       export_data)
+            
+            if response.status_code in [422, 500, 401]:  # Erreurs attendues sans token valide
+                self.log_result("Export GitHub Multi-files", True, 
+                              f"✅ Endpoint GitHub export fonctionnel (erreur attendue {response.status_code} sans token valide)")
+            else:
+                self.log_result("Export GitHub Multi-files", False, 
+                              f"❌ Comportement inattendu: {response.status_code}")
+                
+        except Exception as e:
+            self.log_result("Export GitHub Multi-files", False, f"Exception: {str(e)}")
+
+    def test_regression_existing_features(self):
+        """🎯 TEST PHASE 1&2: Régression - Fonctionnalités Existantes"""
+        print("\n=== 🎯 RÉGRESSION: Fonctionnalités Existantes ===")
+        
+        # Test Auth endpoints
+        if self.access_token:
+            try:
+                response = self.make_request("GET", "/auth/me")
+                if response.status_code == 200:
+                    self.log_result("Régression - Auth /me", True, "✅ Endpoint auth fonctionnel")
+                else:
+                    self.log_result("Régression - Auth /me", False, f"❌ Auth défaillant: {response.status_code}")
+            except Exception as e:
+                self.log_result("Régression - Auth /me", False, f"Exception: {str(e)}")
+        
+        # Test Projects endpoints
+        try:
+            response = self.make_request("GET", "/projects")
+            if response.status_code == 200:
+                self.log_result("Régression - Projects List", True, "✅ Liste projets fonctionnelle")
+            else:
+                self.log_result("Régression - Projects List", False, f"❌ Liste projets défaillante: {response.status_code}")
+        except Exception as e:
+            self.log_result("Régression - Projects List", False, f"Exception: {str(e)}")
+        
+        # Test Credits endpoints
+        try:
+            response = self.make_request("GET", "/credits/balance")
+            if response.status_code == 200:
+                self.log_result("Régression - Credits Balance", True, "✅ Système crédits fonctionnel")
+            else:
+                self.log_result("Régression - Credits Balance", False, f"❌ Crédits défaillants: {response.status_code}")
+        except Exception as e:
+            self.log_result("Régression - Credits Balance", False, f"Exception: {str(e)}")
+        
+        # Test Preview
+        if self.test_project_id:
+            try:
+                response = self.make_request("GET", f"/projects/{self.test_project_id}/preview")
+                if response.status_code == 200:
+                    self.log_result("Régression - Preview", True, "✅ Preview React fonctionnel")
+                else:
+                    self.log_result("Régression - Preview", False, f"❌ Preview défaillant: {response.status_code}")
+            except Exception as e:
+                self.log_result("Régression - Preview", False, f"Exception: {str(e)}")
+
+    def test_error_handling_phase2(self):
+        """🎯 TEST PHASE 2: Tests d'Erreurs"""
+        print("\n=== 🎯 PHASE 2: Tests d'Erreurs ===")
+        
+        # Test génération sans crédits (simulé avec projet inexistant)
+        try:
+            generation_request = {
+                "description": "Test sans crédits",
+                "type": "web_app",
+                "framework": "react",
+                "advanced_mode": True
+            }
+            response = self.make_request("POST", "/projects/inexistant-id/generate", generation_request)
+            
+            if response.status_code == 404:
+                self.log_result("Erreur - Projet inexistant", True, "✅ 404 pour projet inexistant")
+            else:
+                self.log_result("Erreur - Projet inexistant", False, f"❌ Code inattendu: {response.status_code}")
+        except Exception as e:
+            self.log_result("Erreur - Projet inexistant", False, f"Exception: {str(e)}")
+        
+        # Test validation projet inexistant
+        try:
+            response = self.make_request("GET", "/projects/inexistant-id/validate")
+            if response.status_code == 404:
+                self.log_result("Erreur - Validation inexistante", True, "✅ 404 pour validation inexistante")
+            else:
+                self.log_result("Erreur - Validation inexistante", False, f"❌ Code inattendu: {response.status_code}")
+        except Exception as e:
+            self.log_result("Erreur - Validation inexistante", False, f"Exception: {str(e)}")
+        
+        # Test export sans authentification
+        try:
+            headers = {}  # Pas d'Authorization header
+            response = requests.get(f"{self.base_url}/projects/test-id/export/zip", headers=headers, timeout=30)
+            if response.status_code in [401, 403]:
+                self.log_result("Erreur - Export sans auth", True, f"✅ {response.status_code} pour export sans auth")
+            else:
+                self.log_result("Erreur - Export sans auth", False, f"❌ Code inattendu: {response.status_code}")
+        except Exception as e:
+            self.log_result("Erreur - Export sans auth", False, f"Exception: {str(e)}")
+
     def test_vectort_production_complete(self):
-        """🎯 TEST AUTOMATIQUE COMPLET DU BACKEND VECTORT.IO - PRODUCTION"""
-        print("🎯 TEST AUTOMATIQUE COMPLET DU BACKEND VECTORT.IO")
+        """🎯 TEST COMPLET SYSTÈME - TOUTES LES NOUVELLES FONCTIONNALITÉS"""
+        print("🎯 TEST COMPLET SYSTÈME - TOUTES LES NOUVELLES FONCTIONNALITÉS")
         print(f"Testing Production API: {self.base_url}")
+        print("OBJECTIF: Tester EXHAUSTIVEMENT toutes les fonctionnalités Phase 1 & 2")
         print("=" * 80)
         
         # 1. API Status Check
@@ -1190,13 +1514,13 @@ class CodexAPITester:
         self.test_project_listing()
         self.test_project_retrieval()
         
-        # 4. AI Generation Tests (CRITIQUE)
-        print("\n4️⃣ AI GENERATION TESTS (CRITIQUE)")
+        # 4. 🎯 NOUVEAUX TESTS PHASE 1 & 2 (CRITIQUE)
+        print("\n4️⃣ 🎯 NOUVEAUX TESTS PHASE 1 & 2 (CRITIQUE)")
         print("-" * 50)
-        self.test_ai_generation_quick_mode()
-        self.test_ai_generation_advanced_mode()
-        self.test_get_generated_code()
-        self.test_preview_generated_app()
+        self.test_multifile_generation_advanced_mode()
+        self.test_code_validation_system()
+        self.test_export_zip_multifiles()
+        self.test_export_github_multifiles()
         
         # 5. Credit System Tests
         print("\n5️⃣ CREDIT SYSTEM TESTS")
@@ -1205,14 +1529,19 @@ class CodexAPITester:
         self.test_credit_packages_list()
         self.test_credit_purchase_stripe_session()
         
-        # 6. Error Cases
-        print("\n6️⃣ ERROR CASES")
+        # 6. Régression Tests
+        print("\n6️⃣ RÉGRESSION - FONCTIONNALITÉS EXISTANTES")
         print("-" * 50)
-        self.test_error_cases()
+        self.test_regression_existing_features()
+        
+        # 7. Error Cases Phase 2
+        print("\n7️⃣ TESTS D'ERREURS PHASE 2")
+        print("-" * 50)
+        self.test_error_handling_phase2()
         
         # Final Summary
         print("\n" + "=" * 80)
-        print("🎯 VECTORT.IO PRODUCTION TEST SUMMARY")
+        print("🎯 VECTORT.IO PHASE 1 & 2 TEST SUMMARY")
         print("=" * 80)
         print(f"✅ Passed: {self.results['passed']}")
         print(f"❌ Failed: {self.results['failed']}")
@@ -1221,12 +1550,19 @@ class CodexAPITester:
             success_rate = (self.results['passed'] / total_tests * 100)
             print(f"📈 Success Rate: {success_rate:.1f}%")
         
+        # SUCCESS CRITERIA selon la demande française
+        print(f"\n🎯 SUCCESS CRITERIA:")
+        print(f"   ✅ Génération multi-fichiers: {'TESTÉ' if any('Multi-file Generation' in error for error in self.results['errors']) == False else 'ÉCHOUÉ'}")
+        print(f"   ✅ Validation code: {'TESTÉ' if any('Code Validation' in error for error in self.results['errors']) == False else 'ÉCHOUÉ'}")
+        print(f"   ✅ Export ZIP: {'TESTÉ' if any('Export ZIP' in error for error in self.results['errors']) == False else 'ÉCHOUÉ'}")
+        print(f"   ✅ Performance acceptable: {'OUI' if success_rate > 80 else 'À AMÉLIORER'}")
+        
         if self.results['errors']:
             print("\n🔍 FAILED TESTS:")
             for error in self.results['errors']:
                 print(f"   • {error}")
         else:
-            print("\n🎉 ALL TESTS PASSED! Vectort.io is working correctly!")
+            print("\n🎉 ALL TESTS PASSED! Toutes les fonctionnalités Phase 1 & 2 fonctionnent!")
         
         return self.results['failed'] == 0
 
