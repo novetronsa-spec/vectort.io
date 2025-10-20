@@ -80,7 +80,7 @@ class CodexAPITester:
             
             if response.status_code == 200:
                 data = response.json()
-                if "message" in data and "Codex API" in data["message"]:
+                if "message" in data and ("Vectort API" in data["message"] or "AI-powered" in data["message"]):
                     self.log_result("Basic API Response", True, f"Response: {data['message']}")
                 else:
                     self.log_result("Basic API Response", False, f"Unexpected response format: {data}")
