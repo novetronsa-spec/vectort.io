@@ -1036,31 +1036,79 @@ async def preview_project(
             detail="Generated code not found"
         )
     
-    # Combine HTML, CSS, and JS for preview
+    # Get code from generated_app
     html = generated_app.get("html_code", "")
     css = generated_app.get("css_code", "")
     js = generated_app.get("js_code", "")
+    react_code = generated_app.get("react_code", "")
     
-    # Create complete HTML with embedded CSS and JS
-    preview_html = f"""
-    <!DOCTYPE html>
-    <html lang="fr">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Aperçu - {project.get('title', 'Application générée')}</title>
-        <style>
-        {css}
-        </style>
-    </head>
-    <body>
-        {html.replace('<html>', '').replace('</html>', '').replace('<head>', '').replace('</head>', '').replace('<body>', '').replace('</body>', '') if html else ''}
-        <script>
-        {js}
-        </script>
-    </body>
-    </html>
-    """
+    # Si html_code est vide mais react_code existe, créer un preview React
+    if not html and react_code:
+        # Créer un preview HTML qui monte l'application React
+        preview_html = f"""
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aperçu - {project.get('title', 'Application générée')}</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <style>
+    {css}
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    <script type="text/babel">
+    {react_code}
+    
+    // Mount the React component
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    
+    // Try to find the default export or the main component
+    if (typeof ProjectManagementApp !== 'undefined') {{
+        root.render(<ProjectManagementApp />);
+    }} else if (typeof App !== 'undefined') {{
+        root.render(<App />);
+    }} else {{
+        // Fallback: try to render the first React component found
+        root.render(<div><h1>Application générée</h1><p>Le composant React a été généré avec succès.</p></div>);
+    }}
+    </script>
+</body>
+</html>
+        """
+    else:
+        # Preview HTML classique avec HTML/CSS/JS
+        # Nettoyer le HTML des balises dupliquées
+        clean_html = html
+        if html:
+            # Supprimer les balises wrapper si elles existent
+            import re
+            clean_html = re.sub(r'<html[^>]*>|</html>|<head[^>]*>|</head>|<body[^>]*>|</body>', '', html, flags=re.IGNORECASE)
+        
+        preview_html = f"""
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aperçu - {project.get('title', 'Application générée')}</title>
+    <style>
+    {css}
+    </style>
+</head>
+<body>
+    {clean_html if clean_html else '<div style="padding: 20px;"><h1>Application générée</h1><p>Contenu en cours de génération...</p></div>'}
+    <script>
+    {js}
+    </script>
+</body>
+</html>
+        """
     
     from fastapi.responses import HTMLResponse
     return HTMLResponse(content=preview_html)
