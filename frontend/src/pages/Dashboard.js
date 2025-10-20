@@ -564,6 +564,7 @@ ${codeData.backend_code || 'Aucun code backend généré'}
             </div>
             
             <span className="text-gray-400">Bienvenue, {user?.full_name}</span>
+            <LanguageSelector />
             <Button variant="ghost" size="sm">
               <Settings className="h-4 w-4" />
             </Button>
