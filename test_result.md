@@ -1320,6 +1320,18 @@ frontend:
           agent: "main"
           comment: "✅ BOUTONS D'EXPORT INTÉGRÉS: Ajout de 2 nouveaux boutons dans Dashboard - GitHub (icône purple) et Deploy (icône orange). Fonctions openGitHubExport() et openDeployModal() créées. États selectedProject, showGitHubModal, showDeployModal ajoutés. Modals conditionnellement affichés. NÉCESSITE TESTS complets d'intégration."
 
+  - task: "Registration Form - Missing Full Name Field"
+    implemented: false
+    working: false
+    file: "frontend/src/pages/AuthPage.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: false
+          agent: "testing"
+          comment: "❌ CRITICAL REGISTRATION BLOCKING ISSUE IDENTIFIED: Comprehensive testing reveals registration form is missing required 'full_name' field. Backend API requires {email, password, full_name} but frontend registration form only collects {email, password}. This prevents ALL new user registrations. Direct API testing with curl confirms backend works correctly when full_name is provided, returning proper JWT tokens and 10 free credits. Frontend login works perfectly with existing accounts. IMPACT: 100% of new users blocked from registration. SOLUTION REQUIRED: Add full_name input field to registration form in AuthPage.js between email and password fields. This is the only blocking issue preventing public deployment."
+
 metadata:
   created_by: "testing_agent"
   version: "1.0"
