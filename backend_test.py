@@ -1462,7 +1462,7 @@ class CodexAPITester:
             
             purchase_data = {
                 "package_id": "starter",
-                "origin_url": "https://contabo-setup.preview.emergentagent.com"
+                "origin_url": "https://vectort.io"
             }
             
             response = self.make_request("POST", "/credits/purchase", purchase_data)
