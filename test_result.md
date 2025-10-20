@@ -1056,12 +1056,13 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Critical Code Generation Validation - French Requirements"
+    - "VECTORT.IO Production API Performance Issues"
   stuck_tasks:
     - "VECTORT.IO 100% Functionality Test - E-commerce Advanced Mode"
-    - "File Mapping Intelligence System" 
+    - "File Mapping Intelligence System"
+    - "VECTORT.IO Production API Performance Issues"
   test_all: false
-  test_priority: "critical_validation_complete"
+  test_priority: "production_critical_issues"
 
 agent_communication:
     - agent: "testing"
