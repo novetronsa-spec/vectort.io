@@ -1086,13 +1086,14 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Project Preview Authentication Issue"
+    - "VECTORT.IO 100% Functionality Test - E-commerce Advanced Mode"
+    - "File Mapping Intelligence System"
   stuck_tasks:
     - "VECTORT.IO 100% Functionality Test - E-commerce Advanced Mode"
     - "File Mapping Intelligence System"
     - "VECTORT.IO Production API Performance Issues"
   test_all: false
-  test_priority: "critical_authentication_bug"
+  test_priority: "advanced_mode_optimization"
 
 agent_communication:
     - agent: "testing"
