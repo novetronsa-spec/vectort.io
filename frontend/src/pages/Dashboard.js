@@ -414,6 +414,52 @@ ${codeData.backend_code || 'Aucun code backend généré'}
     }
   };
 
+  const exportZip = async (projectId) => {
+    try {
+      toast({
+        title: "Préparation de l'export...",
+        description: "Création de l'archive ZIP en cours...",
+      });
+
+      const response = await axios.get(`${API}/projects/${projectId}/export/zip`, {
+        responseType: 'blob'  // Important pour télécharger un fichier
+      });
+      
+      // Créer un lien de téléchargement
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      
+      // Extraire le nom du fichier depuis les headers si disponible
+      const contentDisposition = response.headers['content-disposition'];
+      let filename = 'vectort-project.zip';
+      if (contentDisposition) {
+        const filenameMatch = contentDisposition.match(/filename="?(.+)"?/);
+        if (filenameMatch && filenameMatch[1]) {
+          filename = filenameMatch[1];
+        }
+      }
+      
+      link.setAttribute('download', filename);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+      
+      toast({
+        title: "Export réussi !",
+        description: "Le projet a été téléchargé en ZIP.",
+      });
+    } catch (error) {
+      console.error("Erreur lors de l'export ZIP:", error);
+      toast({
+        title: "Erreur",
+        description: "Impossible d'exporter le projet en ZIP.",
+        variant: "destructive"
+      });
+    }
+  };
+
   const handleLogout = () => {
     logout();
     navigate("/");
