@@ -3105,11 +3105,14 @@ if __name__ == "__main__":
             success = tester.run_credit_system_tests()
         elif sys.argv[1] == "--export":
             success = tester.run_export_system_tests()
+        elif sys.argv[1] == "--optimized":
+            # Run the specific optimized generation test requested in French review
+            success = tester.run_optimized_generation_test()
         else:
             success = tester.run_all_tests()
     else:
-        # Default: Run export system tests as requested in the review
-        success = tester.run_export_system_tests()
+        # Default: Run optimized generation test as requested in the French review
+        success = tester.run_optimized_generation_test()
     
     # Exit with appropriate code
     sys.exit(0 if success else 1)
