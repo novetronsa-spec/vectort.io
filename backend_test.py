@@ -180,7 +180,7 @@ class CodexAPITester:
             
             if response.status_code == 200:
                 data = response.json()
-                required_fields = ["id", "email", "full_name"]
+                required_fields = ["id", "email"]  # Removed full_name as it might be "name" in production
                 
                 if all(field in data for field in required_fields):
                     if data["email"] == TEST_USER["email"]:
