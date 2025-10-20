@@ -639,6 +639,15 @@ ${codeData.backend_code || 'Aucun code backend généré'}
                                 >
                                   <Code className="h-4 w-4" />
                                 </Button>
+                                <Button 
+                                  variant="ghost" 
+                                  size="sm"
+                                  onClick={() => exportZip(project.id)}
+                                  title="Télécharger le projet (ZIP)"
+                                  className="text-blue-400 hover:text-blue-300"
+                                >
+                                  <Download className="h-4 w-4" />
+                                </Button>
                               </>
                             )}
                             <Button 
