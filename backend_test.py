@@ -122,7 +122,7 @@ class CodexAPITester:
                     user_data = data["user"]
                     
                     if (user_data["email"] == TEST_USER["email"] and 
-                        user_data.get("name", user_data.get("full_name")) == TEST_USER["name"]):
+                        user_data.get("full_name", user_data.get("name")) == TEST_USER["full_name"]):
                         self.log_result("User Registration", True, f"User registered with ID: {self.user_id}")
                     else:
                         self.log_result("User Registration", False, "User data mismatch in response")
