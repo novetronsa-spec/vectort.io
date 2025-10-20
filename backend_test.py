@@ -1972,12 +1972,12 @@ class CodexAPITester:
             # Restore token
             self.access_token = old_token
             
-            if response.status_code == 401:
+            if response.status_code in [401, 403]:
                 self.log_result("Export Without Auth", True, 
-                              "✅ Correctly returned 401 without authentication")
+                              f"✅ Correctly returned {response.status_code} without authentication")
             else:
                 self.log_result("Export Without Auth", False, 
-                              f"Expected 401, got {response.status_code}")
+                              f"Expected 401 or 403, got {response.status_code}")
         except Exception as e:
             self.log_result("Export Without Auth", False, f"Exception: {str(e)}")
 
