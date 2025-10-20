@@ -25,8 +25,10 @@ import {
   Rocket
 } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
+import { useLanguage } from "../contexts/LanguageContext";
 import { useToast } from "../hooks/use-toast";
 import VoiceTextarea from "../components/VoiceTextarea";
+import LanguageSelector from "../components/LanguageSelector";
 import GitHubExportModal from "../components/GitHubExportModal";
 import DeploymentModal from "../components/DeploymentModal";
 import axios from "axios";
