@@ -1164,6 +1164,181 @@ class CodexAPITester:
             self.log_result("Final Validation - All Endpoints", False, 
                           "Some critical endpoints failed validation")
 
+    def test_vectort_production_complete(self):
+        """🎯 TEST AUTOMATIQUE COMPLET DU BACKEND VECTORT.IO - PRODUCTION"""
+        print("🎯 TEST AUTOMATIQUE COMPLET DU BACKEND VECTORT.IO")
+        print(f"Testing Production API: {self.base_url}")
+        print("=" * 80)
+        
+        # 1. API Status Check
+        print("\n1️⃣ API STATUS CHECK")
+        print("-" * 50)
+        self.test_basic_api_response()
+        
+        # 2. Authentication Tests
+        print("\n2️⃣ AUTHENTICATION TESTS")
+        print("-" * 50)
+        self.test_user_registration()
+        if not self.access_token:
+            self.test_user_login()
+        self.test_authentication_check()
+        
+        # 3. Project Management Tests
+        print("\n3️⃣ PROJECT MANAGEMENT TESTS")
+        print("-" * 50)
+        self.test_project_creation()
+        self.test_project_listing()
+        self.test_project_retrieval()
+        
+        # 4. AI Generation Tests (CRITIQUE)
+        print("\n4️⃣ AI GENERATION TESTS (CRITIQUE)")
+        print("-" * 50)
+        self.test_ai_generation_quick_mode()
+        self.test_ai_generation_advanced_mode()
+        self.test_get_generated_code()
+        self.test_preview_generated_app()
+        
+        # 5. Credit System Tests
+        print("\n5️⃣ CREDIT SYSTEM TESTS")
+        print("-" * 50)
+        self.test_credit_system_new_user_balance()
+        self.test_credit_packages_list()
+        self.test_credit_purchase_stripe_session()
+        
+        # 6. Error Cases
+        print("\n6️⃣ ERROR CASES")
+        print("-" * 50)
+        self.test_error_cases()
+        
+        # Final Summary
+        print("\n" + "=" * 80)
+        print("🎯 VECTORT.IO PRODUCTION TEST SUMMARY")
+        print("=" * 80)
+        print(f"✅ Passed: {self.results['passed']}")
+        print(f"❌ Failed: {self.results['failed']}")
+        total_tests = self.results['passed'] + self.results['failed']
+        if total_tests > 0:
+            success_rate = (self.results['passed'] / total_tests * 100)
+            print(f"📈 Success Rate: {success_rate:.1f}%")
+        
+        if self.results['errors']:
+            print("\n🔍 FAILED TESTS:")
+            for error in self.results['errors']:
+                print(f"   • {error}")
+        else:
+            print("\n🎉 ALL TESTS PASSED! Vectort.io is working correctly!")
+        
+        return self.results['failed'] == 0
+
+    def test_ai_generation_quick_mode(self):
+        """Test AI Generation - Quick Mode (advanced_mode=false)"""
+        print("\n=== AI Generation - Quick Mode ===")
+        try:
+            if not self.access_token:
+                self.log_result("AI Generation - Quick Mode", False, "No access token available")
+                return
+            
+            # Create project for e-commerce generation
+            project_data = {
+                "title": "Application E-commerce Test",
+                "description": "Créer une application e-commerce avec panier et paiement Stripe",
+                "type": "web_app"
+            }
+            
+            project_response = self.make_request("POST", "/projects", project_data)
+            if project_response.status_code != 200:
+                self.log_result("AI Generation - Quick Mode", False, f"Failed to create project: {project_response.status_code}")
+                return
+            
+            project_id = project_response.json()["id"]
+            
+            # Generate with quick mode
+            generation_request = {
+                "description": "Créer une application e-commerce avec panier et paiement Stripe",
+                "type": "web_app",
+                "framework": "react",
+                "advanced_mode": False  # Quick mode
+            }
+            
+            response = self.make_request("POST", f"/projects/{project_id}/generate", generation_request)
+            
+            if response.status_code == 200:
+                data = response.json()
+                # Check if code was actually generated
+                code_fields = ["html_code", "css_code", "js_code", "react_code", "backend_code"]
+                generated_code = {field: data.get(field) for field in code_fields if data.get(field)}
+                
+                if generated_code:
+                    code_summary = ", ".join([f"{field}: {len(str(code))} chars" for field, code in generated_code.items()])
+                    self.log_result("AI Generation - Quick Mode", True, f"✅ Code generated successfully: {code_summary}")
+                    self.test_project_id = project_id  # Store for further tests
+                else:
+                    self.log_result("AI Generation - Quick Mode", False, "❌ No code was generated")
+            elif response.status_code == 402:
+                self.log_result("AI Generation - Quick Mode", False, "❌ Insufficient credits")
+            else:
+                self.log_result("AI Generation - Quick Mode", False, f"❌ Generation failed: {response.status_code} - {response.text}")
+        except Exception as e:
+            self.log_result("AI Generation - Quick Mode", False, f"Exception: {str(e)}")
+
+    def test_ai_generation_advanced_mode(self):
+        """Test AI Generation - Advanced Mode (advanced_mode=true)"""
+        print("\n=== AI Generation - Advanced Mode ===")
+        try:
+            if not self.access_token:
+                self.log_result("AI Generation - Advanced Mode", False, "No access token available")
+                return
+            
+            # Create project for advanced generation
+            project_data = {
+                "title": "Application E-commerce Avancée",
+                "description": "Créer une application e-commerce complète avec fonctionnalités avancées",
+                "type": "web_app"
+            }
+            
+            project_response = self.make_request("POST", "/projects", project_data)
+            if project_response.status_code != 200:
+                self.log_result("AI Generation - Advanced Mode", False, f"Failed to create project: {project_response.status_code}")
+                return
+            
+            project_id = project_response.json()["id"]
+            
+            # Generate with advanced mode
+            generation_request = {
+                "description": "Créer une application e-commerce complète avec panier, paiement Stripe, gestion des produits et interface d'administration",
+                "type": "web_app",
+                "framework": "react",
+                "database": "mongodb",
+                "advanced_mode": True,  # Advanced mode
+                "features": ["authentication", "payment_processing", "shopping_cart", "admin_panel"],
+                "integrations": ["stripe"]
+            }
+            
+            response = self.make_request("POST", f"/projects/{project_id}/generate", generation_request)
+            
+            if response.status_code == 200:
+                data = response.json()
+                # Check for advanced features
+                code_fields = ["html_code", "css_code", "js_code", "react_code", "backend_code"]
+                advanced_fields = ["project_structure", "package_json", "requirements_txt", "dockerfile", "readme"]
+                
+                generated_code = {field: data.get(field) for field in code_fields if data.get(field)}
+                advanced_features = {field: data.get(field) for field in advanced_fields if data.get(field)}
+                
+                if generated_code:
+                    code_summary = ", ".join([f"{field}: {len(str(code))} chars" for field, code in generated_code.items()])
+                    advanced_summary = ", ".join(advanced_features.keys()) if advanced_features else "None"
+                    self.log_result("AI Generation - Advanced Mode", True, 
+                                  f"✅ Advanced generation successful: Code: {code_summary}, Advanced: {advanced_summary}")
+                else:
+                    self.log_result("AI Generation - Advanced Mode", False, "❌ No code was generated in advanced mode")
+            elif response.status_code == 402:
+                self.log_result("AI Generation - Advanced Mode", False, "❌ Insufficient credits for advanced mode")
+            else:
+                self.log_result("AI Generation - Advanced Mode", False, f"❌ Advanced generation failed: {response.status_code} - {response.text}")
+        except Exception as e:
+            self.log_result("AI Generation - Advanced Mode", False, f"Exception: {str(e)}")
+
     def run_corrections_tests(self):
         """Run specific tests for the corrections mentioned in review request"""
         print("🔧 VÉRIFICATION DES CORRECTIONS PRÉ-DÉPLOIEMENT")
