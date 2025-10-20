@@ -2651,6 +2651,11 @@ class CodexAPITester:
         print(f"Testing against: {self.base_url}")
         print("=" * 80)
         
+        # PRIORITY: Test spécifique demandé dans la review française
+        print("\n🎯 PRIORITY TEST: OPTIMIZED MULTI-FILE GENERATION")
+        print("-" * 60)
+        self.test_optimized_multifile_generation_french_request()
+        
         # Phase 1: Basic authentication and projects (quick)
         print("\n🔐 PHASE 1: AUTHENTICATION & BASIC PROJECTS")
         print("-" * 50)
