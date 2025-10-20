@@ -3,7 +3,7 @@ VECTORT.IO - GITHUB EXPORTER
 Gère l'export de code généré vers GitHub
 """
 
-import aiohttp
+import httpx
 import base64
 from typing import Dict, Optional, List
 import json
