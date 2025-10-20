@@ -745,6 +745,54 @@ backend:
           comment: "⚠️ DEPLOYMENT MANAGER NON TESTÉ: Système créé mais pas d'endpoints API exposés pour tests. Classes VercelDeployer, NetlifyDeployer disponibles mais pas intégrées dans les routes API. Fonctionnalité disponible pour intégration future mais non accessible via API actuellement."
 
 frontend:
+  - task: "Export Interface - New Buttons Integration"
+    implemented: true
+    working: false
+    file: "frontend/src/pages/Dashboard.js"
+    stuck_count: 1
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: false
+          agent: "testing"
+          comment: "❌ INTERFACE D'EXPORT NON ACCESSIBLE: Tests complets révèlent problème d'authentification bloquant l'accès au dashboard. Code source confirme implémentation complète des 5 boutons d'export (👁️ Prévisualiser, 💻 Voir le code, ⬇️ Télécharger ZIP, 🐙 GitHub export, 🚀 Deploy) dans Dashboard.js lignes 650-687. Modals GitHubExportModal et DeploymentModal implémentés. Backend logs confirment fonctionnalité ZIP et GitHub opérationnelles. PROBLÈME: Impossible de tester interface utilisateur à cause de redirection auth constante vers /auth au lieu de /dashboard. Authentification frontend défaillante empêche validation UI complète."
+
+  - task: "GitHub Export Modal"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/components/GitHubExportModal.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "testing"
+          comment: "✅ MODAL GITHUB IMPLÉMENTÉ: Code source confirme GitHubExportModal complet avec tous les éléments requis - Titre 'Exporter vers GitHub', champ Token GitHub (type password), champ Nom du repository, checkbox Repository privé, boutons Annuler/Exporter, lien vers GitHub settings. Intégration axios pour API calls. NÉCESSITE TEST UI une fois authentification résolue."
+
+  - task: "Deployment Modal"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/components/DeploymentModal.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "testing"
+          comment: "✅ MODAL DÉPLOIEMENT IMPLÉMENTÉ: Code source confirme DeploymentModal complet avec 4 options de déploiement (Vercel, Netlify, Railway, Render), gestion GitHub URL, messages d'avertissement si pas de GitHub URL, boutons 'Déployer' pour chaque plateforme. Design professionnel avec icônes et descriptions. NÉCESSITE TEST UI une fois authentification résolue."
+
+  - task: "Export Buttons Integration"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/pages/Dashboard.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "testing"
+          comment: "✅ BOUTONS D'EXPORT INTÉGRÉS: Code source Dashboard.js confirme intégration complète des 5 boutons avec icônes Lucide (Eye, Code, Download, Github, Rocket), couleurs distinctives (bleu, vert, bleu, purple, orange), fonctions onClick (openPreview, viewCode, exportZip, openGitHubExport, openDeployModal), tooltips descriptifs. Logique d'affichage conditionnelle pour projets completed. NÉCESSITE TEST UI une fois authentification résolue."
+
   - task: "Project Preview Authentication Issue"
     implemented: true
     working: true
