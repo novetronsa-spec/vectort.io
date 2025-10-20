@@ -6,7 +6,9 @@ import { Textarea } from "../components/ui/textarea";
 import { Badge } from "../components/ui/badge";
 import { ArrowRight, ArrowLeft, ArrowDown, Star } from "lucide-react";
 import VoiceTextarea from "../components/VoiceTextarea";
+import LanguageSelector from "../components/LanguageSelector";
 import { useAuth } from "../contexts/AuthContext";
+import { useLanguage } from "../contexts/LanguageContext";
 import axios from "axios";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
