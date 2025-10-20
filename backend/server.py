@@ -244,13 +244,21 @@ class CreditTransaction(BaseModel):
 
 # Définition des packages de crédits (SECURITY: côté serveur uniquement)
 CREDIT_PACKAGES = {
+    "micro": CreditPackage(
+        id="micro",
+        name="Micro",
+        credits=10,
+        price=10.0,
+        currency="usd",
+        description="10 crédits - Parfait pour tester"
+    ),
     "starter": CreditPackage(
         id="starter",
         name="Starter",
-        credits=100,
+        credits=80,
         price=20.0,
         currency="usd",
-        description="100 crédits pour commencer"
+        description="80 crédits pour commencer"
     ),
     "standard": CreditPackage(
         id="standard",
@@ -267,6 +275,30 @@ CREDIT_PACKAGES = {
         price=80.0,
         currency="usd",
         description="400 crédits - Maximum d'économies"
+    ),
+    "business": CreditPackage(
+        id="business",
+        name="Business",
+        credits=1200,
+        price=200.0,
+        currency="usd",
+        description="1200 crédits - Pour équipes"
+    ),
+    "enterprise": CreditPackage(
+        id="enterprise",
+        name="Enterprise",
+        credits=3000,
+        price=500.0,
+        currency="usd",
+        description="3000 crédits - Solution entreprise"
+    ),
+    "ultimate": CreditPackage(
+        id="ultimate",
+        name="Ultimate",
+        credits=7000,
+        price=1000.0,
+        currency="usd",
+        description="7000 crédits - Le package ultime"
     )
 }
 
