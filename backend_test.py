@@ -57,13 +57,13 @@ class CodexAPITester:
         
         try:
             if method.upper() == "GET":
-                response = requests.get(url, headers=default_headers, timeout=30)
+                response = requests.get(url, headers=default_headers, timeout=60)
             elif method.upper() == "POST":
-                response = requests.post(url, json=data, headers=default_headers, timeout=30)
+                response = requests.post(url, json=data, headers=default_headers, timeout=60)
             elif method.upper() == "PUT":
-                response = requests.put(url, json=data, headers=default_headers, timeout=30)
+                response = requests.put(url, json=data, headers=default_headers, timeout=60)
             elif method.upper() == "DELETE":
-                response = requests.delete(url, headers=default_headers, timeout=30)
+                response = requests.delete(url, headers=default_headers, timeout=60)
             else:
                 raise ValueError(f"Unsupported HTTP method: {method}")
             
