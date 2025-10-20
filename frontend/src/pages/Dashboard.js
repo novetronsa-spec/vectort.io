@@ -348,9 +348,32 @@ export default function Dashboard() {
     }
   };
 
-  const openPreview = (projectId) => {
-    const previewUrl = `${BACKEND_URL}/api/projects/${projectId}/preview`;
-    window.open(previewUrl, '_blank');
+  const openPreview = async (projectId) => {
+    try {
+      // Récupérer le preview HTML avec authentification
+      const response = await axios.get(`${API}/projects/${projectId}/preview`);
+      const htmlContent = response.data;
+      
+      // Créer une nouvelle fenêtre et y écrire le contenu HTML
+      const newWindow = window.open('', '_blank');
+      if (newWindow) {
+        newWindow.document.write(htmlContent);
+        newWindow.document.close();
+      } else {
+        toast({
+          title: "Erreur",
+          description: "Impossible d'ouvrir le preview. Vérifiez que les popups ne sont pas bloquées.",
+          variant: "destructive"
+        });
+      }
+    } catch (error) {
+      console.error("Erreur lors de l'ouverture du preview:", error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de charger le preview de l'application",
+        variant: "destructive"
+      });
+    }
   };
 
   const viewCode = async (projectId) => {
