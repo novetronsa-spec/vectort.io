@@ -6,7 +6,7 @@ Debug the XSS test specifically
 import requests
 import re
 
-BASE_URL = "https://aicode-builder-1.preview.emergentagent.com/api"
+BASE_URL = "https://contabo-setup.preview.emergentagent.com/api"
 
 # Setup test user
 test_user = {

@@ -11,7 +11,7 @@ import time
 from typing import Dict, Any, Optional
 
 # Configuration
-BASE_URL = "https://aicode-builder-1.preview.emergentagent.com/api"
+BASE_URL = "https://contabo-setup.preview.emergentagent.com/api"
 TEST_USER = {
     "email": f"focused.test.{int(time.time())}@vectort.io",
     "password": "FocusedTest123!",

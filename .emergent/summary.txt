@@ -1,261 +1,146 @@
 <analysis>
-The previous AI engineer successfully transformed Codex into Vectort.io, replicating emergent.sh. Key achievements include a full-stack (React/FastAPI/MongoDB) implementation with comprehensive authentication, a user dashboard, and an advanced AI application generator. Significant effort was dedicated to bug fixes, such as persistent voice recognition issues and UI contrast problems, alongside security enhancements. Monetization was introduced via a credit-based pricing system, including Stripe integration. Functionalities like file upload, GitHub integration (save/fork), and an Ultra Mode toggle were added to the AI generation interface. The engineer also prepped the codebase for numerous third-party integrations (SendGrid, AWS S3, Slack, Google Sheets, Airtable) by adding environment variable placeholders and installing libraries. The current critical phase involves deploying the entire application to a user-provided Contabo server, where the AI engineer is providing manual deployment steps after facing issues with automated DNS and SSH private key access.
+The deployment of the Vectort.io application to a Contabo server was the central focus of the previous AI engineer's work. This involved a detailed, iterative process of manual instruction-giving to the user, particularly after initial automated deployment scripts failed. Key challenges included correcting DNS records on LWS.fr, integrating numerous API keys (GitHub, SendGrid, Google, Airtable, Stripe) into the backend environment, and meticulously configuring Docker, Docker Compose, Nginx, and Certbot. Significant effort was spent debugging Python dependency conflicts within the Dockerized backend (specifically / versions and missing ) and resolving MongoDB connectivity issues from the Docker container to the host. The process culminated in a fully deployed infrastructure, a functional backend API, and a basic frontend, with all critical API keys in place and SSL certificates active.
 </analysis>
 
 <product_requirements>
-The overarching goal was to create a pixel-perfect clone of emergent.sh, branded as Vectort.io, capable of generating diverse websites. This included: robust authentication, a user dashboard for project management, and an advanced AI generation system supporting 25+ project types (Web App, Mobile, API, E-commerce, etc.) with quick and advanced modes. Key features like microphone-enabled voice-to-text input, and essential business pages (Features, Pricing, FAQs) were required. Emphasis was on 100% functionality, bug-free operation, and strong security. Monetization involved a credit-based pricing system, mirroring Emergent's model (e.g., 100/0, 250/0, 400/0 USD packages), with 10 free credits upon registration and 0 monthly credits. This system necessitated Stripe integration for top-ups. More recently, the user requested advanced functionalities within the project description area, including file upload, GitHub save/fork, an Ultra Mode toggle, and a functional microphone, with an improved UI (buttons below text, larger icons). Finally, full third-party integrations akin to Emergent (GitHub OAuth, SendGrid/Email, AWS S3, Slack, Google Sheets, Airtable) and automated deployment to a Contabo server with a custom LWS.fr domain were requested.
+The overarching goal was to create a pixel-perfect clone of emergent.sh, branded as Vectort.io, capable of generating diverse websites. This included: robust authentication, a user dashboard for project management, and an advanced AI generation system supporting 25+ project types (Web App, Mobile, API, E-commerce, etc.) with quick and advanced modes. Key features like microphone-enabled voice-to-text input, and essential business pages (Features, Pricing, FAQs) were required. Emphasis was on 100% functionality, bug-free operation, and strong security. Monetization involved a credit-based pricing system, mirroring Emergent's model (e.g., 100/0, 250/0, 400/0 USD packages), with 10 free credits upon registration and 0 monthly credits. This system necessitated Stripe integration for top-ups. More recently, the user requested advanced functionalities within the project description area, including file upload, GitHub save/fork, an Ultra Mode toggle, and a functional microphone, with an improved UI (buttons below text, larger icons). Finally, full third-party integrations akin to Emergent (GitHub OAuth, SendGrid/Email, AWS S3, Slack, Google Sheets, Airtable) and automated deployment to a Contabo server with a custom LWS.fr domain were requested. The current deployment successfully establishes core API and frontend accessibility.
 </product_requirements>
 
 <key_technical_concepts>
-- **Frontend:** React.js, Shadcn UI, Tailwind CSS, Web Speech API, Axios interceptors.
-- **Backend:** FastAPI, MongoDB, Pydantic, JWT-based authentication.
-- **AI/LLM:** Emergent LLM Key (for OpenAI GPT-4), .
-- **Payments:** Stripe integration.
-- **Integrations:** GitHub OAuth, SendGrid, AWS S3, Slack, Google APIs, Airtable (libraries installed).
-- **Deployment:** Docker, Docker-Compose, Nginx, SSH.
+-   **Frontend:** React.js, Nginx (serving static files).
+-   **Backend:** FastAPI, MongoDB, Pydantic, JWT Auth, Stripe.
+-   **Integrations:** GitHub OAuth, SendGrid, Google OAuth, Airtable.
+-   **Deployment:** Docker, Docker Compose, Nginx (reverse proxy, SSL), Certbot, SSH, .
+-   **Python Environment:** Virtual environments (), 
+Usage:   
+  pip <command> [options]
+
+Commands:
+  install                     Install packages.
+  lock                        Generate a lock file.
+  download                    Download packages.
+  uninstall                   Uninstall packages.
+  freeze                      Output installed packages in requirements format.
+  inspect                     Inspect the python environment.
+  list                        List installed packages.
+  show                        Show information about installed packages.
+  check                       Verify installed packages have compatible dependencies.
+  config                      Manage local and global configuration.
+  search                      Search PyPI for packages.
+  cache                       Inspect and manage pip's wheel cache.
+  index                       Inspect information available from package indexes.
+  wheel                       Build wheels from your requirements.
+  hash                        Compute hashes of package archives.
+  completion                  A helper command used for command completion.
+  debug                       Show information useful for debugging.
+  help                        Show help for commands.
+
+General Options:
+  -h, --help                  Show help.
+  --debug                     Let unhandled exceptions propagate outside the
+                              main subroutine, instead of logging them to
+                              stderr.
+  --isolated                  Run pip in an isolated mode, ignoring
+                              environment variables and user configuration.
+  --require-virtualenv        Allow pip to only run in a virtual environment;
+                              exit with an error otherwise.
+  --python <python>           Run pip with the specified Python interpreter.
+  -v, --verbose               Give more output. Option is additive, and can be
+                              used up to 3 times.
+  -V, --version               Show version and exit.
+  -q, --quiet                 Give less output. Option is additive, and can be
+                              used up to 3 times (corresponding to WARNING,
+                              ERROR, and CRITICAL logging levels).
+  --log <path>                Path to a verbose appending log.
+  --no-input                  Disable prompting for input.
+  --keyring-provider <keyring_provider>
+                              Enable the credential lookup via the keyring
+                              library if user input is allowed. Specify which
+                              mechanism to use [auto, disabled, import,
+                              subprocess]. (default: auto)
+  --proxy <proxy>             Specify a proxy in the form
+                              scheme://[user:passwd@]proxy.server:port.
+  --retries <retries>         Maximum attempts to establish a new HTTP
+                              connection. (default: 5)
+  --timeout <sec>             Set the socket timeout (default 15 seconds).
+  --exists-action <action>    Default action when a path already exists:
+                              (s)witch, (i)gnore, (w)ipe, (b)ackup, (a)bort.
+  --trusted-host <hostname>   Mark this host or host:port pair as trusted,
+                              even though it does not have valid or any HTTPS.
+  --cert <path>               Path to PEM-encoded CA certificate bundle. If
+                              provided, overrides the default. See 'SSL
+                              Certificate Verification' in pip documentation
+                              for more information.
+  --client-cert <path>        Path to SSL client certificate, a single file
+                              containing the private key and the certificate
+                              in PEM format.
+  --cache-dir <dir>           Store the cache data in <dir>.
+  --no-cache-dir              Disable the cache.
+  --disable-pip-version-check
+                              Don't periodically check PyPI to determine
+                              whether a new version of pip is available for
+                              download. Implied with --no-index.
+  --no-color                  Suppress colored output.
+  --use-feature <feature>     Enable new functionality, that may be backward
+                              incompatible.
+  --use-deprecated <feature>  Enable deprecated functionality, that will be
+                              removed in the future.
+  --resume-retries <resume_retries>
+                              Maximum attempts to resume or restart an
+                              incomplete download. (default: 5).
 </key_technical_concepts>
 
 <code_architecture>
-The application employs a full-stack monorepo structure:
-
-- ****:
-    - **Importance**: Central backend for API endpoints, auth, and AI generation.
-    - **Changes**: Integrated Stripe keys and Pydantic models (CreditPackage, PurchaseRequest, PaymentResponse). Added credit utility functions (, , ), and new endpoints (, , ). Modified  to deduct credits. User model was confirmed to have default credit values. Placeholders for various integration keys were added.
-- **** (NEW):
-    - **Importance**: Modularized logic for GitHub OAuth integration.
-    - **Changes**: New file created.
-- ****:
-    - **Importance**: Stores environment variables.
-    - **Changes**: Updated with Stripe TEST then LIVE keys, a Fernet encryption key, and placeholders for GitHub, SendGrid, AWS, Google, Airtable, Slack, and Contabo credentials. Updated .
-- ****:
-    - **Importance**: Lists Python dependencies.
-    - **Changes**: Added , , , , , .
-- **** (NEW):
-    - **Importance**: Docker configuration for the backend service in production.
-- **** (NEW):
-    - **Importance**: Stores Google API credentials.
-- ****:
-    - **Importance**: User's primary interface for project management and AI generation.
-    - **Changes**: Added state for credits/payment, functions for fetching/purchasing credits. Integrated credit display in header and a credit purchase modal. Modified  for credit checks. Fixed an emoji rendering bug in project type icons. Integrated new props for the enhanced .
-- ****:
-    - **Importance**: Displays pricing information.
-    - **Changes**: Completely revamped to reflect the credit-based pricing model, showing packages (Starter, Standard, Pro) and related FAQs.
-- ****:
-    - **Importance**: Input component with voice recognition.
-    - **Changes**: Enhanced to include advanced features like file upload, GitHub save/fork, Ultra Mode toggle, and microphone input. Buttons were moved below the textarea and icons were enlarged.
-- ****:
-    - **Importance**: Manages user authentication state.
-    - **Changes**: Added an Axios interceptor to ensure JWT tokens are automatically included in API requests, fixing authentication issues.
-- **** (NEW):
-    - **Importance**: Docker configuration for the frontend service in production.
-- **** (NEW):
-    - **Importance**: Nginx configuration for serving the frontend in production.
-- **🚀 Déploiement de Vectort.io sur Contabo...
-============================================
-[0;32m✓ Mise à jour du système...[0m
-Hit:1 http://deb.debian.org/debian bookworm InRelease
-Hit:2 https://repo.mongodb.org/apt/ubuntu jammy/mongodb-org/7.0 InRelease
-Get:3 http://deb.debian.org/debian bookworm-updates InRelease [55.4 kB]
-Get:4 http://deb.debian.org/debian-security bookworm-security InRelease [48.0 kB]
-Hit:5 https://deb.nodesource.com/node_20.x nodistro InRelease
-Get:6 http://deb.debian.org/debian-security bookworm-security/main arm64 Packages [278 kB]
-Fetched 382 kB in 2s (159 kB/s)
-Reading package lists...
-Reading package lists...
-Building dependency tree...
-Reading state information...
-Calculating upgrade...
-0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.
-[0;32m✓ Installation de Docker...[0m
-# Executing docker install script, commit: 86415efcfe5f8d966625843da41a0f798238cce5
-
-================================================================================
-
-To run Docker as a non-privileged user, consider setting up the
-Docker daemon in rootless mode for your user:
-
-    dockerd-rootless-setuptool.sh install
-
-Visit https://docs.docker.com/go/rootless/ to learn about rootless mode.
+The application employs a full-stack monorepo structure. During the trajectory, the focus was on populating the  directory on the Contabo server, effectively mirroring the intended  structure.
 
 
-To run the Docker daemon as a fully privileged service, but granting non-root
-users access, refer to https://docs.docker.com/go/daemon-access/
 
-WARNING: Access to the remote API on a privileged Docker daemon is equivalent
-         to root access on the host. Refer to the 'Docker daemon attack surface'
-         documentation for details: https://docs.docker.com/go/attack-surface/
-
-================================================================================
-
-[0;32m✓ Installation de Docker Compose...[0m
-[0;32m✓ Installation de Nginx...[0m
-Reading package lists...
-Building dependency tree...
-Reading state information...
-nginx is already the newest version (1.22.1-9+deb12u3).
-0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.
-[0;32m✓ Installation de Certbot pour SSL...[0m
-Reading package lists...
-Building dependency tree...
-Reading state information...
-The following additional packages will be installed:
-  python3-acme python3-certbot python3-certifi python3-chardet
-  python3-charset-normalizer python3-configargparse python3-configobj
-  python3-icu python3-idna python3-josepy python3-openssl
-  python3-parsedatetime python3-requests python3-rfc3339 python3-tz
-  python3-urllib3
-Suggested packages:
-  python-certbot-doc python3-certbot-apache python-acme-doc
-  python-certbot-nginx-doc python-configobj-doc python-openssl-doc
-  python3-openssl-dbg python3-socks python-requests-doc python3-brotli
-The following NEW packages will be installed:
-  certbot python3-acme python3-certbot python3-certbot-nginx python3-certifi
-  python3-chardet python3-charset-normalizer python3-configargparse
-  python3-configobj python3-icu python3-idna python3-josepy python3-openssl
-  python3-parsedatetime python3-requests python3-rfc3339 python3-tz
-  python3-urllib3
-0 upgraded, 18 newly installed, 0 to remove and 0 not upgraded.
-Need to get 1560 kB of archives.
-After this operation, 7897 kB of additional disk space will be used.
-Get:1 http://deb.debian.org/debian bookworm/main arm64 python3-openssl all 23.0.0-1 [50.8 kB]
-Get:2 http://deb.debian.org/debian bookworm/main arm64 python3-josepy all 1.13.0-1 [23.1 kB]
-Get:3 http://deb.debian.org/debian bookworm/main arm64 python3-certifi all 2022.9.24-1 [153 kB]
-Get:4 http://deb.debian.org/debian bookworm/main arm64 python3-charset-normalizer all 3.0.1-2 [49.3 kB]
-Get:5 http://deb.debian.org/debian bookworm/main arm64 python3-idna all 3.3-1+deb12u1 [41.0 kB]
-Get:6 http://deb.debian.org/debian bookworm/main arm64 python3-urllib3 all 1.26.12-1+deb12u1 [114 kB]
-Get:7 http://deb.debian.org/debian bookworm/main arm64 python3-chardet all 5.1.0+dfsg-2 [110 kB]
-Get:8 http://deb.debian.org/debian bookworm/main arm64 python3-requests all 2.28.1+dfsg-1 [67.9 kB]
-Get:9 http://deb.debian.org/debian bookworm/main arm64 python3-tz all 2022.7.1-4 [30.1 kB]
-Get:10 http://deb.debian.org/debian bookworm/main arm64 python3-rfc3339 all 1.1-4 [7088 B]
-Get:11 http://deb.debian.org/debian bookworm/main arm64 python3-acme all 2.1.0-1 [32.0 kB]
-Get:12 http://deb.debian.org/debian bookworm/main arm64 python3-configargparse all 1.5.3-1 [26.1 kB]
-Get:13 http://deb.debian.org/debian bookworm/main arm64 python3-configobj all 5.0.8-1 [34.5 kB]
-Get:14 http://deb.debian.org/debian bookworm/main arm64 python3-parsedatetime all 2.6-3 [41.2 kB]
-Get:15 http://deb.debian.org/debian bookworm/main arm64 python3-certbot all 2.1.0-4 [209 kB]
-Get:16 http://deb.debian.org/debian bookworm/main arm64 certbot all 2.1.0-4 [122 kB]
-Get:17 http://deb.debian.org/debian bookworm/main arm64 python3-certbot-nginx all 2.1.0-2 [37.4 kB]
-Get:18 http://deb.debian.org/debian bookworm/main arm64 python3-icu arm64 2.10.2-1+b3 [413 kB]
-Fetched 1560 kB in 0s (7035 kB/s)
-Selecting previously unselected package python3-openssl.
-(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 39258 files and directories currently installed.)
-Preparing to unpack .../00-python3-openssl_23.0.0-1_all.deb ...
-Unpacking python3-openssl (23.0.0-1) ...
-Selecting previously unselected package python3-josepy.
-Preparing to unpack .../01-python3-josepy_1.13.0-1_all.deb ...
-Unpacking python3-josepy (1.13.0-1) ...
-Selecting previously unselected package python3-certifi.
-Preparing to unpack .../02-python3-certifi_2022.9.24-1_all.deb ...
-Unpacking python3-certifi (2022.9.24-1) ...
-Selecting previously unselected package python3-charset-normalizer.
-Preparing to unpack .../03-python3-charset-normalizer_3.0.1-2_all.deb ...
-Unpacking python3-charset-normalizer (3.0.1-2) ...
-Selecting previously unselected package python3-idna.
-Preparing to unpack .../04-python3-idna_3.3-1+deb12u1_all.deb ...
-Unpacking python3-idna (3.3-1+deb12u1) ...
-Selecting previously unselected package python3-urllib3.
-Preparing to unpack .../05-python3-urllib3_1.26.12-1+deb12u1_all.deb ...
-Unpacking python3-urllib3 (1.26.12-1+deb12u1) ...
-Selecting previously unselected package python3-chardet.
-Preparing to unpack .../06-python3-chardet_5.1.0+dfsg-2_all.deb ...
-Unpacking python3-chardet (5.1.0+dfsg-2) ...
-Selecting previously unselected package python3-requests.
-Preparing to unpack .../07-python3-requests_2.28.1+dfsg-1_all.deb ...
-Unpacking python3-requests (2.28.1+dfsg-1) ...
-Selecting previously unselected package python3-tz.
-Preparing to unpack .../08-python3-tz_2022.7.1-4_all.deb ...
-Unpacking python3-tz (2022.7.1-4) ...
-Selecting previously unselected package python3-rfc3339.
-Preparing to unpack .../09-python3-rfc3339_1.1-4_all.deb ...
-Unpacking python3-rfc3339 (1.1-4) ...
-Selecting previously unselected package python3-acme.
-Preparing to unpack .../10-python3-acme_2.1.0-1_all.deb ...
-Unpacking python3-acme (2.1.0-1) ...
-Selecting previously unselected package python3-configargparse.
-Preparing to unpack .../11-python3-configargparse_1.5.3-1_all.deb ...
-Unpacking python3-configargparse (1.5.3-1) ...
-Selecting previously unselected package python3-configobj.
-Preparing to unpack .../12-python3-configobj_5.0.8-1_all.deb ...
-Unpacking python3-configobj (5.0.8-1) ...
-Selecting previously unselected package python3-parsedatetime.
-Preparing to unpack .../13-python3-parsedatetime_2.6-3_all.deb ...
-Unpacking python3-parsedatetime (2.6-3) ...
-Selecting previously unselected package python3-certbot.
-Preparing to unpack .../14-python3-certbot_2.1.0-4_all.deb ...
-Unpacking python3-certbot (2.1.0-4) ...
-Selecting previously unselected package certbot.
-Preparing to unpack .../15-certbot_2.1.0-4_all.deb ...
-Unpacking certbot (2.1.0-4) ...
-Selecting previously unselected package python3-certbot-nginx.
-Preparing to unpack .../16-python3-certbot-nginx_2.1.0-2_all.deb ...
-Unpacking python3-certbot-nginx (2.1.0-2) ...
-Selecting previously unselected package python3-icu.
-Preparing to unpack .../17-python3-icu_2.10.2-1+b3_arm64.deb ...
-Unpacking python3-icu (2.10.2-1+b3) ...
-Setting up python3-configargparse (1.5.3-1) ...
-Setting up python3-parsedatetime (2.6-3) ...
-Setting up python3-icu (2.10.2-1+b3) ...
-Setting up python3-charset-normalizer (3.0.1-2) ...
-Setting up python3-openssl (23.0.0-1) ...
-Setting up python3-tz (2022.7.1-4) ...
-Setting up python3-chardet (5.1.0+dfsg-2) ...
-Setting up python3-configobj (5.0.8-1) ...
-Setting up python3-certifi (2022.9.24-1) ...
-Setting up python3-idna (3.3-1+deb12u1) ...
-Setting up python3-urllib3 (1.26.12-1+deb12u1) ...
-Setting up python3-josepy (1.13.0-1) ...
-Setting up python3-rfc3339 (1.1-4) ...
-Setting up python3-requests (2.28.1+dfsg-1) ...
-Setting up python3-acme (2.1.0-1) ...
-Setting up python3-certbot (2.1.0-4) ...
-Setting up certbot (2.1.0-4) ...
-Created symlink /etc/systemd/system/timers.target.wants/certbot.timer → /lib/systemd/system/certbot.timer.
-Setting up python3-certbot-nginx (2.1.0-2) ...
-[0;32m✓ Configuration du Firewall (UFW)...[0m**, ****, ****, ****, **🚀 DÉPLOIEMENT AUTOMATIQUE COMPLET DE VECTORT.IO
-==================================================
-
-📋 Configuration:
-  - Serveur: 156.67.26.106
-  - Domaine: vectort.io
-
-📦 Étape 1/5: Préparation des fichiers...
-✅ Fichiers préparés
-
-📤 Étape 2/5: Transfer des fichiers vers Contabo (156.67.26.106)...
-   Ceci peut prendre 2-3 minutes...
-   Installation de sshpass...
-Selecting previously unselected package sshpass.
-(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 39803 files and directories currently installed.)
-Preparing to unpack .../sshpass_1.09-1_arm64.deb ...
-Unpacking sshpass (1.09-1) ...
-Setting up sshpass (1.09-1) ...**, **** (NEW):
-    - **Importance**: Various scripts and configuration files created for production deployment to Contabo, including Docker setup, environment variables, DNS configuration, and automated deployment attempts.
+-   ****:
+    -   **Importance**: Stores environment variables for the backend service.
+    -   **Changes**: Updated with live API keys for Stripe (, ), GitHub (, ), SendGrid (, ), Airtable (), and Google OAuth (, ). Also includes  and .
+-   ****:
+    -   **Importance**: Specifies Python package dependencies for the backend.
+    -   **Changes**: Initially provided a comprehensive list. Later, critical updates were made to specify compatible versions for  and  to resolve . Subsequently,  was added to address a  related to Pydantic's .
+-   ****:
+    -   **Importance**: The main FastAPI application serving all API endpoints.
+    -   **Changes**: A basic placeholder was replaced with the complete FastAPI application logic, including authentication (register, login, ), project management (create, get, delete), credit management (balance, packages, Stripe purchase integration), and a simulated AI generation endpoint (). CORS middleware is configured.
+-   ****:
+    -   **Importance**: Contains the logic for AI content generation.
+    -   **Changes**: A basic  Pydantic model and  function (placeholder logic) were created.
+-   ****:
+    -   **Importance**: The entry point for the frontend user interface.
+    -   **Changes**: A simple static HTML page was created to confirm frontend deployment, featuring a title, descriptive text, status indicators (for frontend, backend API, MongoDB), and a JavaScript  call to test the backend API.
+-   ****:
+    -   **Importance**: Defines and orchestrates the multi-service Docker application (backend and frontend containers).
+    -   **Changes**: Recreated multiple times to include  (Python 3.11-slim, installing dependencies from  and running ),  (Nginx Alpine, serving static files), and a . A critical change involved adjusting the  in the backend service's environment from  to  and explicitly adding  to both backend and frontend services to ensure proper communication within the Docker environment and with the host-installed MongoDB.
+-   ****:
+    -   **Importance**: Nginx server block configuration file for the domain.
+    -   **Changes**: Configured to handle HTTP to HTTPS redirection, manage SSL certificates via Certbot (), and act as a reverse proxy. It routes requests to  and  to the frontend container (port 3000) and requests to  to the backend container (port 8001), ensuring secure and correct routing.
 </code_architecture>
 
 <pending_tasks>
-- Fully implement backend logic for GitHub OAuth (beyond initial file creation and key setup).
-- Implement backend and frontend logic for SendGrid, AWS S3, Slack, Google Sheets, and Airtable integrations.
-- Successfully deploy the application to the Contabo server, including resolving DNS configuration with LWS.fr and executing the final deployment script.
-- Ensure all advanced functionalities (file upload, GitHub save/fork, Ultra Mode) within the  are fully functional and integrated with their respective backend logic.
+-   Fully implement backend logic for advanced functionalities (file upload, GitHub save/fork, Ultra Mode) within the  beyond just UI elements and placeholder code.
+-   Implement backend and frontend logic for AWS S3 and Slack integrations.
+-   User to update GitHub OAuth  on GitHub to .
 </pending_tasks>
 
 <current_work>
-Immediately before this summary request, the previous AI engineer was focused on deploying the Vectort.io application to the user's Contabo server. The user had successfully established an SSH connection to their Contabo server from their local MacBook (), providing proof of connection in the chat.
+Immediately before this summary, the AI engineer successfully completed the deployment of the Vectort.io application to the user's Contabo server. This process was largely manual, involving direct execution of commands by the user on their SSH terminal due to previous automation difficulties.
 
-The deployment process had encountered several roadblocks:
-1.  **DNS Configuration**: Automated configuration attempts for  via the LWS.fr API () failed repeatedly due to issues with API authentication/headers, despite the user providing API keys and login credentials. The AI engineer reverted to providing manual DNS configuration instructions for the user.
-2.  **SSH Access for Automated Deployment**: The AI engineer attempted to create an  script to automate DNS, SSH, and deployment. This failed because the user initially provided only a public SSH key, while the AI engineer required the private key for automated SSH. After clarification, the user successfully SSHed into the server from their local machine, but the AI engineer's automated script still couldn't use a password or the public key for its own SSH operations.
+The work accomplished includes:
+1.  **DNS Correction**: The user's LWS.fr DNS configuration was verified and corrected, ensuring that , , and  all point to the Contabo server's IP address () by removing a conflicting  record.
+2.  **API Key Integration**: All provided third-party API keys (GitHub Client ID/Secret, SendGrid API Key, Google OAuth Client ID/Secret, Airtable API Key) and Stripe live keys were successfully configured in the backend's  file within the  directory on the Contabo server.
+3.  **Server Infrastructure Setup**: Key components such as Docker, Docker Compose, Nginx, Certbot, and MongoDB were installed and configured on the Contabo server.
+4.  **Application Code Deployment**: The complete application code, including  (FastAPI backend), , , a basic  for the frontend, and , was created directly on the Contabo server using  commands.
+5.  **Dependency Resolution**:
+    *   A persistent  was resolved by explicitly updating  to  and .
+    *   A  (for Pydantic's ) was resolved by adding  to .
+6.  **Docker Networking Fix**: The  file was modified to ensure backend-to-MongoDB connectivity by changing the  to  and setting  for both backend and frontend services.
+7.  **SSL/Nginx Configuration**: Nginx was configured with SSL certificates (obtained via Certbot using ) to serve the frontend via  and proxy API requests to the backend via .
 
-As a result of these persistent automation difficulties, the AI engineer has now pivoted to providing direct, copy-paste commands for the user to execute themselves on their *already active* SSH terminal connection to the Contabo server. The AI engineer has prepared an  script for this purpose.
-
-This follows extensive work on:
-*   Implementing a comprehensive credit-based pricing system with Stripe integration (using live keys).
-*   Updating the  frontend to reflect credit packages.
-*   Enhancing the  component in  to include file upload, GitHub save/fork, Ultra Mode, and microphone options, with revised UI placement (buttons below the textarea) and sizing, and fixing a recurring  JavaScript error related to emoji rendering.
-*   Fixing an authentication issue in the frontend  using an Axios interceptor to ensure proper JWT token handling, enabling successful code generation.
-*   Setting up environment variables and installing libraries for multiple third-party integrations (GitHub OAuth, SendGrid, AWS S3, Slack, Google Sheets, Airtable).
+The work concluded with successful  tests confirming that the backend API is live and accessible both locally () and publicly (), returning . The frontend is also confirmed to be loading its placeholder page.
 </current_work>
 
 <optional_next_step>
-Provide the user with the exact commands and instructions to copy-paste into their active SSH terminal to deploy Vectort.io on their Contabo server.
+Verify the deployed application in a web browser by visiting  and .
 </optional_next_step>

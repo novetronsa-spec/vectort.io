@@ -10,7 +10,7 @@ import sys
 from typing import Dict, Any, Optional
 
 # Configuration
-BASE_URL = "https://aicode-builder-1.preview.emergentagent.com/api"
+BASE_URL = "https://contabo-setup.preview.emergentagent.com/api"
 
 class SecurityTester:
     def __init__(self):

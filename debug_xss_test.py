@@ -6,7 +6,7 @@ Debug XSS Protection - Check what's actually being stored
 import requests
 import json
 
-BASE_URL = "https://aicode-builder-1.preview.emergentagent.com/api"
+BASE_URL = "https://contabo-setup.preview.emergentagent.com/api"
 
 # Setup test user
 test_user = {
