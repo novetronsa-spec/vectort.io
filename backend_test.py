@@ -10,8 +10,8 @@ import sys
 import time
 from typing import Dict, Any, Optional
 
-# Configuration - CONTABO ENVIRONMENT API
-BASE_URL = "https://contabo-setup.preview.emergentagent.com/api"
+# Configuration - LOCAL ENVIRONMENT API (as per review request)
+BASE_URL = "http://localhost:8001/api"
 TEST_USER = {
     "email": f"test_vectort_{int(time.time())}@example.com",
     "password": "TestPassword123!",
