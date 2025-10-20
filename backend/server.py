@@ -436,12 +436,41 @@ async def generate_complete_multifile_project(request: GenerateAppRequest) -> di
         
         logger.info(f"Projet généré avec {len(all_files)} fichiers")
         
-        # Extraire les fichiers principaux pour compatibilité
+        # Extraire les fichiers principaux pour compatibilité avec mapping intelligent
         html_code = all_files.get("public/index.html", all_files.get("index.html", ""))
-        css_code = all_files.get("src/index.css", all_files.get("src/styles/App.css", ""))
-        js_code = all_files.get("src/utils/helpers.js", "")
-        react_code = all_files.get("src/App.jsx", all_files.get("src/main.jsx", ""))
-        backend_code = all_files.get("main.py", all_files.get("server.js", ""))
+        
+        # CSS: chercher tous les fichiers CSS
+        css_code = ""
+        for path, content in all_files.items():
+            if path.endswith('.css') and content:
+                css_code = content
+                break
+        
+        # JavaScript: chercher tous les fichiers JS (non JSX)
+        js_code = ""
+        for path, content in all_files.items():
+            if path.endswith('.js') and not path.endswith('.jsx') and content:
+                js_code = content
+                break
+        
+        # React: chercher les fichiers JSX/TSX
+        react_code = ""
+        for path, content in all_files.items():
+            if (path.endswith('.jsx') or path.endswith('.tsx')) and 'App' in path and content:
+                react_code = content
+                break
+        if not react_code:  # Fallback vers n'importe quel JSX
+            for path, content in all_files.items():
+                if (path.endswith('.jsx') or path.endswith('.tsx')) and content:
+                    react_code = content
+                    break
+        
+        # Backend: chercher les fichiers Python/Node backend
+        backend_code = ""
+        for path, content in all_files.items():
+            if (path.endswith('.py') or (path.endswith('.js') and 'server' in path.lower())) and content:
+                backend_code = content
+                break
         
         # Extraire les configs
         package_json = all_files.get("package.json", "")
