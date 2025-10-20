@@ -1129,6 +1129,42 @@ frontend:
           agent: "testing"
           comment: "🎉 REACT PREVIEW FIX VALIDATION RÉUSSIE! Comprehensive testing confirms the React preview fix is working perfectly: ✅ BACKEND API FONCTIONNEL: Registration, project creation, and code generation working (HTTP 200/201) ✅ PREVIEW GENERATION SUCCESSFUL: Preview endpoint returns 3384 characters of HTML content (vs previous 374 chars) ✅ REACT CDN INTEGRATION: Preview HTML includes React 18, ReactDOM, Babel, and Axios via CDN links ✅ CSS STYLING INCLUDED: Preview contains embedded CSS styles for proper visual rendering ✅ STRUCTURED HTML: Complete HTML5 document with proper DOCTYPE, meta tags, and French language support ✅ FIX IMPLEMENTATION CONFIRMED: The preview now detects react_code and creates interactive React preview as specified in the French requirements ✅ NO MORE BLANK PAGES: The 'Impossible de montrer preview' issue has been resolved - preview generates substantial content. The React preview fix successfully loads React libraries via CDN, compiles JSX with Babel, and creates functional React applications that display properly instead of blank pages."
 
+  - task: "GitHub Export Modal UI"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/components/GitHubExportModal.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "✅ INTERFACE GITHUB EXPORT CRÉÉE: Composant GitHubExportModal avec formulaire complet (token GitHub, nom repo, private/public). Intégration dans Dashboard avec bouton GitHub (icône purple). Modal avec validation, loader, et feedback toast. NÉCESSITE TESTS utilisateur avec token réel."
+
+  - task: "Deployment Modal UI"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/components/DeploymentModal.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "✅ INTERFACE DÉPLOIEMENT CRÉÉE: Composant DeploymentModal affichant 4 options (Vercel, Netlify, Railway, Render) avec descriptions et boutons one-click. Génération automatique des URLs de déploiement depuis GitHub. Design moderne avec logos des plateformes. NÉCESSITE TESTS end-to-end."
+
+  - task: "Dashboard Export Buttons Integration"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/pages/Dashboard.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "✅ BOUTONS D'EXPORT INTÉGRÉS: Ajout de 2 nouveaux boutons dans Dashboard - GitHub (icône purple) et Deploy (icône orange). Fonctions openGitHubExport() et openDeployModal() créées. États selectedProject, showGitHubModal, showDeployModal ajoutés. Modals conditionnellement affichés. NÉCESSITE TESTS complets d'intégration."
+
 metadata:
   created_by: "testing_agent"
   version: "1.0"
