@@ -10,12 +10,12 @@ import sys
 import time
 from typing import Dict, Any, Optional
 
-# Configuration
-BASE_URL = "https://contabo-setup.preview.emergentagent.com/api"
+# Configuration - PRODUCTION VECTORT.IO API
+BASE_URL = "https://api.vectort.io/api"
 TEST_USER = {
-    "email": f"test.corrections.{int(time.time())}@vectort.io",
-    "password": "SecurePass123!",
-    "full_name": "Test Corrections User"
+    "email": f"test_vectort_{int(time.time())}@example.com",
+    "password": "TestPassword123!",
+    "full_name": f"Test Vectort User {int(time.time())}"
 }
 
 class CodexAPITester:
