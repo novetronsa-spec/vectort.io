@@ -17,6 +17,7 @@ const API = `${BACKEND_URL}/api`;
 export default function LandingPage() {
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
+  const { t } = useLanguage();
   const [currentSlide, setCurrentSlide] = useState(0);
   const [description, setDescription] = useState("");
   const [stats, setStats] = useState({
