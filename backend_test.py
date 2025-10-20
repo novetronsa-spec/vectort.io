@@ -2462,6 +2462,37 @@ class CodexAPITester:
         
         return self.results['failed'] == 0
 
+    def run_optimized_generation_test(self):
+        """Run the specific optimized generation test requested in French review"""
+        print("🎯 TEST GÉNÉRATION MULTI-FICHIERS OPTIMISÉE")
+        print(f"Testing against: {self.base_url}")
+        print("=" * 80)
+        
+        # Reset results for this specific test
+        self.results = {"passed": 0, "failed": 0, "errors": []}
+        
+        # Run the specific test
+        self.test_optimized_multifile_generation_french_request()
+        
+        # Print final results
+        print("\n" + "=" * 80)
+        print("📊 RÉSULTAT TEST OPTIMISATION")
+        print("=" * 80)
+        print(f"✅ Passed: {self.results['passed']}")
+        print(f"❌ Failed: {self.results['failed']}")
+        
+        if self.results['failed'] == 0:
+            print("\n🎉 TEST D'OPTIMISATION RÉUSSI!")
+            print("✅ La génération parallèle fonctionne correctement")
+        else:
+            print("\n❌ TEST D'OPTIMISATION ÉCHOUÉ")
+            if self.results['errors']:
+                print("\n🔍 ERREURS DÉTECTÉES:")
+                for error in self.results['errors']:
+                    print(f"  - {error}")
+        
+        return self.results['failed'] == 0
+
     def test_optimized_multifile_generation_french_request(self):
         """🎯 RE-TEST GÉNÉRATION MULTI-FICHIERS OPTIMISÉE (French Review Request)"""
         print("\n=== 🎯 RE-TEST GÉNÉRATION MULTI-FICHIERS OPTIMISÉE ===")
