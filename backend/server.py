@@ -1072,6 +1072,83 @@ async def get_project_code(
     
     return GeneratedApp(**generated_app)
 
+
+@api_router.get("/projects/{project_id}/validate")
+async def validate_project_code(
+    project_id: str,
+    current_user: User = Depends(get_current_user)
+):
+    """Valide le code généré d'un projet"""
+    # Verify project ownership
+    project = await db.projects.find_one({"id": project_id, "user_id": current_user.id})
+    if not project:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Project not found"
+        )
+    
+    # Get generated code
+    generated_app = await db.generated_apps.find_one({"project_id": project_id})
+    if not generated_app:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Code not found"
+        )
+    
+    try:
+        from validators.code_validator import CodeValidator
+        
+        # Préparer les fichiers pour validation
+        all_files = generated_app.get("all_files", {})
+        
+        # Ajouter les fichiers principaux si all_files est vide
+        if not all_files:
+            all_files = {}
+            if generated_app.get("react_code"):
+                all_files["src/App.jsx"] = generated_app["react_code"]
+            if generated_app.get("css_code"):
+                all_files["src/styles/App.css"] = generated_app["css_code"]
+            if generated_app.get("html_code"):
+                all_files["public/index.html"] = generated_app["html_code"]
+            if generated_app.get("backend_code"):
+                all_files["server.py"] = generated_app["backend_code"]
+            if generated_app.get("package_json"):
+                all_files["package.json"] = generated_app["package_json"]
+        
+        # Valider
+        validator = CodeValidator()
+        results = validator.validate_project(all_files)
+        overall_score = validator.get_project_score(results)
+        report = validator.generate_validation_report(results)
+        
+        # Convertir les résultats en dict
+        results_dict = {
+            file_path: {
+                "is_valid": result.is_valid,
+                "errors": result.errors,
+                "warnings": result.warnings,
+                "score": result.score
+            }
+            for file_path, result in results.items()
+        }
+        
+        return {
+            "project_id": project_id,
+            "overall_score": overall_score,
+            "total_files": len(results),
+            "valid_files": sum(1 for r in results.values() if r.is_valid),
+            "total_errors": sum(len(r.errors) for r in results.values()),
+            "total_warnings": sum(len(r.warnings) for r in results.values()),
+            "files": results_dict,
+            "report": report
+        }
+        
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Erreur validation: {str(e)}"
+        )
+
 @api_router.get("/projects/{project_id}/preview")
 async def preview_project(
     project_id: str,
