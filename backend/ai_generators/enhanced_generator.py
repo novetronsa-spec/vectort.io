@@ -343,72 +343,190 @@ class EnhancedProjectGenerator:
         advanced_mode: bool = True
     ) -> Dict[str, str]:
         """
-        Génère un projet complet avec tous les fichiers
-        VERSION OPTIMISÉE : Génération parallèle + fichiers essentiels uniquement
+        Génère un projet complet - VERSION ULTRA-OPTIMISÉE
+        Réduit les appels LLM en générant plusieurs fichiers par appel
         
         Returns:
             Dict avec tous les fichiers générés {chemin: contenu}
         """
+        import asyncio
+        
         # Obtenir la structure
         structure = self.get_project_structure(framework, project_type)
-        
-        # OPTIMISATION : Ne générer que les fichiers essentiels (pas tous)
         essential_files = self._filter_essential_files(structure.files, framework)
         
-        # Générer tous les fichiers EN PARALLÈLE
         all_files = {}
         
+        # STRATÉGIE : 3 appels LLM groupés au lieu de 1 par fichier
         chat = LlmChat(
             api_key=self.api_key,
             session_id=f"project-{hash(description)}",
             system_message=self._get_system_message(framework, project_type)
         )
         
-        # Créer les tasks de génération en PARALLÈLE
-        import asyncio
-        tasks = []
-        file_paths = []
-        
-        for file_path, file_desc in essential_files.items():
-            task = self._generate_file_content(
-                chat=chat,
-                file_path=file_path,
-                file_desc=file_desc,
-                description=description,
-                framework=framework,
-                project_type=project_type,
-                dependencies=structure.dependencies,
-                existing_files={}  # Pas de context pour paralléliser
-            )
-            tasks.append(task)
-            file_paths.append(file_path)
-        
         try:
-            # Générer TOUS les fichiers en parallèle avec timeout de 20s
+            # Groupe 1 : Fichiers principaux (composants React, pages)
+            main_files = {k: v for k, v in essential_files.items() if any(x in k for x in ['App.', 'main.', 'index.', 'Home.', 'Layout.'])}
+            
+            # Groupe 2 : Fichiers utilitaires et helpers
+            util_files = {k: v for k, v in essential_files.items() if any(x in k for x in ['util', 'helper', 'api.', 'config.'])}
+            
+            # Groupe 3 : Composants secondaires
+            component_files = {k: v for k, v in essential_files.items() if 'component' in k.lower() and k not in main_files}
+            
+            # Générer en 3 appels parallèles avec timeout
+            task1 = self._generate_files_batch(chat, main_files, description, framework, project_type) if main_files else asyncio.sleep(0)
+            task2 = self._generate_files_batch(chat, util_files, description, framework, project_type) if util_files else asyncio.sleep(0)
+            task3 = self._generate_files_batch(chat, component_files, description, framework, project_type) if component_files else asyncio.sleep(0)
+            
             results = await asyncio.wait_for(
-                asyncio.gather(*tasks, return_exceptions=True),
-                timeout=20.0
+                asyncio.gather(task1, task2, task3, return_exceptions=True),
+                timeout=18.0  # 18s pour laisser 2s de marge
             )
             
-            # Traiter les résultats
-            for i, result in enumerate(results):
-                file_path = file_paths[i]
-                if isinstance(result, Exception):
-                    print(f"Erreur génération {file_path}: {result}")
-                    all_files[file_path] = self._get_fallback_content(file_path)
-                else:
-                    all_files[file_path] = result
+            # Fusionner les résultats
+            for result in results:
+                if isinstance(result, dict):
+                    all_files.update(result)
                     
         except asyncio.TimeoutError:
-            print("Timeout génération parallèle, utilisation fallbacks")
-            for file_path in file_paths:
-                if file_path not in all_files:
-                    all_files[file_path] = self._get_fallback_content(file_path)
+            print("⚠️ Timeout génération, utilisation de fallbacks minimaux")
+        except Exception as e:
+            print(f"⚠️ Erreur génération: {e}")
         
-        # Ajouter les fichiers de configuration auto-générés (instantané)
+        # Si pas assez de fichiers, ajouter des fallbacks
+        if len(all_files) < 3:
+            print("⚠️ Génération insuffisante, ajout de fichiers de base")
+            all_files.update(self._generate_minimal_project(framework, description))
+        
+        # Ajouter TOUJOURS les fichiers de configuration (instantané, pas de LLM)
         all_files.update(self._generate_config_files(structure, framework))
         
         return all_files
+    
+    async def _generate_files_batch(
+        self,
+        chat: LlmChat,
+        files: Dict[str, str],
+        description: str,
+        framework: str,
+        project_type: str
+    ) -> Dict[str, str]:
+        """Génère un batch de fichiers en un seul appel LLM"""
+        
+        if not files:
+            return {}
+        
+        # Créer un prompt groupé pour tous les fichiers
+        files_list = "\n".join([f"- {path}: {desc}" for path, desc in files.items()])
+        
+        prompt = f"""Génère le code pour TOUS ces fichiers d'un coup:
+
+PROJET: {description}
+TYPE: {project_type}
+FRAMEWORK: {framework}
+
+FICHIERS À GÉNÉRER:
+{files_list}
+
+IMPORTANT:
+- Génère le code de CHAQUE fichier
+- Format de réponse: 
+  FICHIER: chemin/fichier.ext
+  ```
+  code ici
+  ```
+  
+  FICHIER: autre/fichier.ext
+  ```
+  code ici
+  ```
+
+- Code production-ready, fonctionnel
+- Respect des conventions du framework
+- Imports/exports cohérents
+
+Génère MAINTENANT tous les fichiers."""
+        
+        try:
+            response = await chat.with_model("openai", "gpt-4o").send_message(UserMessage(text=prompt))
+            
+            # Parser la réponse pour extraire chaque fichier
+            generated = self._parse_batch_response(response, list(files.keys()))
+            return generated
+            
+        except Exception as e:
+            print(f"Erreur génération batch: {e}")
+            # Fallback : générer au moins le premier fichier
+            first_file = list(files.keys())[0]
+            return {first_file: self._get_fallback_content(first_file)}
+    
+    def _parse_batch_response(self, response: str, expected_files: List[str]) -> Dict[str, str]:
+        """Parse une réponse contenant plusieurs fichiers"""
+        
+        files = {}
+        
+        # Chercher les patterns "FICHIER: path"
+        import re
+        parts = re.split(r'FICHIER:\s*([^\n]+)', response)
+        
+        for i in range(1, len(parts), 2):
+            if i+1 < len(parts):
+                file_path = parts[i].strip()
+                content = parts[i+1].strip()
+                
+                # Nettoyer le contenu
+                content = self._clean_generated_code(content)
+                
+                # Trouver le fichier correspondant
+                for expected in expected_files:
+                    if expected in file_path or file_path in expected:
+                        files[expected] = content
+                        break
+        
+        # Si pas assez de fichiers parsés, ajouter des fallbacks
+        for expected in expected_files:
+            if expected not in files:
+                files[expected] = self._get_fallback_content(expected)
+        
+        return files
+    
+    def _generate_minimal_project(self, framework: str, description: str) -> Dict[str, str]:
+        """Génère un projet minimal sans LLM (fallback)"""
+        
+        files = {}
+        
+        if framework == "react":
+            files["src/App.jsx"] = f"""import React from 'react';
+
+export default function App() {{
+  return (
+    <div className="app">
+      <h1>Application Générée</h1>
+      <p>{description}</p>
+    </div>
+  );
+}}
+"""
+            files["src/index.css"] = """* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.app {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+h1 {
+  color: #333;
+  margin-bottom: 1rem;
+}
+"""
+        
+        return files
     
     def _filter_essential_files(self, all_files: Dict[str, str], framework: str) -> Dict[str, str]:
         """Filtre pour garder uniquement les fichiers essentiels (MVP)"""
