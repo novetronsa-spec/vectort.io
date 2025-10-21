@@ -56,7 +56,9 @@ cp /app/docker-compose.yml $PACKAGE_DIR/ 2>/dev/null || true
 # Scripts de déploiement
 echo "   - Copie des scripts de déploiement..."
 cp /app/contabo-auto-deploy.sh $PACKAGE_DIR/
+cp /app/update-contabo.sh $PACKAGE_DIR/
 cp /app/DEPLOY_INSTRUCTIONS_FR.md $PACKAGE_DIR/
+cp /app/GUIDE_MISE_A_JOUR_FR.md $PACKAGE_DIR/
 
 echo "   ✅ Fichiers copiés"
 
