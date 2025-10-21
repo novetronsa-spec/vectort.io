@@ -12,7 +12,7 @@ import os
 from typing import Dict, Any, Optional
 
 # Configuration
-BASE_URL = "https://vectort-code.preview.emergentagent.com/api"
+BASE_URL = "https://emergent-clone-193.preview.emergentagent.com/api"
 TEST_USER = {
     "email": f"critical.test.{int(time.time())}@vectort.io",
     "password": "CriticalTest123!",
