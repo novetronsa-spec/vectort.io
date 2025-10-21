@@ -7,7 +7,7 @@ import requests
 import json
 import time
 
-BASE_URL = "https://contabo-setup.preview.emergentagent.com/api"
+BASE_URL = "https://vectort-code.preview.emergentagent.com/api"
 
 def debug_advanced_response():
     print("🔍 Debugging Advanced Mode Response")

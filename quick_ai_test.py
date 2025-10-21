@@ -7,7 +7,7 @@ import requests
 import json
 import time
 
-BASE_URL = "https://contabo-setup.preview.emergentagent.com/api"
+BASE_URL = "https://vectort-code.preview.emergentagent.com/api"
 
 def test_ai_generation():
     print("🔧 Quick AI Generation Test")
