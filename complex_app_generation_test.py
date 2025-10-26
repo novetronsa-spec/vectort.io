@@ -271,7 +271,7 @@ Use React hooks, modern styling, and include proper state management."""
                 "description": description,
                 "type": "web_app",
                 "framework": "react",
-                "advanced_mode": True
+                "advanced_mode": False
             }
             
             start_time = time.time()
@@ -359,7 +359,7 @@ Modern UI with Tailwind-style colors and smooth animations."""
                 "description": description,
                 "type": "web_app",
                 "framework": "react",
-                "advanced_mode": True
+                "advanced_mode": False
             }
             
             start_time = time.time()
@@ -448,7 +448,7 @@ Clean, modern UI similar to Slack or Discord."""
                 "description": description,
                 "type": "web_app",
                 "framework": "react",
-                "advanced_mode": True
+                "advanced_mode": False
             }
             
             start_time = time.time()
