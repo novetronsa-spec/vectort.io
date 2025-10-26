@@ -1625,11 +1625,11 @@ async def iterate_project(
             detail=f"Crédits insuffisants. Vous avez {user_credits.total_available} crédit(s), {credit_cost} requis pour cette tâche ({complexity_level}). {complexity_explanation}"
         )
     
-    # Deduct credits
+    # Deduct credits (adaptive amount)
     await deduct_credits(
         current_user.id,
         credit_cost,
-        f"Itération projet #{iteration_number}",
+        f"Itération projet #{iteration_number} - {complexity_level} ({credit_cost} crédits)",
         project_id
     )
     
