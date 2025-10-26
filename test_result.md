@@ -102,7 +102,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Teste complètement le nouveau système de génération d'applications IA de Codex : Test authentification et projets de base, Test génération d'applications IA (focus principal), Test de différents types d'applications, Test de robustesse"
+user_problem_statement: "Test complet du système d'itération et de chat IA pour Vectort.io - Le système d'amélioration itérative des projets comme emergent.sh"
 
 backend:
   - task: "Basic API Response"
