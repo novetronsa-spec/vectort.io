@@ -3,7 +3,7 @@
  * Gère les flux d'authentification OAuth pour Google, GitHub et Apple
  */
 
-const API_URL = process.env.REACT_APP_BACKEND_URL || 'https://omniai-platform-2.preview.emergentagent.com';
+const API_URL = process.env.REACT_APP_BACKEND_URL || 'https://codeforge-108.preview.emergentagent.com';
 
 /**
  * Initie le flux OAuth Google

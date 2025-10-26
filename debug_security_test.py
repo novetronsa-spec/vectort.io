@@ -6,7 +6,7 @@ Debug the XSS test specifically
 import requests
 import re
 
-BASE_URL = "https://omniai-platform-2.preview.emergentagent.com/api"
+BASE_URL = "https://codeforge-108.preview.emergentagent.com/api"
 
 # Setup test user
 test_user = {

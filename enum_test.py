@@ -7,7 +7,7 @@ import requests
 import json
 import time
 
-BASE_URL = "https://omniai-platform-2.preview.emergentagent.com/api"
+BASE_URL = "https://codeforge-108.preview.emergentagent.com/api"
 
 def test_enum_and_advanced_mode():
     print("🔧 Testing ProjectType Enum and Advanced Mode")

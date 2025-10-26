@@ -18,16 +18,16 @@ from cryptography.hazmat.backends import default_backend
 # Configuration des providers OAuth
 GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID')
 GOOGLE_CLIENT_SECRET = os.environ.get('GOOGLE_CLIENT_SECRET')
-GOOGLE_REDIRECT_URI = os.environ.get('GOOGLE_REDIRECT_URI', 'https://omniai-platform-2.preview.emergentagent.com/api/auth/google/callback')
+GOOGLE_REDIRECT_URI = os.environ.get('GOOGLE_REDIRECT_URI', 'https://codeforge-108.preview.emergentagent.com/api/auth/google/callback')
 
 GITHUB_CLIENT_ID = os.environ.get('GITHUB_CLIENT_ID')
 GITHUB_CLIENT_SECRET = os.environ.get('GITHUB_CLIENT_SECRET')
-GITHUB_REDIRECT_URI = os.environ.get('GITHUB_REDIRECT_URI', 'https://omniai-platform-2.preview.emergentagent.com/api/auth/github/callback')
+GITHUB_REDIRECT_URI = os.environ.get('GITHUB_REDIRECT_URI', 'https://codeforge-108.preview.emergentagent.com/api/auth/github/callback')
 
 APPLE_TEAM_ID = os.environ.get('APPLE_TEAM_ID', '')
 APPLE_KEY_ID = os.environ.get('APPLE_KEY_ID', '')
 APPLE_CLIENT_ID = os.environ.get('APPLE_CLIENT_ID', '')
-APPLE_REDIRECT_URI = os.environ.get('APPLE_REDIRECT_URI', 'https://omniai-platform-2.preview.emergentagent.com/api/auth/apple/callback')
+APPLE_REDIRECT_URI = os.environ.get('APPLE_REDIRECT_URI', 'https://codeforge-108.preview.emergentagent.com/api/auth/apple/callback')
 
 
 class GoogleOAuth:

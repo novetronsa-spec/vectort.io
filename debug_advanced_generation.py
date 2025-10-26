@@ -7,7 +7,7 @@ import requests
 import json
 import time
 
-BASE_URL = "https://omniai-platform-2.preview.emergentagent.com/api"
+BASE_URL = "https://codeforge-108.preview.emergentagent.com/api"
 TEST_USER = {
     "email": f"debug.test.{int(time.time())}@vectort.io",
     "password": "DebugTest123!",

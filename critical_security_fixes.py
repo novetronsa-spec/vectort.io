@@ -8,7 +8,7 @@ import requests
 import json
 import time
 
-BASE_URL = "https://omniai-platform-2.preview.emergentagent.com/api"
+BASE_URL = "https://codeforge-108.preview.emergentagent.com/api"
 
 def test_xss_vulnerability():
     """Test if XSS vulnerability still exists after understanding the issue"""
