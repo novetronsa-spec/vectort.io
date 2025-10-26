@@ -6,7 +6,7 @@ Debug the XSS test specifically
 import requests
 import re
 
-BASE_URL = "https://emergent-clone-193.preview.emergentagent.com/api"
+BASE_URL = "https://oauth-debug-2.preview.emergentagent.com/api"
 
 # Setup test user
 test_user = {

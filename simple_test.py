@@ -7,7 +7,7 @@ import requests
 import json
 import time
 
-BASE_URL = "https://emergent-clone-193.preview.emergentagent.com/api"
+BASE_URL = "https://oauth-debug-2.preview.emergentagent.com/api"
 
 def test_basic_generation():
     # Register user
