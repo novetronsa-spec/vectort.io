@@ -1779,7 +1779,8 @@ async def get_project_chat(
     
     # Get chat messages
     messages = await db.project_chat.find(
-        {"project_id": project_id}
+        {"project_id": project_id},
+        {"_id": 0}  # Exclude _id field to avoid ObjectId serialization issues
     ).sort("timestamp", 1).to_list(length=100)
     
     return {
