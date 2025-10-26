@@ -1046,10 +1046,10 @@ async def github_callback(code: str, state: str):
             user = User(
                 email=email,
                 full_name=github_name,
+                provider="github",
+                provider_id=str(user_info.get("id"))
             )
             user_dict = user.dict()
-            user_dict["oauth_provider"] = "github"
-            user_dict["oauth_id"] = str(user_info.get("id"))
             await db.users.insert_one(user_dict)
         
         # Crée un JWT token
