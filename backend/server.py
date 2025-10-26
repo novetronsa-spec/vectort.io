@@ -1636,14 +1636,15 @@ async def iterate_project(
             new_instruction=instruction
         )
         
-        # Call LLM
-        llm_response = await multi_llm_service.generate(
-            prompt=prompt,
-            max_tokens=6000,
-            temperature=0.7
-        )
+        # Call LLM using direct LlmChat (same as working generation)
+        chat = LlmChat(
+            api_key=EMERGENT_LLM_KEY,
+            session_id=f"iteration-{uuid.uuid4()}",
+            system_message="Tu es un développeur expert qui améliore le code existant selon les instructions de l'utilisateur."
+        ).with_model("openai", "gpt-4o")
         
-        response_text = llm_response.get("content", "")
+        user_message = UserMessage(text=prompt)
+        response_text = await chat.send_message(user_message)
         
         # Parse response to extract code and changes
         import json
