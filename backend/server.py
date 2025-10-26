@@ -980,7 +980,9 @@ async def google_callback(code: str, state: str):
 async def github_login():
     """Initie le flux OAuth GitHub"""
     from auth_oauth import GitHubOAuth
-    return GitHubOAuth.get_authorization_url()
+    auth_data = GitHubOAuth.get_authorization_url()
+    # Redirige directement vers GitHub
+    return RedirectResponse(url=auth_data["authorization_url"])
 
 
 @api_router.get("/auth/github/callback")
