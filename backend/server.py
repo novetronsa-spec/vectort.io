@@ -2534,6 +2534,12 @@ async def startup_db():
     await db.users.create_index([("provider", 1), ("provider_id", 1)])
     await db.projects.create_index("user_id")
     await db.projects.create_index("created_at")
+    
+    # Indexes for iteration system
+    await db.project_chat.create_index([("project_id", 1), ("timestamp", 1)])
+    await db.project_iterations.create_index([("project_id", 1), ("iteration_number", 1)])
+    await db.generated_apps.create_index("project_id", unique=True)
+    
     logger.info("Database indexes created")
 
 @app.on_event("shutdown")
