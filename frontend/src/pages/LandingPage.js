@@ -133,17 +133,17 @@ export default function LandingPage() {
           {/* Main heading */}
           <div className="text-center lg:text-left">
             <h1 className="text-6xl lg:text-7xl font-bold mb-4">
-              Transform ideas into<br />
-              <span className="text-green-400">AI-powered</span> applications
+              {t('landing.hero_title')}<br />
+              <span className="text-green-400">{t('landing.hero_subtitle')}</span>
             </h1>
             
             <p className="text-gray-400 mb-8">
-              Already have an account? 
+              {t('auth.already_have_account')}
               <button 
                 onClick={() => navigate("/auth")}
                 className="text-green-400 hover:underline ml-2"
               >
-                Sign in
+                {t('auth.sign_in')}
               </button>
             </p>
           </div>
