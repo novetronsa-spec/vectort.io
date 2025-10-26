@@ -251,6 +251,27 @@ class CreditTransaction(BaseModel):
     project_id: Optional[str] = None
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
+# Deployment models
+class DeploymentRequest(BaseModel):
+    platform: str  # vercel, netlify, render
+    github_repo_url: str
+    project_name: str
+    env_vars: Optional[Dict[str, str]] = None
+    framework: Optional[str] = None
+    build_command: Optional[str] = None
+    start_command: Optional[str] = None
+    publish_dir: Optional[str] = None
+
+class DeploymentResponse(BaseModel):
+    success: bool
+    platform: str
+    deployment_url: Optional[str] = None
+    deployment_id: Optional[str] = None
+    status: str
+    message: Optional[str] = None
+    error: Optional[str] = None
+    logs_url: Optional[str] = None
+
 # Définition des packages de crédits (SECURITY: côté serveur uniquement)
 CREDIT_PACKAGES = {
     "micro": CreditPackage(
