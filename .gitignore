@@ -293,3 +293,7 @@ android-sdk/ -e
 # Prevent secret-containing files
 GOOGLE_OAUTH_FINAL_CHECKLIST.md
 vectort_comprehensive_test.py
+-e 
+# Environment files
+*.env
+*.env.*
