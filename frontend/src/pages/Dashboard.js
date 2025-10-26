@@ -515,8 +515,9 @@ ${codeData.backend_code || 'Aucun code backend généré'}
   };
 
   const handleCodeUpdated = async () => {
-    // Recharger les projets après mise à jour du code
+    // Recharger les projets et crédits après mise à jour du code
     await fetchProjects();
+    await fetchCredits();
     toast({
       title: "✨ Projet mis à jour",
       description: "Vos modifications ont été appliquées avec succès!",
