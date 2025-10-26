@@ -2,7 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { Send, Loader2, MessageSquare, Sparkles, Clock, CheckCircle2 } from 'lucide-react';
 
-const API = process.env.REACT_APP_BACKEND_URL;
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+const API = `${BACKEND_URL}/api`;
 
 const ProjectChatPanel = ({ projectId, onCodeUpdated, userCredits }) => {
   const [messages, setMessages] = useState([]);
