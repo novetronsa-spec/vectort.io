@@ -1,11 +1,12 @@
 {
   "common": {
     "welcome": "Benvenuto su Vectort",
+    "app_name": "Vectort.io",
     "get_started": "Inizia",
     "login": "Accedi",
     "register": "Registrati",
     "logout": "Esci",
-    "dashboard": "Cruscotto",
+    "dashboard": "Dashboard",
     "projects": "Progetti",
     "credits": "Crediti",
     "settings": "Impostazioni",
@@ -20,6 +21,73 @@
     "create": "Crea",
     "export": "Esporta",
     "download": "Scarica",
-    "deploy": "Distribuisci"
+    "deploy": "Deploy",
+    "close": "Chiudi",
+    "back": "Indietro",
+    "next": "Avanti",
+    "finish": "Fine",
+    "search": "Cerca",
+    "profile": "Profilo",
+    "pricing": "Prezzi",
+    "features": "Funzionalità",
+    "documentation": "Documentazione",
+    "support": "Supporto",
+    "contact": "Contatto",
+    "terms": "Termini di servizio",
+    "privacy": "Privacy policy",
+    "language": "Lingua",
+    "continue": "Continua"
+  },
+  "landing": {
+    "hero_title": "Crea Applicazioni Full-Stack",
+    "hero_subtitle": "in Secondi con l'IA",
+    "hero_description": "Trasforma le tue idee in codice pronto per la produzione.",
+    "start_building": "Inizia Ora",
+    "try_free": "Prova Gratuita - 10 Crediti",
+    "continue_with_google": "Continua con Google",
+    "sign_in_with_email": "Registrati con Email",
+    "or": "oppure",
+    "by_continuing": "Continuando, accetti i nostri"
+  },
+  "auth": {
+    "sign_in": "Accedi",
+    "sign_up": "Registrati",
+    "email": "Email",
+    "password": "Password",
+    "full_name": "Nome completo",
+    "already_have_account": "Hai già un account?",
+    "login_success": "Accesso effettuato",
+    "register_success": "Account creato"
+  },
+  "dashboard": {
+    "welcome_back": "Bentornato",
+    "my_projects": "I Miei Progetti",
+    "new_project": "Nuovo Progetto",
+    "credits_remaining": "crediti rimanenti",
+    "buy_more_credits": "Acquista Altri",
+    "quick_mode": "Modalità Rapida",
+    "advanced_mode": "Modalità Avanzata",
+    "ultra_mode": "Modalità Ultra",
+    "generate_code": "Genera Codice",
+    "view_code": "Visualizza Codice",
+    "preview": "Anteprima",
+    "describe_project": "Descrivi il tuo progetto...",
+    "generating": "Generazione..."
+  },
+  "projects": {
+    "generate": "Genera",
+    "export_zip": "Esporta ZIP",
+    "export_github": "Esporta GitHub"
+  },
+  "credits": {
+    "balance": "Saldo",
+    "buy_credits": "Acquista Crediti",
+    "package_starter": "Starter",
+    "package_standard": "Standard",
+    "package_pro": "Pro"
+  },
+  "messages": {
+    "copied": "Copiato",
+    "loading": "Caricamento..."
   }
 }

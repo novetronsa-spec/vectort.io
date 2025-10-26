@@ -1,17 +1,18 @@
 {
   "common": {
-    "welcome": "مرحبا بك في Vectort",
+    "welcome": "مرحبًا بك في Vectort",
+    "app_name": "Vectort.io",
     "get_started": "ابدأ",
     "login": "تسجيل الدخول",
-    "register": "التسجيل",
+    "register": "إنشاء حساب",
     "logout": "تسجيل الخروج",
     "dashboard": "لوحة التحكم",
     "projects": "المشاريع",
-    "credits": "الرصيد",
+    "credits": "الأرصدة",
     "settings": "الإعدادات",
-    "loading": "جاري التحميل...",
+    "loading": "جارٍ التحميل...",
     "error": "خطأ",
-    "success": "نجح",
+    "success": "نجاح",
     "cancel": "إلغاء",
     "confirm": "تأكيد",
     "save": "حفظ",
@@ -19,7 +20,74 @@
     "edit": "تعديل",
     "create": "إنشاء",
     "export": "تصدير",
-    "download": "تنزيل",
-    "deploy": "نشر"
+    "download": "تحميل",
+    "deploy": "نشر",
+    "close": "إغلاق",
+    "back": "رجوع",
+    "next": "التالي",
+    "finish": "إنهاء",
+    "search": "بحث",
+    "profile": "الملف الشخصي",
+    "pricing": "الأسعار",
+    "features": "الميزات",
+    "documentation": "التوثيق",
+    "support": "الدعم",
+    "contact": "الاتصال",
+    "terms": "شروط الخدمة",
+    "privacy": "سياسة الخصوصية",
+    "language": "اللغة",
+    "continue": "متابعة"
+  },
+  "landing": {
+    "hero_title": "قم ببناء تطبيقات Full-Stack",
+    "hero_subtitle": "في ثوانٍ باستخدام الذكاء الاصطناعي",
+    "hero_description": "حوّل أفكارك إلى كود جاهز للإنتاج.",
+    "start_building": "ابدأ الآن",
+    "try_free": "تجربة مجانية - 10 أرصدة",
+    "continue_with_google": "متابعة مع Google",
+    "sign_in_with_email": "التسجيل بالبريد الإلكتروني",
+    "or": "أو",
+    "by_continuing": "بالمتابعة، فإنك توافق على"
+  },
+  "auth": {
+    "sign_in": "تسجيل الدخول",
+    "sign_up": "إنشاء حساب",
+    "email": "البريد الإلكتروني",
+    "password": "كلمة المرور",
+    "full_name": "الاسم الكامل",
+    "already_have_account": "هل لديك حساب بالفعل؟",
+    "login_success": "تم تسجيل الدخول",
+    "register_success": "تم إنشاء الحساب"
+  },
+  "dashboard": {
+    "welcome_back": "مرحبًا بعودتك",
+    "my_projects": "مشاريعي",
+    "new_project": "مشروع جديد",
+    "credits_remaining": "أرصدة متبقية",
+    "buy_more_credits": "شراء المزيد",
+    "quick_mode": "وضع سريع",
+    "advanced_mode": "وضع متقدم",
+    "ultra_mode": "وضع فائق",
+    "generate_code": "إنشاء الكود",
+    "view_code": "عرض الكود",
+    "preview": "معاينة",
+    "describe_project": "صف مشروعك...",
+    "generating": "جارٍ الإنشاء..."
+  },
+  "projects": {
+    "generate": "إنشاء",
+    "export_zip": "تصدير ZIP",
+    "export_github": "تصدير GitHub"
+  },
+  "credits": {
+    "balance": "الرصيد",
+    "buy_credits": "شراء الأرصدة",
+    "package_starter": "مبتدئ",
+    "package_standard": "قياسي",
+    "package_pro": "احترافي"
+  },
+  "messages": {
+    "copied": "تم النسخ",
+    "loading": "جارٍ التحميل..."
   }
 }
