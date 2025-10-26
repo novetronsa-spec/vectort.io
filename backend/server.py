@@ -1391,7 +1391,7 @@ async def generate_project_code(
     
     try:
         # Generate code using ADVANCED AI
-        code_data = await generate_app_code_advanced(request)
+        code_data = await generate_app_code_advanced(request_data)
         
         # Calculate generation time and cost
         duration = time.time() - start_time
