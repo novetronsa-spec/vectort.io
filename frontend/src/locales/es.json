@@ -1,6 +1,7 @@
 {
   "common": {
     "welcome": "Bienvenido a Vectort",
+    "app_name": "Vectort.io",
     "get_started": "Comenzar",
     "login": "Iniciar sesión",
     "register": "Registrarse",
@@ -20,16 +21,73 @@
     "create": "Crear",
     "export": "Exportar",
     "download": "Descargar",
-    "deploy": "Desplegar"
+    "deploy": "Desplegar",
+    "close": "Cerrar",
+    "back": "Atrás",
+    "next": "Siguiente",
+    "finish": "Finalizar",
+    "search": "Buscar",
+    "profile": "Perfil",
+    "pricing": "Precios",
+    "features": "Características",
+    "documentation": "Documentación",
+    "support": "Soporte",
+    "contact": "Contacto",
+    "terms": "Términos de servicio",
+    "privacy": "Política de privacidad",
+    "language": "Idioma",
+    "continue": "Continuar"
+  },
+  "landing": {
+    "hero_title": "Crea Aplicaciones Full-Stack",
+    "hero_subtitle": "en Segundos con IA",
+    "hero_description": "Transforma tus ideas en código listo para producción.",
+    "start_building": "Comenzar Ahora",
+    "try_free": "Prueba Gratis - 10 Créditos",
+    "continue_with_google": "Continuar con Google",
+    "sign_in_with_email": "Registrarse con Email",
+    "or": "o",
+    "by_continuing": "Al continuar, aceptas nuestros"
   },
   "auth": {
-    "email": "Correo electrónico",
+    "sign_in": "Iniciar sesión",
+    "sign_up": "Registrarse",
+    "email": "Email",
     "password": "Contraseña",
-    "full_name": "Nombre completo"
+    "full_name": "Nombre completo",
+    "already_have_account": "¿Ya tienes cuenta?",
+    "login_success": "Inicio de sesión exitoso",
+    "register_success": "Cuenta creada"
   },
   "dashboard": {
+    "welcome_back": "Bienvenido de nuevo",
     "my_projects": "Mis Proyectos",
     "new_project": "Nuevo Proyecto",
-    "credits_balance": "Saldo de Créditos"
+    "credits_remaining": "créditos restantes",
+    "buy_more_credits": "Comprar Más",
+    "quick_mode": "Modo Rápido",
+    "advanced_mode": "Modo Avanzado",
+    "ultra_mode": "Modo Ultra",
+    "generate_code": "Generar Código",
+    "view_code": "Ver Código",
+    "preview": "Vista previa",
+    "describe_project": "Describe tu proyecto...",
+    "generating": "Generando..."
+  },
+  "projects": {
+    "generate": "Generar",
+    "export_zip": "Exportar ZIP",
+    "export_github": "Exportar GitHub"
+  },
+  "credits": {
+    "balance": "Saldo",
+    "buy_credits": "Comprar Créditos",
+    "package_starter": "Starter",
+    "package_standard": "Standard",
+    "package_pro": "Pro"
+  },
+  "messages": {
+    "copied": "Copiado",
+    "loading": "Cargando..."
   }
 }

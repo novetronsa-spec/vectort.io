@@ -1,6 +1,7 @@
 {
   "common": {
     "welcome": "Willkommen bei Vectort",
+    "app_name": "Vectort.io",
     "get_started": "Loslegen",
     "login": "Anmelden",
     "register": "Registrieren",
@@ -20,6 +21,73 @@
     "create": "Erstellen",
     "export": "Exportieren",
     "download": "Herunterladen",
-    "deploy": "Bereitstellen"
+    "deploy": "Bereitstellen",
+    "close": "Schließen",
+    "back": "Zurück",
+    "next": "Weiter",
+    "finish": "Fertig",
+    "search": "Suchen",
+    "profile": "Profil",
+    "pricing": "Preise",
+    "features": "Funktionen",
+    "documentation": "Dokumentation",
+    "support": "Support",
+    "contact": "Kontakt",
+    "terms": "Nutzungsbedingungen",
+    "privacy": "Datenschutz",
+    "language": "Sprache",
+    "continue": "Fortfahren"
+  },
+  "landing": {
+    "hero_title": "Erstelle Full-Stack-Anwendungen",
+    "hero_subtitle": "in Sekunden mit KI",
+    "hero_description": "Verwandle deine Ideen in produktionsreifen Code.",
+    "start_building": "Jetzt starten",
+    "try_free": "Kostenlos testen - 10 Credits",
+    "continue_with_google": "Mit Google fortfahren",
+    "sign_in_with_email": "Mit E-Mail registrieren",
+    "or": "oder",
+    "by_continuing": "Durch Fortfahren stimmst du unseren"
+  },
+  "auth": {
+    "sign_in": "Anmelden",
+    "sign_up": "Registrieren",
+    "email": "E-Mail",
+    "password": "Passwort",
+    "full_name": "Vollständiger Name",
+    "already_have_account": "Hast du bereits ein Konto?",
+    "login_success": "Anmeldung erfolgreich",
+    "register_success": "Konto erstellt"
+  },
+  "dashboard": {
+    "welcome_back": "Willkommen zurück",
+    "my_projects": "Meine Projekte",
+    "new_project": "Neues Projekt",
+    "credits_remaining": "Credits übrig",
+    "buy_more_credits": "Mehr kaufen",
+    "quick_mode": "Schnellmodus",
+    "advanced_mode": "Erweiterter Modus",
+    "ultra_mode": "Ultra-Modus",
+    "generate_code": "Code generieren",
+    "view_code": "Code ansehen",
+    "preview": "Vorschau",
+    "describe_project": "Beschreibe dein Projekt...",
+    "generating": "Wird generiert..."
+  },
+  "projects": {
+    "generate": "Generieren",
+    "export_zip": "ZIP exportieren",
+    "export_github": "GitHub exportieren"
+  },
+  "credits": {
+    "balance": "Guthaben",
+    "buy_credits": "Credits kaufen",
+    "package_starter": "Starter",
+    "package_standard": "Standard",
+    "package_pro": "Pro"
+  },
+  "messages": {
+    "copied": "Kopiert",
+    "loading": "Lädt..."
   }
 }
