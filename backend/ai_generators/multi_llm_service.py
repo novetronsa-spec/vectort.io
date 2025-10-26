@@ -7,6 +7,7 @@ Features: Circuit breaker, retry with exponential backoff, latency-based selecti
 import os
 import asyncio
 import time
+import uuid
 from typing import Optional, Dict, Any, List
 from enum import Enum
 import logging
