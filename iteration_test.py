@@ -457,8 +457,8 @@ class VectortIterationTester:
                 code_lengths = {field: len(data.get(field) or "") for field in code_fields}
                 
                 # Check for iterations reflection
-                react_code = data.get("react_code", "")
-                css_code = data.get("css_code", "")
+                react_code = data.get("react_code") or ""
+                css_code = data.get("css_code") or ""
                 
                 # Look for iteration changes (contact form, blue header, gallery)
                 has_contact_form = "contact" in react_code.lower() or "formulaire" in react_code.lower()
