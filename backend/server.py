@@ -1038,7 +1038,9 @@ async def github_callback(code: str, state: str):
 async def apple_login():
     """Initie le flux OAuth Apple"""
     from auth_oauth import AppleOAuth
-    return AppleOAuth.get_authorization_url()
+    auth_data = AppleOAuth.get_authorization_url()
+    # Redirige directement vers Apple
+    return RedirectResponse(url=auth_data["authorization_url"])
 
 
 @api_router.post("/auth/apple/callback")
