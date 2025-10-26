@@ -1779,6 +1779,44 @@ async def iterate_project(
         raise HTTPException(status_code=500, detail=f"Erreur lors de l'itération: {str(e)}")
 
 
+@api_router.post("/projects/{project_id}/estimate-credits")
+async def estimate_iteration_credits(
+    project_id: str,
+    iteration_request: IterationRequest,
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Estimate credit cost for an iteration BEFORE executing
+    Like Emergent - shows cost upfront
+    """
+    from utils.credit_estimator import CreditEstimator
+    from utils.cache import sanitize_prompt
+    
+    # Verify project ownership
+    project = await db.projects.find_one({"id": project_id, "user_id": current_user.id})
+    if not project:
+        raise HTTPException(status_code=404, detail="Project not found")
+    
+    # Sanitize and estimate
+    instruction = sanitize_prompt(iteration_request.instruction)
+    breakdown = CreditEstimator.get_credit_breakdown(instruction)
+    
+    # Check if user has enough credits
+    user_credits = await get_user_credit_balance(current_user.id)
+    has_enough = user_credits.total_available >= breakdown["estimated_credits"]
+    
+    return {
+        "project_id": project_id,
+        "instruction": instruction,
+        "estimated_credits": breakdown["estimated_credits"],
+        "complexity_level": breakdown["complexity_level"],
+        "explanation": breakdown["explanation"],
+        "user_available_credits": user_credits.total_available,
+        "has_enough_credits": has_enough,
+        "factors": breakdown["factors"]
+    }
+
+
 @api_router.get("/projects/{project_id}/chat")
 async def get_project_chat(
     project_id: str,
