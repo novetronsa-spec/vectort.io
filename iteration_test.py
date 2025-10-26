@@ -187,7 +187,7 @@ class VectortIterationTester:
                         else:
                             self.log_result("Project Creation & Generation", False, 
                                           f"❌ Critères non remplis. Status: {project_status}, "
-                                          f"Code généré: {code_generated}, Crédits déduits: {credits_deducted}")
+                                          f"Code généré: {code_generated}, Crédits OK: {credits_ok}")
                     else:
                         self.log_result("Project Creation & Generation", False, 
                                       f"❌ Impossible de vérifier le statut du projet")
