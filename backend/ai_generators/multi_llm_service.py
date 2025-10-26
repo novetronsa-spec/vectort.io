@@ -107,7 +107,7 @@ class MultiLLMService:
             
             # Use emergent key for all providers
             chat = LlmChat(
-                key=self.emergent_key,
+                api_key=self.emergent_key,
                 model=provider.value,
                 max_tokens=max_tokens,
                 temperature=temperature
