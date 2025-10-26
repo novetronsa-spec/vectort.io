@@ -1294,11 +1294,17 @@ async def get_user_stats(current_user: User = Depends(get_current_user)):
 
 # AI Code Generation routes
 @api_router.post("/projects/{project_id}/generate", response_model=GeneratedApp)
+@limiter.limit("10/minute")  # Rate limit: 10 generations per minute
 async def generate_project_code(
+    request_obj: Request,  # For rate limiting
     project_id: str, 
     request: GenerateAppRequest,
     current_user: User = Depends(get_current_user)
 ):
+    from utils.cache import generate_cache_key, sanitize_prompt, estimate_llm_cost
+    
+    start_time = time.time()
+    
     # Verify project ownership
     project = await db.projects.find_one({"id": project_id, "user_id": current_user.id})
     if not project:
@@ -1306,6 +1312,43 @@ async def generate_project_code(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Project not found"
         )
+    
+    # Sanitize description for security
+    request.description = sanitize_prompt(request.description)
+    
+    # Generate cache key
+    cache_key = generate_cache_key(
+        request.description,
+        request.framework or "react",
+        request.type,
+        request.advanced_mode
+    )
+    
+    # Check cache first (unless force regenerate)
+    force_regenerate = getattr(request, 'force_regenerate', False)
+    if not force_regenerate:
+        cached_app = await db.generated_apps.find_one(
+            {"cache_key": cache_key},
+            sort=[("created_at", -1)]
+        )
+        
+        if cached_app:
+            logger.info(
+                "cache_hit",
+                extra={
+                    "user_id": current_user.id,
+                    "project_id": project_id,
+                    "cache_key": cache_key
+                }
+            )
+            track_cache(hit=True, cache_type="llm")
+            
+            # Return cached result (no credit deduction for cache hits)
+            return GeneratedApp(**cached_app)
+    
+    # Cache miss - track it
+    track_cache(hit=False, cache_type="llm")
+    log_generation_started(logger, current_user.id, project_id, request.framework or "react", "gpt-5")
     
     # Calculer le coût en crédits selon le mode
     credit_cost = 2 if not request.advanced_mode else 4  # Quick: 2, Advanced: 4
@@ -1332,6 +1375,13 @@ async def generate_project_code(
             detail="Erreur lors de la déduction des crédits"
         )
     
+    # Track credit consumption
+    track_credits(
+        plan=current_user.subscription_plan or "free",
+        operation="generation",
+        amount=credit_cost
+    )
+    
     # Update project status
     await db.projects.update_one(
         {"id": project_id},
@@ -1341,6 +1391,10 @@ async def generate_project_code(
     try:
         # Generate code using ADVANCED AI
         code_data = await generate_app_code_advanced(request)
+        
+        # Calculate generation time and cost
+        duration = time.time() - start_time
+        estimated_cost = estimate_llm_cost("gpt-5", len(str(code_data)) // 4)  # Rough token estimate
         
         # Create generated app record with ADVANCED features
         generated_app = GeneratedApp(
