@@ -28,6 +28,14 @@ from ai_generators.advanced_generator import (
     Framework, 
     DatabaseType
 )
+from ai_generators.multi_llm_service import multi_llm_service
+from exporters.deployment_platforms import (
+    vercel_deployment,
+    netlify_deployment,
+    render_deployment,
+    DeploymentPlatform,
+    DeploymentResult
+)
 from fastapi import Request
 from typing import Dict
 
