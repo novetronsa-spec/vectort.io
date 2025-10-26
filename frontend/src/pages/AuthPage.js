@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs"
 import { ArrowLeft, Eye, EyeOff } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
 import { useToast } from "../hooks/use-toast";
+import { loginWithGoogle, loginWithGitHub, loginWithApple } from "../utils/oauth";
 
 export default function AuthPage() {
   const navigate = useNavigate();
