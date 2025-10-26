@@ -1192,6 +1192,13 @@ ${codeData.backend_code || 'Aucun code backend généré'}
           }}
         />
       )}
+
+      {/* Modal Preview Simple */}
+      <PreviewModal
+        projectId={previewProjectId}
+        isOpen={showPreviewModal}
+        onClose={closePreviewModal}
+      />
     </div>
   );
 }
