@@ -75,6 +75,8 @@ export default function Dashboard() {
   const [showGitHubModal, setShowGitHubModal] = useState(false);
   const [showDeployModal, setShowDeployModal] = useState(false);
   const [selectedProject, setSelectedProject] = useState(null);
+  const [showChatPanel, setShowChatPanel] = useState(false);
+  const [chatProjectId, setChatProjectId] = useState(null);
 
   const frameworks = {
     web_app: ["react", "vue", "angular", "nextjs", "svelte"],
