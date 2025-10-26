@@ -495,6 +495,11 @@ ${codeData.backend_code || 'Aucun code backend généré'}
     setChatProjectId(null);
   };
 
+  const closePreviewModal = () => {
+    setShowPreviewModal(false);
+    setPreviewProjectId(null);
+  };
+
   const handleCodeUpdated = async () => {
     // Recharger les projets et crédits après mise à jour du code
     await fetchProjects();
