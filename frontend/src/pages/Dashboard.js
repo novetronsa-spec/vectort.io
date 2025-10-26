@@ -80,6 +80,8 @@ export default function Dashboard() {
   const [selectedProject, setSelectedProject] = useState(null);
   const [showChatPanel, setShowChatPanel] = useState(false);
   const [chatProjectId, setChatProjectId] = useState(null);
+  const [showPreviewModal, setShowPreviewModal] = useState(false);
+  const [previewProjectId, setPreviewProjectId] = useState(null);
 
   const frameworks = {
     web_app: ["react", "vue", "angular", "nextjs", "svelte"],
