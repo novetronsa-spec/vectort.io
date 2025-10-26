@@ -114,14 +114,19 @@ class MultiLLMService:
             ).with_model("openai", "gpt-4o")
             
             # Convert messages to emergentintegrations format
-            formatted_messages = []
+            # For now, just use the last user message (emergentintegrations expects single message)
+            user_content = ""
             for msg in messages:
                 if msg["role"] == "user":
-                    formatted_messages.append(UserMessage(msg["content"]))
-                # Add system messages if needed (depends on emergentintegrations support)
+                    user_content = msg["content"]
+            
+            if not user_content:
+                raise ValueError("No user message found")
+            
+            user_message = UserMessage(text=user_content)
             
             # Make the call
-            response = await asyncio.to_thread(chat.chat, formatted_messages)
+            response = await chat.send_message(user_message)
             
             # Record latency
             latency = time.time() - start_time
