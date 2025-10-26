@@ -1728,12 +1728,19 @@ async def iterate_project(
             0.01
         )
         
+        # Create clean update_data for response (without datetime fields)
+        clean_update_data = {}
+        if update_data:
+            for key, value in update_data.items():
+                if key != "updated_at" and isinstance(value, str):
+                    clean_update_data[key] = value
+        
         return ProjectIterationResponse(
             success=True,
             iteration_number=iteration_number,
             changes_made=code_data.get("changes_made", []),
             explanation=code_data.get("explanation", "Améliorations appliquées"),
-            updated_code=update_data if update_data else None
+            updated_code=clean_update_data if clean_update_data else None
         )
         
     except Exception as e:
