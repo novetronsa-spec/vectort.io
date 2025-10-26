@@ -288,20 +288,24 @@ class DeploymentAPITester:
             async with self.session.post(f"{API_BASE}/projects/{self.test_project_id}/deploy", json=payload, headers=headers) as response:
                 data = await response.json()
                 
-                # We expect this to fail due to invalid repo/tokens, but the API structure should be correct
-                if response.status in [400, 500]:
+                # We expect this to return 200 with success=false due to missing tokens
+                if response.status == 200:
                     # Check if the response has the correct structure
                     required_fields = ["success", "platform", "status"]
                     if all(field in data for field in required_fields):
                         if data.get("platform") == "netlify" and data.get("success") == False:
-                            print(f"   📝 Expected failure due to invalid repo/token: {data.get('error', 'Unknown error')}")
-                            self.record_test(test_name, True)
+                            if "NETLIFY_TOKEN not configured" in data.get("error", ""):
+                                print(f"   📝 Expected failure due to missing NETLIFY_TOKEN: {data.get('error')}")
+                                self.record_test(test_name, True)
+                            else:
+                                print(f"   📝 Expected failure due to invalid repo/token: {data.get('error', 'Unknown error')}")
+                                self.record_test(test_name, True)
                         else:
                             self.record_test(test_name, False, f"Incorrect response structure: {data}")
                     else:
                         self.record_test(test_name, False, f"Missing required fields in response: {data}")
                 else:
-                    # Unexpected success or other status
+                    # Unexpected status
                     self.record_test(test_name, False, f"Unexpected status {response.status}: {data}")
         
         except Exception as e:
