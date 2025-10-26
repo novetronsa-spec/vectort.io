@@ -1,116 +1,60 @@
 <analysis>
-The trajectory details the AI engineer's work on Vectort.io, a clone of emergent.sh. Initial efforts included a challenging Contabo deployment with manual configurations and subsequent fixes for local environment issues (MongoDB, /, React build). Key features implemented are ZIP export, GitHub export backend, multi-file generation, multilingual support (9 languages), and updated credit packages. The core focus then shifted to automating Contabo deployment, which initially failed due to SSH access issues. After user clarification that it was an update, the AI created an update package () and an  script. The current challenge revolves around guiding the user to correctly transfer this package from the Emergent environment to the Contabo server and execute the update, as the user repeatedly attempts  from incorrect source locations.
+The AI engineer's work pivoted from failed Contabo deployment to stabilizing the application on an Emergent server. Initial efforts focused on verifying existing functionality, updating Stripe API keys to achieve 100% backend functionality, and then implementing and debugging OAuth integrations for Google, GitHub, and Apple. This involved creating new backend routes, frontend components, and fixing redirection/validation errors. Subsequently, the engineer embarked on a comprehensive translation effort for 9 languages, a task repeatedly pushed by the user to 100% completion despite its significant time investment. The current critical blocker is a persistent GitHub push protection error caused by committed documentation files containing secrets, preventing any further Git operations. The AI is now attempting to resolve this by rewriting Git history, currently being blocked by uncommitted changes.
 </analysis>
 
 <product_requirements>
-The objective is to build Vectort.io, a pixel-perfect clone of emergent.sh, featuring robust authentication, comprehensive project management, and an advanced AI generation system supporting over 25 project types (quick/advanced modes, voice-to-text). The application incorporates a credit-based monetization model (100/0, 250/0, etc.) with 10 free credits and Stripe integration. User requests included file upload, GitHub save/fork, an Ultra Mode, a functional microphone, UI improvements, and full third-party integrations (GitHub OAuth, SendGrid, AWS S3, Slack, Google Sheets, Airtable). A critical requirement was automated deployment to a Contabo server with a custom LWS.fr domain. The AI has implemented the core API and frontend, fixed a preview display issue, added ZIP export, built backend logic for GitHub export and multi-file generation, and integrated multilingual support (9 languages) and updated credit packages. The current primary task is to achieve successful automated deployment/update to the Contabo server.
+The goal is Vectort.io, a clone of emergent.sh, featuring authentication, comprehensive project management, and an advanced AI generation system with over 25 project types (quick/advanced modes, voice-to-text). It includes a credit-based monetization model with Stripe integration. User requests covered file upload, GitHub save/fork, an Ultra Mode, a functional microphone, UI improvements, and full third-party integrations (GitHub OAuth, SendGrid, AWS S3, Slack, Google Sheets, Airtable). Automated deployment to a Contabo server was a critical initial requirement. The AI has implemented core API/frontend, fixed preview issues, added ZIP export, built GitHub export and multi-file generation logic, integrated multilingual support (9 languages), and updated credit packages. The primary unresolved task remains successful Contabo deployment/update, and recent efforts focused on debugging OAuth integrations on the Emergent server and completing app-wide translation.
 </product_requirements>
 
 <key_technical_concepts>
--   **Frontend:** React.js, Craco, Nginx, Shadcn/UI (implied).
--   **Backend:** FastAPI, Pydantic, MongoDB, JWT Auth, Stripe, Emergent LLM Key (GPT-4o), , .
--   **Integrations:** GitHub OAuth, SendGrid, Google OAuth, Airtable, Stripe.
--   **Deployment:** Docker, Docker Compose, Nginx, Certbot, SSH, backend                          RUNNING   pid 41, uptime 0:00:09
-code-server                      RUNNING   pid 43, uptime 0:00:09
-frontend                         RUNNING   pid 190, uptime 0:00:04
-mongodb                          RUNNING   pid 47, uptime 0:00:09
-supervisor> .
--   **Core Features:** Multi-file code generation, ZIP export, GitHub export, Contabo deployment/update, multilingual support.
+-   **Frontend:** React.js, Craco, Nginx, npm.
+-   **Backend:** FastAPI, Pydantic, MongoDB, JWT Auth, Stripe, .
+-   **Integrations:** Google OAuth, GitHub OAuth, Apple OAuth, SendGrid, Stripe.
+-   **Deployment:** Docker, Docker Compose, SSH, Git.
+-   **Internationalization:** i18n using JSON locale files.
 </key_technical_concepts>
 
 <code_architecture>
-The application uses a full-stack monorepo structure within the  directory:
 
-
-
--   ****: Stores API keys including , , and various integration keys.
--   ****: Manages Python dependencies; updated for , , , and .
--   ****: The main FastAPI application. Configured , improved , added endpoints for ZIP () and GitHub () exports, updated , and integrated .
--   ****: Implements multi-file code generation logic using .
--   ****: Handles ZIP archive creation.
--   ****: Manages pushing generated code to GitHub via .
--   ****: Core UI for user interaction; updated for authenticated previews, integrated export/deployment buttons, and .
--   ****: Frontend UI for GitHub export.
--   ****, ****, ****: New files for comprehensive multilingual support (9 languages).
--   ****: Wrapped with  for global language context.
--   **═══════════════════════════════════════════════════════════════
-   📦 PRÉPARATION DU PACKAGE DE DÉPLOIEMENT VECTORT.IO
-═══════════════════════════════════════════════════════════════
-📋 Configuration:
-   Package: vectort-deploy
-   Destination: 156.67.26.106
-
-🧹 Étape 1/5: Nettoyage des fichiers temporaires...
-   ✅ Répertoire temporaire créé
-📂 Étape 2/5: Copie des fichiers de l'application...
-   - Copie du backend...
-   - Copie du frontend...
-   - Copie des fichiers Docker...
-   - Copie des scripts de déploiement...
-   ✅ Fichiers copiés
-⚙️  Étape 3/5: Création de la configuration Docker...
-   ✅ docker-compose.yml créé
-🐳 Étape 4/5: Vérification des Dockerfiles...
-📦 Étape 5/5: Création de l'archive...
-   ✅ Archive créée: /tmp/vectort-deploy.tar.gz
-   📊 Taille: 380K
-
-═══════════════════════════════════════════════════════════════
-   ✅ PACKAGE PRÊT!
-═══════════════════════════════════════════════════════════════
-
-📦 Fichier créé: /tmp/vectort-deploy.tar.gz
-
-🚀 PROCHAINES ÉTAPES:
-
-1️⃣  Transférer le fichier vers Contabo:
-   scp /tmp/vectort-deploy.tar.gz @156.67.26.106:/opt/
-
-2️⃣  Se connecter au serveur Contabo:
-   ssh root@156.67.26.106
-
-3️⃣  Décompresser et exécuter le script:
-   cd /opt
-   tar -xzf vectort-deploy.tar.gz
-   cd vectort-deploy
-   chmod +x contabo-auto-deploy.sh
-   sudo ./contabo-auto-deploy.sh
-
-💡 OU copiez les commandes ci-dessous dans votre terminal:
-
-═══════════════════════════════════════════════════════════════
-# Commandes à copier-coller
-scp /tmp/vectort-deploy.tar.gz root@156.67.26.106:/opt/
-ssh root@156.67.26.106
-cd /opt && tar -xzf vectort-deploy.tar.gz && cd vectort-deploy && chmod +x contabo-auto-deploy.sh && sudo ./contabo-auto-deploy.sh
-═══════════════════════════════════════════════════════════════**: A new script to bundle application files and the update script into .
--   **═══════════════════════════════════════════════════════════════
-   🔄 MISE À JOUR VECTORT.IO SUR CONTABO
-═══════════════════════════════════════════════════════════════
-📋 Configuration:
-   Répertoire de l'application: /opt/vectort
-   Répertoire de sauvegarde: /opt/vectort-backup-20251021-160053
-
-🔍 Étape 1/8: Vérification de l'installation existante...
-❌ L'application n'existe pas dans /opt/vectort
-   Veuillez d'abord déployer l'application avec contabo-auto-deploy.sh**: A new script for updating an existing Contabo deployment, created after user clarification.
--   ****: Provides French instructions for the update process.
+-   ****: Stores critical API keys and database URL. Updated with new Stripe, Google, GitHub, and Apple OAuth credentials.
+-   ****: Manages Python dependencies.
+-   ****: The main FastAPI application. Modified to import , integrate , fix OAuth endpoints to redirect correctly, and add  fallbacks for GitHub and Google user creation.
+-   ****: *New file*. Contains backend endpoints for Google, GitHub, and Apple OAuth login and callback.
+-   ****: Stores frontend environment variables like .
+-   ****: Core user interface landing page. Modified to connect OAuth buttons to frontend handlers and began integration of multilingual translation using .
+-   ****: Main user dashboard. Confirmed  import, and handlers for GitHub Save/Fork/Ultra Mode are present. Translation work is ongoing.
+-   ****: *New file*. Provides utility functions for initiating OAuth flows from the frontend.
+-   ****: *New file*. Handles OAuth callback redirects from external providers.
+-   ****: Main React application. Modified to include the  route.
+-   ****: Manages language state and auto-detection.
+-   ****: Translation files (e.g., , , , , ).  was created as a master translation file, and , , ,  were created/updated with comprehensive keys.
+-   **, , , , **: Markdown files created for user guidance and internal planning.
 </code_architecture>
 
 <pending_tasks>
 -   Complete frontend UI for GitHub export and deployment modals.
 -   Full implementation of AWS S3 and Slack integrations.
--   User needs to update GitHub OAuth .
--   Successfully execute the automated Contabo deployment/update.
 -   Implement an interactive preview in an iframe.
 -   Implement one-click deploy to Vercel/Netlify.
 -   Implement progressive/streaming generation.
+-   **Crucially:** Integrate all remaining hardcoded texts in  and  into the i18n system for all 9 languages.
+-   Resolve Contabo deployment issues.
+-   Resolve persistent GitHub Push Protection errors by removing secrets from Git history.
 </pending_tasks>
 
 <current_work>
-Immediately before this summary, the AI engineer created a robust update mechanism for the Contabo server. This involved generating a  package containing the latest application code, including the newly created  script, which is designed to perform an in-place update on an already deployed Contabo instance. French-language guides, , were also created to assist the user through the process. The user's explicit request was to deploy these updates. However, the user is currently facing difficulties with the file transfer step. They attempted  commands from both their Contabo server and their local Mac, each time resulting in No such file or directory errors because the  file exists only within the Emergent environment where the AI is operating. The AI is now actively guiding the user through the correct procedure to transfer the file from Emergent to Contabo.
+Immediately before this summary request, the AI engineer was primarily focused on two major areas:
+1.  **Comprehensive Application Translation:** The AI was actively working on translating the entire application into 9 languages. This involved generating comprehensive JSON translation files (e.g., , , , , ) with all necessary keys. It had begun modifying  to utilize these translations, specifically for navigation elements. This is a large, ongoing task, and the user repeatedly insisted on 100% completion, including sections like Features, Pricing, FAQs, despite the AI estimating significant time (4-6 hours).
+2.  **Resolving GitHub Push Protection Errors:** A critical blocker to further progress is a recurring Git push protection error. This error occurs because sensitive data (Google OAuth Client ID/Secret, Stripe API Key) was inadvertently committed into documentation files (, ) within the Git history. The AI had identified these files and attempted to stage their removal. However, the last reported action indicated that the attempt to rewrite Git history (WARNING: git-filter-branch has a glut of gotchas generating mangled history
+	 rewrites.  Hit Ctrl-C before proceeding to abort, then use an
+	 alternative filtering tool such as 'git filter-repo'
+	 (https://github.com/newren/git-filter-repo/) instead.  See the
+	 filter-branch manual page for more details; to squelch this warning,
+	 set FILTER_BRANCH_SQUELCH_WARNING=1.
+Proceeding with filter-branch...) was blocked by uncommitted changes. The immediate goal is to overcome this Git issue to allow further code commits and pushes.
 </current_work>
 
 <optional_next_step>
-Guide the user to transfer the  from Emergent to Contabo and execute .
+Commit current frontend translation changes, then remove documentation files containing secrets from Git history.
 </optional_next_step>
+

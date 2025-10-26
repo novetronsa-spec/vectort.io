@@ -11,7 +11,7 @@ import time
 from typing import Dict, Any, Optional
 
 # Configuration - PRODUCTION ENVIRONMENT API
-BASE_URL = "https://oauth-debug-2.preview.emergentagent.com/api"
+BASE_URL = "https://omniai-platform-2.preview.emergentagent.com/api"
 TEST_USER = {
     "email": f"test_vectort_{int(time.time())}@example.com",
     "password": "TestPassword123!",

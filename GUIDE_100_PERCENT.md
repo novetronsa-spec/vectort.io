@@ -60,7 +60,7 @@
    - Cliquez dessus
    - **COLLEZ EXACTEMENT** (Ctrl+C, Ctrl+V) :
      ```
-     https://oauth-debug-2.preview.emergentagent.com
+     https://omniai-platform-2.preview.emergentagent.com
      ```
    - Appuyez sur **Entrée**
    - ⚠️ **VÉRIFIEZ** : Pas d'espace avant/après, pas de "/" à la fin
@@ -72,7 +72,7 @@
    - Cliquez dessus
    - **COLLEZ EXACTEMENT** :
      ```
-     https://oauth-debug-2.preview.emergentagent.com/api/auth/google/callback
+     https://omniai-platform-2.preview.emergentagent.com/api/auth/google/callback
      ```
    - Appuyez sur **Entrée**
    - ⚠️ **VÉRIFIEZ** : Exactement "/api/auth/google/callback" à la fin
@@ -93,19 +93,19 @@
 
     ✅ **Origines JavaScript autorisées** :
     ```
-    https://oauth-debug-2.preview.emergentagent.com
+    https://omniai-platform-2.preview.emergentagent.com
     ```
 
     ✅ **URI de redirection autorisés** :
     ```
-    https://oauth-debug-2.preview.emergentagent.com/api/auth/google/callback
+    https://omniai-platform-2.preview.emergentagent.com/api/auth/google/callback
     ```
 
 ### ✅ ÉTAPE 2 : Test Google OAuth
 
 1. **Ouvrez un nouvel onglet** et allez sur :
    ```
-   https://oauth-debug-2.preview.emergentagent.com
+   https://omniai-platform-2.preview.emergentagent.com
    ```
 
 2. **Cliquez sur le bouton blanc** "Continue with Google"
@@ -150,9 +150,9 @@
 5. **SI ELLE N'EXISTE PAS**, cliquez sur **"New OAuth App"** et remplissez :
    ```
    Application name: Vectort.io
-   Homepage URL: https://oauth-debug-2.preview.emergentagent.com
+   Homepage URL: https://omniai-platform-2.preview.emergentagent.com
    Application description: (optionnel) AI-powered application generator
-   Authorization callback URL: https://oauth-debug-2.preview.emergentagent.com/api/auth/github/callback
+   Authorization callback URL: https://omniai-platform-2.preview.emergentagent.com/api/auth/github/callback
    ```
    → Cliquez sur "Register application"
    → **COPIEZ le Client ID et générez un Client Secret**
@@ -169,7 +169,7 @@
 
 8. **Vérifiez/Modifiez** pour avoir EXACTEMENT :
    ```
-   https://oauth-debug-2.preview.emergentagent.com/api/auth/github/callback
+   https://omniai-platform-2.preview.emergentagent.com/api/auth/github/callback
    ```
 
 9. **Cliquez sur "Update application"** (bouton vert)
@@ -180,7 +180,7 @@
 
 1. **Allez sur** :
    ```
-   https://oauth-debug-2.preview.emergentagent.com
+   https://omniai-platform-2.preview.emergentagent.com
    ```
 
 2. **Cliquez sur le bouton** "GitHub" (avec l'icône GitHub verte)

@@ -967,7 +967,7 @@ async def google_callback(code: str, state: str):
         jwt_token = create_access_token(data={"sub": user.id})
         
         # Redirige vers le frontend avec le token
-        frontend_url = os.environ.get('FRONTEND_URL', 'https://oauth-debug-2.preview.emergentagent.com')
+        frontend_url = os.environ.get('FRONTEND_URL', 'https://omniai-platform-2.preview.emergentagent.com')
         return RedirectResponse(
             url=f"{frontend_url}/auth/callback?token={jwt_token}&provider=google"
         )
@@ -1027,7 +1027,7 @@ async def github_callback(code: str, state: str):
         jwt_token = create_access_token(data={"sub": user.id})
         
         # Redirige vers le frontend avec le token
-        frontend_url = os.environ.get('FRONTEND_URL', 'https://oauth-debug-2.preview.emergentagent.com')
+        frontend_url = os.environ.get('FRONTEND_URL', 'https://omniai-platform-2.preview.emergentagent.com')
         return RedirectResponse(
             url=f"{frontend_url}/auth/callback?token={jwt_token}&provider=github"
         )

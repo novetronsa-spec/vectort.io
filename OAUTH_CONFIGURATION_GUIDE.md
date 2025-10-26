@@ -21,12 +21,12 @@ Le message d'erreur "oauth-debug-2.preview.emergentagent.com n'autorise pas la c
 
 **3. Configurez les Origines JavaScript autorisées**
    ```
-   https://oauth-debug-2.preview.emergentagent.com
+   https://omniai-platform-2.preview.emergentagent.com
    ```
 
 **4. Configurez les URI de redirection autorisés**
    ```
-   https://oauth-debug-2.preview.emergentagent.com/api/auth/google/callback
+   https://omniai-platform-2.preview.emergentagent.com/api/auth/google/callback
    ```
 
 **5. Enregistrez et copiez**
@@ -43,10 +43,10 @@ Le message d'erreur "oauth-debug-2.preview.emergentagent.com n'autorise pas la c
 
 **2. Remplissez le formulaire**
    - Application name: `Vectort.io`
-   - Homepage URL: `https://oauth-debug-2.preview.emergentagent.com`
+   - Homepage URL: `https://omniai-platform-2.preview.emergentagent.com`
    - Authorization callback URL: 
      ```
-     https://oauth-debug-2.preview.emergentagent.com/api/auth/github/callback
+     https://omniai-platform-2.preview.emergentagent.com/api/auth/github/callback
      ```
 
 **3. Enregistrez et copiez**
@@ -82,10 +82,10 @@ Une fois les redirect URIs configurés dans Google et GitHub:
 
 Les URLs de callback sont configurées pour pointer vers:
 ```
-Backend: https://oauth-debug-2.preview.emergentagent.com/api/auth/google/callback
-Backend: https://oauth-debug-2.preview.emergentagent.com/api/auth/github/callback
+Backend: https://omniai-platform-2.preview.emergentagent.com/api/auth/google/callback
+Backend: https://omniai-platform-2.preview.emergentagent.com/api/auth/github/callback
 
-Frontend redirect: https://oauth-debug-2.preview.emergentagent.com/auth/callback
+Frontend redirect: https://omniai-platform-2.preview.emergentagent.com/auth/callback
 ```
 
 ---

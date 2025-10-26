@@ -13,7 +13,7 @@ from typing import Dict, Any, List
 import sys
 
 # Configuration
-BASE_URL = "https://oauth-debug-2.preview.emergentagent.com/api"
+BASE_URL = "https://omniai-platform-2.preview.emergentagent.com/api"
 CONCURRENT_USERS = 10
 LOAD_TEST_DURATION = 30  # seconds
 
