@@ -735,6 +735,17 @@ backend:
           agent: "testing"
           comment: "✅ EXPORT GITHUB BACKEND CONFIRMÉ EN PRODUCTION: Backend logs confirment API fonctionnelle - GET /api/github/user retourne 401 pour tokens invalides (comportement attendu), POST /api/projects/{id}/export/github retourne 422 pour validation (normal sans token valide). Système opérationnel et prêt pour tokens GitHub réels."
 
+  - task: "Vectort.io Production API Complete Testing"
+    implemented: true
+    working: true
+    file: "https://oauth-debug-2.preview.emergentagent.com/api"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "🎯 VECTORT.IO PRODUCTION API TESTING - 92.9% SUCCESS RATE! Comprehensive testing confirms: ✅ API STATUS: GET /api/ responds correctly ✅ AUTHENTICATION: Registration, Login, JWT verification working perfectly ✅ CREDIT SYSTEM: 10 free credits confirmed, 3 packages (Starter/Standard/Pro) available ✅ PROJECT MANAGEMENT: Create/List/Get operations working ✅ AI GENERATION CRITICAL: EMERGENT_LLM_KEY functional - REAL code generated (React: 3505 chars, CSS: 849 chars, Backend: 705 chars) in 10.1s, credit deduction working (10→8) ✅ CODE RETRIEVAL: Generated code accessible ✅ PREVIEW: HTML preview (5612 chars) generated ✅ EXPORT ZIP: Working (6648 bytes) ❌ STRIPE ONLY ISSUE: API key expired (sk_live_*****Equ3V4) causing 500 error on purchase - needs renewal. Backend logs confirm LiteLLM integration working, MongoDB operational. System 100% ready for production once Stripe key updated."
   - task: "Deployment Manager System"
     implemented: true
     working: "NA"
