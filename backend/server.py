@@ -1414,13 +1414,34 @@ async def generate_project_code(
             all_files=code_data.get("all_files")
         )
         
-        # Save to database
-        await db.generated_apps.insert_one(generated_app.dict())
+        # Save to database WITH cache key
+        app_dict = generated_app.dict()
+        app_dict["cache_key"] = cache_key  # For future cache hits
+        await db.generated_apps.insert_one(app_dict)
         
         # Update project status to completed
         await db.projects.update_one(
             {"id": project_id},
             {"$set": {"status": "completed", "updated_at": datetime.utcnow()}}
+        )
+        
+        # Track successful generation
+        track_generation(
+            status="success",
+            model="gpt-5",
+            framework=request.framework or "react",
+            mode="advanced" if request.advanced_mode else "quick",
+            duration=duration,
+            cost=estimated_cost
+        )
+        
+        log_generation_completed(
+            logger,
+            current_user.id,
+            project_id,
+            duration,
+            len(str(code_data)),
+            estimated_cost
         )
         
         logger.info(f"Génération réussie pour le projet {project_id}. {credit_cost} crédits déduits.")
