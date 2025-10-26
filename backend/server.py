@@ -99,6 +99,34 @@ app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 # Initialize Prometheus metrics
 init_prometheus(app)
 
+# Sentry context middleware
+@app.middleware("http")
+async def add_sentry_context(request: Request, call_next):
+    """Add user context to Sentry errors"""
+    import sentry_sdk
+    
+    # Try to get user from request
+    try:
+        auth_header = request.headers.get("authorization")
+        if auth_header and auth_header.startswith("Bearer "):
+            token = auth_header.split(" ")[1]
+            payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
+            user_id = payload.get("sub")
+            
+            if user_id:
+                user = await db.users.find_one({"id": user_id})
+                if user:
+                    sentry_sdk.set_user({
+                        "id": user.get("id"),
+                        "email": user.get("email"),
+                        "username": user.get("full_name")
+                    })
+    except Exception:
+        pass  # Ignore errors in middleware
+    
+    response = await call_next(request)
+    return response
+
 # Create a router with the /api prefix
 api_router = APIRouter(prefix="/api")
 
