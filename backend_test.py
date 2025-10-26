@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-🔧 VÉRIFICATION DES CORRECTIONS PRÉ-DÉPLOIEMENT
-Tests spécifiques pour les corrections apportées au système Vectort.io
+🎯 TEST BACKEND COMPLET AVANT DÉPLOIEMENT FINAL - VECTORT.IO
+Tests exhaustifs pour l'API de production avant déploiement définitif
 """
 
 import requests
@@ -10,7 +10,7 @@ import sys
 import time
 from typing import Dict, Any, Optional
 
-# Configuration - PRODUCTION ENVIRONMENT API (as per review request)
+# Configuration - PRODUCTION ENVIRONMENT API
 BASE_URL = "https://oauth-debug-2.preview.emergentagent.com/api"
 TEST_USER = {
     "email": f"test_vectort_{int(time.time())}@example.com",
