@@ -1077,14 +1077,73 @@ async def apple_login():
 
 
 @api_router.post("/auth/apple/callback")
-async def apple_callback(code: str, state: str, user: Optional[str] = None):
-    """Callback OAuth Apple"""
-    # Note: Apple OAuth nécessite une configuration complexe avec clé privée
-    # Pour l'instant, retourne une erreur explicative
-    raise HTTPException(
-        status_code=501,
-        detail="Apple OAuth requires private key configuration. Please contact support or use Google/GitHub login."
-    )
+async def apple_callback(request: Request):
+    """Callback OAuth Apple (POST form_post)"""
+    from auth_oauth import AppleOAuth
+    
+    try:
+        # Apple envoie les données en POST form
+        form_data = await request.form()
+        code = form_data.get("code")
+        user_data = form_data.get("user")  # Apple envoie les données utilisateur seulement la première fois
+        
+        if not code:
+            raise HTTPException(status_code=400, detail="Authorization code missing")
+        
+        # Échange le code contre un token
+        token_data = await AppleOAuth.exchange_code_for_token(code)
+        id_token = token_data.get("id_token")
+        
+        if not id_token:
+            raise HTTPException(status_code=400, detail="ID token missing from Apple response")
+        
+        # Extrait les infos utilisateur depuis l'ID token
+        user_info = await AppleOAuth.get_user_info(id_token)
+        
+        # Si c'est la première connexion, Apple envoie les données utilisateur
+        if user_data:
+            import json
+            user_json = json.loads(user_data)
+            first_name = user_json.get("name", {}).get("firstName", "")
+            last_name = user_json.get("name", {}).get("lastName", "")
+            user_info["name"] = f"{first_name} {last_name}".strip() or "Apple User"
+        
+        # Cherche ou crée l'utilisateur
+        email = user_info.get("email")
+        if not email:
+            raise HTTPException(status_code=400, detail="Email not provided by Apple")
+        
+        existing_user = await db.users.find_one({"email": email})
+        
+        if existing_user:
+            user = User(**{k: v for k, v in existing_user.items() if k != "password_hash"})
+        else:
+            # Crée un nouvel utilisateur
+            apple_name = user_info.get("name") or email.split("@")[0] or "Apple User"
+            user = User(
+                email=email,
+                full_name=apple_name,
+                provider="apple",
+                provider_id=user_info.get("id")
+            )
+            user_dict = user.dict()
+            await db.users.insert_one(user_dict)
+        
+        # Crée un JWT token
+        jwt_token = create_access_token(data={"sub": user.id})
+        
+        # Redirige vers le frontend avec le token
+        frontend_url = os.environ.get('FRONTEND_URL', 'https://omniai-platform-2.preview.emergentagent.com')
+        return RedirectResponse(
+            url=f"{frontend_url}/auth/callback?token={jwt_token}&provider=apple"
+        )
+        
+    except Exception as e:
+        logger.error(f"Erreur OAuth Apple: {str(e)}")
+        frontend_url = os.environ.get('FRONTEND_URL', 'https://omniai-platform-2.preview.emergentagent.com')
+        return RedirectResponse(
+            url=f"{frontend_url}/?error=apple_auth_failed"
+        )
 
 # Project routes
 @api_router.get("/projects", response_model=List[Project])
