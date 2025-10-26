@@ -696,6 +696,15 @@ ${codeData.backend_code || 'Aucun code backend généré'}
                                 <Button 
                                   variant="ghost" 
                                   size="sm"
+                                  onClick={() => openChatPanel(project.id)}
+                                  title="Améliorer avec l'IA (Chat)"
+                                  className="text-green-400 hover:text-green-300"
+                                >
+                                  <MessageSquare className="h-4 w-4" />
+                                </Button>
+                                <Button 
+                                  variant="ghost" 
+                                  size="sm"
                                   onClick={() => viewCode(project.id)}
                                   title="Voir le code"
                                   className="text-green-400 hover:text-green-300"
