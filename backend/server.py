@@ -952,9 +952,11 @@ async def google_callback(code: str, state: str):
             user = User(**{k: v for k, v in existing_user.items() if k != "password_hash"})
         else:
             # Crée un nouvel utilisateur
+            # Google name peut être None, utiliser email comme fallback
+            google_name = user_info.get("name") or user_info.get("email", "").split("@")[0] or "Google User"
             user = User(
                 email=user_info.get("email"),
-                full_name=user_info.get("name", ""),
+                full_name=google_name,
             )
             user_dict = user.dict()
             user_dict["oauth_provider"] = "google"
