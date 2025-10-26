@@ -213,6 +213,23 @@ class ProjectUpdate(BaseModel):
     description: Optional[str] = None
     status: Optional[str] = None
 
+# Iteration models
+class ChatMessage(BaseModel):
+    role: str  # "user" or "assistant"
+    content: str
+    timestamp: datetime = Field(default_factory=datetime.utcnow)
+
+class IterationRequest(BaseModel):
+    instruction: str  # User's improvement request
+    context: Optional[str] = None
+
+class ProjectIterationResponse(BaseModel):
+    success: bool
+    iteration_number: int
+    changes_made: List[str]
+    explanation: str
+    updated_code: Optional[Dict[str, str]] = None
+
 class Stats(BaseModel):
     users: str
     apps: str
