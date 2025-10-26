@@ -34,6 +34,7 @@ import GitHubExportModal from "../components/GitHubExportModal";
 import DeploymentModal from "../components/DeploymentModal";
 import ProjectChatPanel from "../components/ProjectChatPanel";
 import ProjectIterationView from "../components/ProjectIterationView";
+import PreviewModal from "../components/PreviewModal";
 import axios from "axios";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
