@@ -133,3 +133,17 @@ websockets==15.0.1
 wrapt==1.17.3
 yarl==1.20.1
 zipp==3.23.0
+
+# Monitoring & Observability - Added 2025-10-26
+sentry-sdk[fastapi]==1.40.0
+prometheus-client==0.19.0
+prometheus-fastapi-instrumentator==6.1.0
+python-json-logger==2.0.7
+
+# Performance & Scaling - Added 2025-10-26
+slowapi==0.1.9
+redis==5.0.1
+celery[redis]==5.3.4
+
+# Storage - Added 2025-10-26
+boto3==1.34.60
