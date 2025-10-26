@@ -986,10 +986,10 @@ async def google_callback(code: str, state: str):
             user = User(
                 email=user_info.get("email"),
                 full_name=google_name,
+                provider="google",
+                provider_id=user_info.get("id")
             )
             user_dict = user.dict()
-            user_dict["oauth_provider"] = "google"
-            user_dict["oauth_id"] = user_info.get("id")
             await db.users.insert_one(user_dict)
         
         # Crée un JWT token
