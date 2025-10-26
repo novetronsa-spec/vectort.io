@@ -142,5 +142,4 @@ python-json-logger==2.0.7
 
 # Performance & Scaling - Added 2025-10-26
 slowapi==0.1.9
-redis==5.0.1
 celery[redis]==5.3.4
