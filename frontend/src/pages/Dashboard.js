@@ -1191,6 +1191,35 @@ ${codeData.backend_code || 'Aucun code backend généré'}
           />
         </>
       )}
+
+      {/* Modal Chat Panel pour amélioration continue */}
+      {showChatPanel && chatProjectId && (
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+          <div className="bg-gray-900 rounded-lg w-full max-w-4xl h-[80vh] flex flex-col">
+            {/* Header du modal */}
+            <div className="flex items-center justify-between p-4 border-b border-gray-800">
+              <h2 className="text-xl font-bold text-white">💬 Amélioration Continue - IA</h2>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={closeChatPanel}
+                className="text-gray-400 hover:text-white"
+              >
+                ✕
+              </Button>
+            </div>
+            
+            {/* Chat Panel */}
+            <div className="flex-1 overflow-hidden">
+              <ProjectChatPanel
+                projectId={chatProjectId}
+                onCodeUpdated={handleCodeUpdated}
+                userCredits={credits.total_available}
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
