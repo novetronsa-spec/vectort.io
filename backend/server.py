@@ -1617,13 +1617,12 @@ async def iterate_project(
     # Calculate iteration number
     iteration_number = len([msg for msg in chat_history if msg.role == "user"]) + 1
     
-    # Check credits (1 crédit per iteration)
-    credit_cost = 1
+    # Check credits (ADAPTIVE COST - 1 to 5 credits based on complexity)
     user_credits = await get_user_credit_balance(current_user.id)
     if user_credits.total_available < credit_cost:
         raise HTTPException(
             status_code=402,
-            detail=f"Crédits insuffisants. Vous avez {user_credits.total_available} crédit(s), {credit_cost} requis."
+            detail=f"Crédits insuffisants. Vous avez {user_credits.total_available} crédit(s), {credit_cost} requis pour cette tâche ({complexity_level}). {complexity_explanation}"
         )
     
     # Deduct credits
