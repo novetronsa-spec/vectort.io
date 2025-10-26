@@ -1297,9 +1297,9 @@ async def get_user_stats(current_user: User = Depends(get_current_user)):
 @api_router.post("/projects/{project_id}/generate", response_model=GeneratedApp)
 @limiter.limit("10/minute")  # Rate limit: 10 generations per minute
 async def generate_project_code(
-    request_obj: Request,  # For rate limiting
+    request: Request,  # For rate limiting
     project_id: str, 
-    request: GenerateAppRequest,
+    request_data: GenerateAppRequest,
     current_user: User = Depends(get_current_user)
 ):
     from utils.cache import generate_cache_key, sanitize_prompt, estimate_llm_cost
@@ -1315,14 +1315,14 @@ async def generate_project_code(
         )
     
     # Sanitize description for security
-    request.description = sanitize_prompt(request.description)
+    request_data.description = sanitize_prompt(request_data.description)
     
     # Generate cache key
     cache_key = generate_cache_key(
-        request.description,
-        request.framework or "react",
-        request.type,
-        request.advanced_mode
+        request_data.description,
+        request_data.framework or "react",
+        request_data.type,
+        request_data.advanced_mode
     )
     
     # Check cache first (unless force regenerate)
