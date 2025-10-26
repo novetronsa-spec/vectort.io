@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { X, Loader2, RefreshCw, Maximize2 } from 'lucide-react';
 
-const API = process.env.REACT_APP_BACKEND_URL;
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+const API = `${BACKEND_URL}/api`;
 
 const PreviewModal = ({ projectId, isOpen, onClose }) => {
   const [previewHtml, setPreviewHtml] = useState('');
