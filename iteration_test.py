@@ -454,7 +454,7 @@ class VectortIterationTester:
                 # Check for code files
                 code_fields = ["html_code", "css_code", "js_code", "react_code", "backend_code"]
                 available_code = {field: bool(data.get(field)) for field in code_fields}
-                code_lengths = {field: len(data.get(field, "")) for field in code_fields}
+                code_lengths = {field: len(data.get(field) or "") for field in code_fields}
                 
                 # Check for iterations reflection
                 react_code = data.get("react_code", "")
