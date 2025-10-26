@@ -386,9 +386,9 @@ export default function Dashboard() {
   };
 
   const openPreview = async (projectId) => {
-    // Ouvrir directement l'interface d'itération avec preview
-    // Cela ouvre le split-screen: chat à gauche, preview à droite
-    openChatPanel(projectId);
+    // Ouvrir le modal de preview simple
+    setPreviewProjectId(projectId);
+    setShowPreviewModal(true);
   };
 
   const viewCode = async (projectId) => {
