@@ -129,10 +129,31 @@ export default function AuthPage() {
   };
 
   const handleOAuthSignIn = (provider) => {
-    toast({
-      title: "Authentification OAuth",
-      description: `Connexion ${provider} en cours de développement...`,
-    });
+    try {
+      switch (provider) {
+        case "Google":
+          loginWithGoogle();
+          break;
+        case "GitHub":
+          loginWithGitHub();
+          break;
+        case "Apple":
+          loginWithApple();
+          break;
+        default:
+          toast({
+            title: "Erreur",
+            description: "Provider OAuth non supporté",
+            variant: "destructive"
+          });
+      }
+    } catch (error) {
+      toast({
+        title: "Erreur OAuth",
+        description: "Impossible d'initier la connexion OAuth",
+        variant: "destructive"
+      });
+    }
   };
 
   return (
