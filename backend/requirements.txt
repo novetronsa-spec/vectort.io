@@ -144,6 +144,3 @@ python-json-logger==2.0.7
 slowapi==0.1.9
 redis==5.0.1
 celery[redis]==5.3.4
-
-# Storage - Added 2025-10-26
-boto3==1.34.60
