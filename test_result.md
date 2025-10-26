@@ -921,6 +921,30 @@ backend:
           comment: "✅ CACHE SYSTEM FIXED: Modified cache hit logic to create new GeneratedApp instance with current project_id and save to database. Cached results now properly associated with requesting project. Code retrieval working correctly after cache hits."
 
 frontend:
+  - task: "ProjectIterationView Component (CRITICAL)"
+    implemented: true
+    working: true
+    file: "frontend/src/components/ProjectIterationView.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "🎯 PROJECTITERATIONVIEW COMPONENT FULLY VALIDATED! Comprehensive testing of the split-screen iteration interface like Emergent.sh: ✅ COMPONENT IMPLEMENTATION: ProjectIterationView.js properly implemented with split-screen layout (chat left, preview right) ✅ SPLIT-SCREEN LAYOUT: Proper 50/50 split with chat panel and real-time preview panel ✅ CREDIT ESTIMATION UI: Real-time credit estimation working - shows badge with estimated credits (1-5) and complexity level ✅ ADAPTIVE CREDITS: UI correctly displays 'simple', 'medium', 'complex' classifications with color coding ✅ PREVIEW INTEGRATION: Real-time preview updates after each iteration using iframe with srcDoc ✅ CHAT INTERFACE: Complete chat history with user/assistant messages, timestamps, and changes list ✅ HEADER CONTROLS: 'Retour' button, 'Masquer/Afficher Preview' toggle, credits display working ✅ INPUT VALIDATION: Proper validation for insufficient credits with red badge and disabled send button ✅ RESPONSIVE DESIGN: Interface adapts properly to different screen sizes ✅ INTEGRATION: Properly integrated into Dashboard.js with MessageSquare button trigger The ProjectIterationView component is production-ready and provides the exact Emergent.sh-like experience requested."
+
+  - task: "Credit Estimation System Frontend"
+    implemented: true
+    working: true
+    file: "frontend/src/components/ProjectIterationView.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "✅ FRONTEND CREDIT ESTIMATION SYSTEM VALIDATED! Real-time credit estimation working perfectly in the UI: ✅ REAL-TIME ESTIMATION: Credits estimated as user types (800ms debounce) ✅ VISUAL FEEDBACK: Estimation badge shows credits with complexity level and color coding ✅ BACKEND INTEGRATION: Calls POST /projects/{id}/estimate-credits endpoint correctly ✅ INSUFFICIENT CREDITS HANDLING: Red badge and disabled send button when credits insufficient ✅ COMPLEXITY DISPLAY: Shows 'simple', 'medium', 'complex', 'very_complex' with appropriate colors ✅ EXPLANATION TEXT: Displays detailed explanation of why certain credits are needed The frontend credit estimation provides excellent user experience and prevents unexpected credit usage."
+
   - task: "Export Interface - New Buttons Integration"
     implemented: true
     working: true
