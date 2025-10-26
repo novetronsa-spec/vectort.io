@@ -22,7 +22,8 @@ import {
   Download,
   ExternalLink,
   Github,
-  Rocket
+  Rocket,
+  MessageSquare
 } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
 import { useLanguage } from "../contexts/LanguageContext";
