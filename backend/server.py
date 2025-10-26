@@ -920,6 +920,132 @@ async def login(user_data: UserLogin):
 async def get_current_user_info(current_user: User = Depends(get_current_user)):
     return current_user
 
+
+# OAuth Routes - Google
+@api_router.get("/auth/google/login")
+async def google_login():
+    """Initie le flux OAuth Google"""
+    from auth_oauth import GoogleOAuth
+    return GoogleOAuth.get_authorization_url()
+
+
+@api_router.get("/auth/google/callback")
+async def google_callback(code: str, state: str):
+    """Callback OAuth Google"""
+    from auth_oauth import GoogleOAuth
+    
+    try:
+        # Échange le code contre un token
+        token_data = await GoogleOAuth.exchange_code_for_token(code)
+        access_token = token_data.get("access_token")
+        
+        # Récupère les infos utilisateur
+        user_info = await GoogleOAuth.get_user_info(access_token)
+        
+        # Cherche ou crée l'utilisateur
+        existing_user = await db.users.find_one({"email": user_info.get("email")})
+        
+        if existing_user:
+            user = User(**{k: v for k, v in existing_user.items() if k != "password_hash"})
+        else:
+            # Crée un nouvel utilisateur
+            user = User(
+                email=user_info.get("email"),
+                full_name=user_info.get("name", ""),
+            )
+            user_dict = user.dict()
+            user_dict["oauth_provider"] = "google"
+            user_dict["oauth_id"] = user_info.get("id")
+            await db.users.insert_one(user_dict)
+        
+        # Crée un JWT token
+        jwt_token = create_access_token(data={"sub": user.id})
+        
+        # Redirige vers le frontend avec le token
+        frontend_url = os.environ.get('FRONTEND_URL', 'https://oauth-debug-2.preview.emergentagent.com')
+        return RedirectResponse(
+            url=f"{frontend_url}/auth/callback?token={jwt_token}&provider=google"
+        )
+        
+    except Exception as e:
+        logger.error(f"Erreur OAuth Google: {str(e)}")
+        raise HTTPException(status_code=400, detail=f"OAuth failed: {str(e)}")
+
+
+# OAuth Routes - GitHub
+@api_router.get("/auth/github/login")
+async def github_login():
+    """Initie le flux OAuth GitHub"""
+    from auth_oauth import GitHubOAuth
+    return GitHubOAuth.get_authorization_url()
+
+
+@api_router.get("/auth/github/callback")
+async def github_callback(code: str, state: str):
+    """Callback OAuth GitHub"""
+    from auth_oauth import GitHubOAuth
+    
+    try:
+        # Échange le code contre un token
+        token_data = await GitHubOAuth.exchange_code_for_token(code)
+        access_token = token_data.get("access_token")
+        
+        # Récupère les infos utilisateur
+        user_info = await GitHubOAuth.get_user_info(access_token)
+        
+        # Cherche ou crée l'utilisateur
+        email = user_info.get("email")
+        if not email:
+            # Si l'email n'est pas public, utiliser l'ID GitHub
+            email = f"{user_info.get('login')}@github.user"
+        
+        existing_user = await db.users.find_one({"email": email})
+        
+        if existing_user:
+            user = User(**{k: v for k, v in existing_user.items() if k != "password_hash"})
+        else:
+            # Crée un nouvel utilisateur
+            user = User(
+                email=email,
+                full_name=user_info.get("name", user_info.get("login")),
+            )
+            user_dict = user.dict()
+            user_dict["oauth_provider"] = "github"
+            user_dict["oauth_id"] = str(user_info.get("id"))
+            await db.users.insert_one(user_dict)
+        
+        # Crée un JWT token
+        jwt_token = create_access_token(data={"sub": user.id})
+        
+        # Redirige vers le frontend avec le token
+        frontend_url = os.environ.get('FRONTEND_URL', 'https://oauth-debug-2.preview.emergentagent.com')
+        return RedirectResponse(
+            url=f"{frontend_url}/auth/callback?token={jwt_token}&provider=github"
+        )
+        
+    except Exception as e:
+        logger.error(f"Erreur OAuth GitHub: {str(e)}")
+        raise HTTPException(status_code=400, detail=f"OAuth failed: {str(e)}")
+
+
+# OAuth Routes - Apple (simplifié)
+@api_router.get("/auth/apple/login")
+async def apple_login():
+    """Initie le flux OAuth Apple"""
+    from auth_oauth import AppleOAuth
+    return AppleOAuth.get_authorization_url()
+
+
+@api_router.post("/auth/apple/callback")
+async def apple_callback(code: str, state: str, user: Optional[str] = None):
+    """Callback OAuth Apple"""
+    # Note: Apple OAuth nécessite une configuration complexe avec clé privée
+    # Pour l'instant, retourne une erreur explicative
+    raise HTTPException(
+        status_code=501,
+        detail="Apple OAuth requires private key configuration. Please contact support or use Google/GitHub login."
+    )
+
 # Project routes
 @api_router.get("/projects", response_model=List[Project])
 async def get_projects(current_user: User = Depends(get_current_user)):
