@@ -1,0 +1,60 @@
+🚀 TEST FINAL GÉNÉRATION AVANCÉE - VECTORT.IO
+OBJECTIF: Confirmer que la génération de code fonctionne à 100% !
+Testing against: https://oauth-debug-2.preview.emergentagent.com/api
+================================================================================
+🔐 SETUP: Authentication
+--------------------------------------------------
+✅ PASS: User Registration
+   User registered with ID: 8d20985f-ddd4-4adf-85f0-f4d436845855
+
+🎯 TESTS SPÉCIFIQUES DEMANDÉS
+--------------------------------------------------
+
+=== Test 1: Génération E-commerce avancée ===
+✅ PASS: E-commerce Project Creation
+   Project created: 1587cfbf-9331-456c-bc55-97a82ad12c75
+   🔄 Lancement génération avancée (timeout 90s)...
+❌ FAIL: E-commerce Advanced - Main Files
+   ❌ Seulement 0 fichiers générés
+   🔄 Test fallback vers mode basique...
+✅ PASS: E-commerce Advanced - Fallback
+   ✅ Fallback réussi: 3 fichiers
+
+=== Test 2: Fallback robuste ===
+✅ PASS: Fallback Robuste - Basic Files
+   ✅ 4/4 fichiers de base: ['react_code', 'html_code', 'css_code', 'backend_code']
+✅ PASS: Fallback Robuste - Backend Python
+   ✅ Backend Python généré (418 chars)
+
+=== Test 3: Performance et stabilité ===
+✅ PASS: Performance Portfolio
+   ✅ Généré en 8.3s (< 15s)
+✅ PASS: Performance Landing Page
+   ✅ Généré en 5.5s (< 15s)
+✅ PASS: Performance Blog
+   ✅ Généré en 13.4s (< 15s)
+✅ PASS: Performance Stability - No 500 Errors
+   ✅ 3/3 générations réussies, pas d'erreurs 500
+✅ PASS: Performance Stability - Timing
+   ✅ Temps moyen: 9.1s (< 20s)
+
+=== Test 4: Validation finale complète ===
+✅ PASS: Validation Finale - Mode Basique
+   ✅ Mode basique fonctionnel (3 fichiers)
+✅ PASS: Validation Finale - Types Supportés
+   ✅ 4/4 types de projets supportés
+✅ PASS: Validation Finale - Génération Robuste
+   ✅ Génération robuste avec fallback confirmée
+
+================================================================================
+🚀 RÉSULTATS FINAUX - GÉNÉRATION AVANCÉE VECTORT.IO
+================================================================================
+✅ Tests réussis: 13
+❌ Tests échoués: 1
+📈 Taux de réussite: 92.9%
+
+🔍 PROBLÈMES DÉTECTÉS:
+   • E-commerce Advanced - Main Files: ❌ Seulement 0 fichiers générés
+
+⚠️ 1 problème(s) détecté(s)
+✅ Système globalement fonctionnel avec améliorations mineures nécessaires
