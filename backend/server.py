@@ -1804,7 +1804,8 @@ async def get_project_iterations(
     
     # Get iterations
     iterations = await db.project_iterations.find(
-        {"project_id": project_id}
+        {"project_id": project_id},
+        {"_id": 0}  # Exclude _id field to avoid ObjectId serialization issues
     ).sort("iteration_number", 1).to_list(length=100)
     
     return {
