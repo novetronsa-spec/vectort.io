@@ -1361,8 +1361,36 @@ async def generate_project_code(
             )
             track_cache(hit=True, cache_type="llm")
             
+            # Create a new GeneratedApp for this project with cached data
+            cached_generated_app = GeneratedApp(
+                project_id=project_id,  # Use current project_id
+                html_code=cached_app.get("html_code"),
+                css_code=cached_app.get("css_code"),
+                js_code=cached_app.get("js_code"),
+                react_code=cached_app.get("react_code"),
+                backend_code=cached_app.get("backend_code"),
+                project_structure=cached_app.get("project_structure"),
+                package_json=cached_app.get("package_json"),
+                requirements_txt=cached_app.get("requirements_txt"),
+                dockerfile=cached_app.get("dockerfile"),
+                readme=cached_app.get("readme"),
+                deployment_config=cached_app.get("deployment_config"),
+                all_files=cached_app.get("all_files")
+            )
+            
+            # Save cached result for current project
+            app_dict = cached_generated_app.dict()
+            app_dict["cache_key"] = cache_key
+            await db.generated_apps.insert_one(app_dict)
+            
+            # Update project status to completed
+            await db.projects.update_one(
+                {"id": project_id},
+                {"$set": {"status": "completed", "updated_at": datetime.utcnow()}}
+            )
+            
             # Return cached result (no credit deduction for cache hits)
-            return GeneratedApp(**cached_app)
+            return cached_generated_app
     
     # Cache miss - track it
     track_cache(hit=False, cache_type="llm")
