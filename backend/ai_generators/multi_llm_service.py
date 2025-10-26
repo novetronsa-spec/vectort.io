@@ -108,10 +108,9 @@ class MultiLLMService:
             # Use emergent key for all providers
             chat = LlmChat(
                 api_key=self.emergent_key,
-                model=provider.value,
-                max_tokens=max_tokens,
-                temperature=temperature
-            )
+                session_id=f"multi-llm-{uuid.uuid4()}",
+                system_message="Tu es un assistant IA expert."
+            ).with_model("openai", "gpt-4o")
             
             # Convert messages to emergentintegrations format
             formatted_messages = []
