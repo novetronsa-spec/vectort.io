@@ -927,7 +927,9 @@ async def get_current_user_info(current_user: User = Depends(get_current_user)):
 async def google_login():
     """Initie le flux OAuth Google"""
     from auth_oauth import GoogleOAuth
-    return GoogleOAuth.get_authorization_url()
+    auth_data = GoogleOAuth.get_authorization_url()
+    # Redirige directement vers Google
+    return RedirectResponse(url=auth_data["authorization_url"])
 
 
 @api_router.get("/auth/google/callback")
