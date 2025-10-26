@@ -77,7 +77,7 @@ class CreditEstimator:
             score += 2
         
         # Determine complexity level and credit cost
-        if score <= 2 or simple_count > 0 and medium_count == 0 and complex_count == 0:
+        if score <= 2 or (simple_count > 0 and medium_count == 0 and complex_count == 0 and word_count < 15):
             # Simple: color change, text update, small style fix
             return (1, "simple", "Modification simple (couleur, texte, style basique)")
             
