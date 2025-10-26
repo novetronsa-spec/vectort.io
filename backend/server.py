@@ -1526,6 +1526,257 @@ async def get_project_code(
     return GeneratedApp(**generated_app)
 
 
+# ============================================
+# PROJECT ITERATION ROUTES
+# ============================================
+
+@api_router.post("/projects/{project_id}/iterate", response_model=ProjectIterationResponse)
+@limiter.limit("20/minute")  # Allow more iterations than new generations
+async def iterate_project(
+    request: Request,
+    project_id: str,
+    iteration_request: IterationRequest,
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Iterate/improve an existing project based on user instructions
+    Allows conversational improvement of generated code
+    """
+    from utils.iteration import create_iteration_prompt, extract_changes_from_response
+    from utils.cache import sanitize_prompt
+    from ai_generators.multi_llm_service import multi_llm_service
+    
+    start_time = time.time()
+    
+    # Verify project ownership
+    project = await db.projects.find_one({"id": project_id, "user_id": current_user.id})
+    if not project:
+        raise HTTPException(status_code=404, detail="Project not found")
+    
+    # Get current generated code
+    current_app = await db.generated_apps.find_one({"project_id": project_id})
+    if not current_app:
+        raise HTTPException(
+            status_code=404,
+            detail="No generated code found. Please generate the project first."
+        )
+    
+    # Sanitize instruction
+    instruction = sanitize_prompt(iteration_request.instruction)
+    
+    # Get chat history
+    chat_history_docs = await db.project_chat.find(
+        {"project_id": project_id}
+    ).sort("timestamp", 1).to_list(length=50)
+    
+    chat_history = [ChatMessage(**doc) for doc in chat_history_docs]
+    
+    # Calculate iteration number
+    iteration_number = len([msg for msg in chat_history if msg.role == "user"]) + 1
+    
+    # Check credits (1 crédit per iteration)
+    credit_cost = 1
+    user_credits = await get_user_credit_balance(current_user.id)
+    if user_credits.total_available < credit_cost:
+        raise HTTPException(
+            status_code=402,
+            detail=f"Crédits insuffisants. Vous avez {user_credits.total_available} crédit(s), {credit_cost} requis."
+        )
+    
+    # Deduct credits
+    await deduct_credits(
+        current_user.id,
+        credit_cost,
+        f"Itération projet #{iteration_number}",
+        project_id
+    )
+    
+    try:
+        # Create iteration prompt
+        current_code = {
+            "html_code": current_app.get("html_code"),
+            "css_code": current_app.get("css_code"),
+            "js_code": current_app.get("js_code"),
+            "react_code": current_app.get("react_code"),
+            "backend_code": current_app.get("backend_code")
+        }
+        
+        prompt = await create_iteration_prompt(
+            original_description=project.get("description", ""),
+            current_code=current_code,
+            chat_history=chat_history,
+            new_instruction=instruction
+        )
+        
+        # Call LLM
+        llm_response = await multi_llm_service.generate(
+            prompt=prompt,
+            max_tokens=6000,
+            temperature=0.7
+        )
+        
+        response_text = llm_response.get("content", "")
+        
+        # Parse response to extract code and changes
+        import json
+        try:
+            # Try to extract JSON from response
+            json_start = response_text.find('{')
+            json_end = response_text.rfind('}') + 1
+            if json_start >= 0 and json_end > json_start:
+                json_str = response_text[json_start:json_end]
+                code_data = json.loads(json_str)
+            else:
+                # Fallback: use current code with AI response as explanation
+                code_data = {
+                    "changes_made": extract_changes_from_response(response_text),
+                    "explanation": response_text[:500]
+                }
+        except:
+            code_data = {
+                "changes_made": ["Améliorations appliquées selon vos instructions"],
+                "explanation": response_text[:500]
+            }
+        
+        # Update generated app in database
+        update_data = {}
+        if code_data.get("html_code"):
+            update_data["html_code"] = code_data["html_code"]
+        if code_data.get("css_code"):
+            update_data["css_code"] = code_data["css_code"]
+        if code_data.get("js_code"):
+            update_data["js_code"] = code_data["js_code"]
+        if code_data.get("react_code"):
+            update_data["react_code"] = code_data["react_code"]
+        if code_data.get("backend_code"):
+            update_data["backend_code"] = code_data["backend_code"]
+        
+        if update_data:
+            update_data["updated_at"] = datetime.utcnow()
+            await db.generated_apps.update_one(
+                {"project_id": project_id},
+                {"$set": update_data}
+            )
+        
+        # Save chat messages
+        user_message = ChatMessage(role="user", content=instruction)
+        assistant_message = ChatMessage(
+            role="assistant",
+            content=code_data.get("explanation", "Code amélioré")
+        )
+        
+        await db.project_chat.insert_many([
+            {**user_message.dict(), "project_id": project_id},
+            {**assistant_message.dict(), "project_id": project_id}
+        ])
+        
+        # Save iteration history
+        await db.project_iterations.insert_one({
+            "project_id": project_id,
+            "iteration_number": iteration_number,
+            "user_request": instruction,
+            "changes_made": code_data.get("changes_made", []),
+            "timestamp": datetime.utcnow()
+        })
+        
+        # Track metrics
+        duration = time.time() - start_time
+        track_generation(
+            status="success",
+            model=llm_response.get("provider", "gpt-5"),
+            framework="iteration",
+            mode="iterate",
+            duration=duration,
+            cost=0.01  # Estimated
+        )
+        
+        log_generation_completed(
+            logger,
+            current_user.id,
+            project_id,
+            duration,
+            len(response_text),
+            0.01
+        )
+        
+        return ProjectIterationResponse(
+            success=True,
+            iteration_number=iteration_number,
+            changes_made=code_data.get("changes_made", []),
+            explanation=code_data.get("explanation", "Améliorations appliquées"),
+            updated_code=update_data if update_data else None
+        )
+        
+    except Exception as e:
+        # Refund credits on error
+        await deduct_credits(
+            current_user.id,
+            -credit_cost,
+            f"Remboursement - Erreur itération",
+            project_id
+        )
+        
+        track_generation(
+            status="error",
+            model="gpt-5",
+            framework="iteration",
+            mode="iterate",
+            duration=time.time() - start_time,
+            cost=0
+        )
+        
+        logger.error(f"Iteration error for project {project_id}: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Erreur lors de l'itération: {str(e)}")
+
+
+@api_router.get("/projects/{project_id}/chat")
+async def get_project_chat(
+    project_id: str,
+    current_user: User = Depends(get_current_user)
+):
+    """Get chat history for a project"""
+    
+    # Verify project ownership
+    project = await db.projects.find_one({"id": project_id, "user_id": current_user.id})
+    if not project:
+        raise HTTPException(status_code=404, detail="Project not found")
+    
+    # Get chat messages
+    messages = await db.project_chat.find(
+        {"project_id": project_id}
+    ).sort("timestamp", 1).to_list(length=100)
+    
+    return {
+        "project_id": project_id,
+        "messages": messages,
+        "total": len(messages)
+    }
+
+
+@api_router.get("/projects/{project_id}/iterations")
+async def get_project_iterations(
+    project_id: str,
+    current_user: User = Depends(get_current_user)
+):
+    """Get iteration history for a project"""
+    
+    # Verify project ownership
+    project = await db.projects.find_one({"id": project_id, "user_id": current_user.id})
+    if not project:
+        raise HTTPException(status_code=404, detail="Project not found")
+    
+    # Get iterations
+    iterations = await db.project_iterations.find(
+        {"project_id": project_id}
+    ).sort("iteration_number", 1).to_list(length=100)
+    
+    return {
+        "project_id": project_id,
+        "iterations": iterations,
+        "total": len(iterations)
+    }
+
+
 @api_router.get("/projects/{project_id}/validate")
 async def validate_project_code(
     project_id: str,
