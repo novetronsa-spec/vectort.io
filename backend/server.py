@@ -1456,6 +1456,25 @@ async def generate_project_code(
             "refund",
             f"Remboursement - Erreur de génération pour {project_id}"
         )
+        
+        # Track failed generation
+        track_generation(
+            status="error",
+            model="gpt-5",
+            framework=request.framework or "react",
+            mode="advanced" if request.advanced_mode else "quick",
+            duration=time.time() - start_time,
+            cost=0
+        )
+        
+        log_generation_failed(
+            logger,
+            current_user.id,
+            project_id,
+            str(e),
+            "gpt-5"
+        )
+        
         logger.error(f"Erreur de génération, {credit_cost} crédits remboursés à l'utilisateur {current_user.id}")
         
         # Update project status to error
