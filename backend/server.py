@@ -944,7 +944,7 @@ async def root():
 # Authentication routes
 @api_router.post("/auth/register", response_model=Token)
 @limiter.limit("5/hour")  # Limit registrations to prevent spam
-async def register(request_obj: Request, user_data: UserCreate):
+async def register(request: Request, user_data: UserCreate):
     # Check if user exists
     existing_user = await db.users.find_one({"email": user_data.email})
     if existing_user:
