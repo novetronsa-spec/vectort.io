@@ -123,11 +123,11 @@ class ComplexAppTester:
             if credits_response.status_code == 200:
                 credits_data = credits_response.json()
                 total_credits = credits_data.get("total_available", 0)
-                if total_credits >= 12:  # Need at least 12 credits for 3 advanced generations (4 each)
+                if total_credits >= 6:  # Need at least 6 credits for 3 quick generations (2 each)
                     self.log_result("Credits Check", True, f"Sufficient credits available: {total_credits}")
                     return True
                 else:
-                    self.log_result("Credits Check", False, f"Insufficient credits: {total_credits} (need 12+)")
+                    self.log_result("Credits Check", False, f"Insufficient credits: {total_credits} (need 6+)")
                     return False
             else:
                 self.log_result("Credits Check", False, "Could not check credit balance")
