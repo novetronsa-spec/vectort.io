@@ -33,6 +33,7 @@ import LanguageSelector from "../components/LanguageSelector";
 import GitHubExportModal from "../components/GitHubExportModal";
 import DeploymentModal from "../components/DeploymentModal";
 import ProjectChatPanel from "../components/ProjectChatPanel";
+import ProjectIterationView from "../components/ProjectIterationView";
 import axios from "axios";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
