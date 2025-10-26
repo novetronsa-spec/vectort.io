@@ -1712,7 +1712,7 @@ async def iterate_project(
         duration = time.time() - start_time
         track_generation(
             status="success",
-            model=llm_response.get("provider", "gpt-5"),
+            model="gpt-4o",
             framework="iteration",
             mode="iterate",
             duration=duration,
