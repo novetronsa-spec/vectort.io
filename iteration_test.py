@@ -159,10 +159,12 @@ class VectortIterationTester:
                         project_status = project_check.json().get("status")
                         
                         # Verify REAL code was generated
-                        has_react_code = bool(gen_data.get("react_code"))
-                        has_css_code = bool(gen_data.get("css_code"))
-                        react_code_length = len(gen_data.get("react_code", ""))
-                        css_code_length = len(gen_data.get("css_code", ""))
+                        react_code = gen_data.get("react_code") or ""
+                        css_code = gen_data.get("css_code") or ""
+                        has_react_code = bool(react_code)
+                        has_css_code = bool(css_code)
+                        react_code_length = len(react_code)
+                        css_code_length = len(css_code)
                         
                         # Check credits after generation (should be 10 → 8)
                         credits_after = self.make_request("GET", "/credits/balance")
