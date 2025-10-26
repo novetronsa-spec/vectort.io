@@ -151,7 +151,7 @@ export default function LandingPage() {
           {/* Auth buttons */}
           <div className="space-y-4">
             <Button 
-              onClick={() => navigate("/auth")}
+              onClick={() => window.location.href = `${process.env.REACT_APP_BACKEND_URL}/api/auth/google/login`}
               className="w-full bg-white text-black hover:bg-gray-200 py-6 text-lg font-medium"
             >
               <svg className="mr-3 h-5 w-5" viewBox="0 0 24 24">
@@ -165,7 +165,7 @@ export default function LandingPage() {
 
             <div className="flex space-x-4">
               <Button 
-                onClick={() => navigate("/auth")}
+                onClick={() => window.location.href = `${process.env.REACT_APP_BACKEND_URL}/api/auth/github/login`}
                 variant="outline" 
                 className="flex-1 bg-transparent border-gray-700 text-white hover:bg-gray-900 py-6"
               >
@@ -175,7 +175,7 @@ export default function LandingPage() {
                 GitHub
               </Button>
               <Button 
-                onClick={() => navigate("/auth")}
+                onClick={() => window.location.href = `${process.env.REACT_APP_BACKEND_URL}/api/auth/apple/login`}
                 variant="outline" 
                 className="flex-1 bg-transparent border-gray-700 text-white hover:bg-gray-900 py-6"
               >
