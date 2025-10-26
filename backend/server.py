@@ -1863,6 +1863,168 @@ async def get_credit_history(
     
     return [CreditTransaction(**t) for t in transactions]
 
+# ============================================
+# DEPLOYMENT ROUTES - Multi-Platform Support
+# ============================================
+
+@api_router.post("/projects/{project_id}/deploy", response_model=DeploymentResponse)
+async def deploy_project(
+    project_id: str,
+    deployment_request: DeploymentRequest,
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Deploy a project to Vercel, Netlify, or Render
+    
+    Platform-specific requirements:
+    - Vercel: github_repo_url, project_name, optional: framework, env_vars
+    - Netlify: github_repo_url, project_name, optional: build_command, publish_dir, env_vars
+    - Render: github_repo_url, project_name, optional: build_command, start_command, env_vars
+    """
+    
+    try:
+        # Verify project ownership
+        project = await db.projects.find_one({
+            "id": project_id,
+            "user_id": current_user.id
+        })
+        
+        if not project:
+            raise HTTPException(status_code=404, detail="Project not found")
+        
+        # Route to appropriate deployment service
+        platform = deployment_request.platform.lower()
+        
+        if platform == DeploymentPlatform.VERCEL:
+            result = await vercel_deployment.deploy_from_github(
+                github_repo_url=deployment_request.github_repo_url,
+                project_name=deployment_request.project_name,
+                env_vars=deployment_request.env_vars,
+                framework=deployment_request.framework
+            )
+        
+        elif platform == DeploymentPlatform.NETLIFY:
+            result = await netlify_deployment.deploy_from_github(
+                github_repo_url=deployment_request.github_repo_url,
+                project_name=deployment_request.project_name,
+                build_command=deployment_request.build_command,
+                publish_dir=deployment_request.publish_dir,
+                env_vars=deployment_request.env_vars
+            )
+        
+        elif platform == DeploymentPlatform.RENDER:
+            result = await render_deployment.deploy_from_github(
+                github_repo_url=deployment_request.github_repo_url,
+                project_name=deployment_request.project_name,
+                env_vars=deployment_request.env_vars,
+                build_command=deployment_request.build_command,
+                start_command=deployment_request.start_command
+            )
+        
+        else:
+            raise HTTPException(
+                status_code=400, 
+                detail=f"Unsupported platform: {platform}. Supported: vercel, netlify, render"
+            )
+        
+        # Update project with deployment info
+        if result.success:
+            await db.projects.update_one(
+                {"id": project_id},
+                {
+                    "$set": {
+                        "deployment_url": result.deployment_url,
+                        "updated_at": datetime.utcnow()
+                    }
+                }
+            )
+            
+            logger.info(f"✅ Project {project_id} deployed to {platform}: {result.deployment_url}")
+        
+        return DeploymentResponse(**result.to_dict())
+    
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.exception(f"Deployment error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Deployment failed: {str(e)}")
+
+@api_router.get("/projects/{project_id}/deployment/status")
+async def get_deployment_status(
+    project_id: str,
+    platform: str,
+    deployment_id: str,
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Get deployment status for a specific platform
+    """
+    
+    try:
+        # Verify project ownership
+        project = await db.projects.find_one({
+            "id": project_id,
+            "user_id": current_user.id
+        })
+        
+        if not project:
+            raise HTTPException(status_code=404, detail="Project not found")
+        
+        # Get status from appropriate platform
+        if platform.lower() == DeploymentPlatform.VERCEL:
+            result = await vercel_deployment.get_deployment_status(deployment_id)
+        else:
+            # Netlify and Render don't have simple status check endpoints in this implementation
+            # Could be added if needed
+            raise HTTPException(
+                status_code=400,
+                detail=f"Status check not implemented for {platform}"
+            )
+        
+        return DeploymentResponse(**result.to_dict())
+    
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.exception(f"Status check error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/deployment/platforms")
+async def get_supported_platforms():
+    """Get list of supported deployment platforms and their configurations"""
+    
+    return {
+        "platforms": [
+            {
+                "id": "vercel",
+                "name": "Vercel",
+                "description": "Best for Next.js, React, Vue applications",
+                "features": ["Automatic HTTPS", "Global CDN", "Serverless Functions"],
+                "supported_frameworks": ["nextjs", "react", "vue", "svelte", "angular"],
+                "requires": ["github_repo_url", "project_name"],
+                "optional": ["framework", "env_vars"]
+            },
+            {
+                "id": "netlify",
+                "name": "Netlify",
+                "description": "Perfect for static sites and JAMstack apps",
+                "features": ["Instant rollbacks", "Split testing", "Forms & Identity"],
+                "supported_frameworks": ["react", "vue", "angular", "gatsby", "hugo"],
+                "requires": ["github_repo_url", "project_name"],
+                "optional": ["build_command", "publish_dir", "env_vars"]
+            },
+            {
+                "id": "render",
+                "name": "Render",
+                "description": "Full-stack hosting for web services and databases",
+                "features": ["Auto-deploy from Git", "Private services", "Managed databases"],
+                "supported_frameworks": ["express", "fastapi", "django", "flask", "rails"],
+                "requires": ["github_repo_url", "project_name"],
+                "optional": ["build_command", "start_command", "env_vars"]
+            }
+        ]
+    }
+
 
 # Include the router in the main app
 app.include_router(api_router)
