@@ -1,6 +1,7 @@
 {
   "common": {
     "welcome": "Vectortへようこそ",
+    "app_name": "Vectort.io",
     "get_started": "始める",
     "login": "ログイン",
     "register": "登録",
@@ -20,6 +21,73 @@
     "create": "作成",
     "export": "エクスポート",
     "download": "ダウンロード",
-    "deploy": "デプロイ"
+    "deploy": "デプロイ",
+    "close": "閉じる",
+    "back": "戻る",
+    "next": "次へ",
+    "finish": "完了",
+    "search": "検索",
+    "profile": "プロフィール",
+    "pricing": "価格",
+    "features": "機能",
+    "documentation": "ドキュメント",
+    "support": "サポート",
+    "contact": "お問い合わせ",
+    "terms": "利用規約",
+    "privacy": "プライバシーポリシー",
+    "language": "言語",
+    "continue": "続ける"
+  },
+  "landing": {
+    "hero_title": "フルスタックアプリを構築",
+    "hero_subtitle": "AIで数秒で完成",
+    "hero_description": "アイデアを本番対応のコードに変換。",
+    "start_building": "今すぐ始める",
+    "try_free": "無料トライアル - 10クレジット",
+    "continue_with_google": "Googleで続ける",
+    "sign_in_with_email": "メールで登録",
+    "or": "または",
+    "by_continuing": "続けることで、次のことに同意します"
+  },
+  "auth": {
+    "sign_in": "ログイン",
+    "sign_up": "登録",
+    "email": "メール",
+    "password": "パスワード",
+    "full_name": "氏名",
+    "already_have_account": "アカウントをお持ちですか？",
+    "login_success": "ログイン成功",
+    "register_success": "アカウント作成済み"
+  },
+  "dashboard": {
+    "welcome_back": "お帰りなさい",
+    "my_projects": "マイプロジェクト",
+    "new_project": "新しいプロジェクト",
+    "credits_remaining": "残りクレジット",
+    "buy_more_credits": "購入",
+    "quick_mode": "クイックモード",
+    "advanced_mode": "アドバンスドモード",
+    "ultra_mode": "ウルトラモード",
+    "generate_code": "コード生成",
+    "view_code": "コードを見る",
+    "preview": "プレビュー",
+    "describe_project": "プロジェクトを説明...",
+    "generating": "生成中..."
+  },
+  "projects": {
+    "generate": "生成",
+    "export_zip": "ZIPエクスポート",
+    "export_github": "GitHubエクスポート"
+  },
+  "credits": {
+    "balance": "残高",
+    "buy_credits": "クレジット購入",
+    "package_starter": "スターター",
+    "package_standard": "スタンダード",
+    "package_pro": "プロ"
+  },
+  "messages": {
+    "copied": "コピー済み",
+    "loading": "読み込み中..."
   }
 }

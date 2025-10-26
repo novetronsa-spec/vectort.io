@@ -1,6 +1,7 @@
 {
   "common": {
     "welcome": "Добро пожаловать в Vectort",
+    "app_name": "Vectort.io",
     "get_started": "Начать",
     "login": "Войти",
     "register": "Регистрация",
@@ -20,6 +21,73 @@
     "create": "Создать",
     "export": "Экспорт",
     "download": "Скачать",
-    "deploy": "Развернуть"
+    "deploy": "Развернуть",
+    "close": "Закрыть",
+    "back": "Назад",
+    "next": "Далее",
+    "finish": "Завершить",
+    "search": "Поиск",
+    "profile": "Профиль",
+    "pricing": "Цены",
+    "features": "Возможности",
+    "documentation": "Документация",
+    "support": "Поддержка",
+    "contact": "Контакт",
+    "terms": "Условия использования",
+    "privacy": "Политика конфиденциальности",
+    "language": "Язык",
+    "continue": "Продолжить"
+  },
+  "landing": {
+    "hero_title": "Создавайте Full-Stack приложения",
+    "hero_subtitle": "за секунды с ИИ",
+    "hero_description": "Превратите ваши идеи в готовый код.",
+    "start_building": "Начать сейчас",
+    "try_free": "Бесплатная проба - 10 кредитов",
+    "continue_with_google": "Продолжить с Google",
+    "sign_in_with_email": "Регистрация с Email",
+    "or": "или",
+    "by_continuing": "Продолжая, вы соглашаетесь с нашими"
+  },
+  "auth": {
+    "sign_in": "Войти",
+    "sign_up": "Регистрация",
+    "email": "Email",
+    "password": "Пароль",
+    "full_name": "Полное имя",
+    "already_have_account": "Уже есть аккаунт?",
+    "login_success": "Вход выполнен",
+    "register_success": "Аккаунт создан"
+  },
+  "dashboard": {
+    "welcome_back": "Добро пожаловать обратно",
+    "my_projects": "Мои проекты",
+    "new_project": "Новый проект",
+    "credits_remaining": "осталось кредитов",
+    "buy_more_credits": "Купить ещё",
+    "quick_mode": "Быстрый режим",
+    "advanced_mode": "Расширенный режим",
+    "ultra_mode": "Ультра режим",
+    "generate_code": "Генерировать код",
+    "view_code": "Посмотреть код",
+    "preview": "Предпросмотр",
+    "describe_project": "Опишите ваш проект...",
+    "generating": "Генерация..."
+  },
+  "projects": {
+    "generate": "Генерировать",
+    "export_zip": "Экспорт ZIP",
+    "export_github": "Экспорт GitHub"
+  },
+  "credits": {
+    "balance": "Баланс",
+    "buy_credits": "Купить кредиты",
+    "package_starter": "Стартер",
+    "package_standard": "Стандарт",
+    "package_pro": "Про"
+  },
+  "messages": {
+    "copied": "Скопировано",
+    "loading": "Загрузка..."
   }
 }
