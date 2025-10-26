@@ -502,6 +502,25 @@ ${codeData.backend_code || 'Aucun code backend généré'}
     setShowDeployModal(true);
   };
 
+  const openChatPanel = (projectId) => {
+    setChatProjectId(projectId);
+    setShowChatPanel(true);
+  };
+
+  const closeChatPanel = () => {
+    setShowChatPanel(false);
+    setChatProjectId(null);
+  };
+
+  const handleCodeUpdated = async () => {
+    // Recharger les projets après mise à jour du code
+    await fetchProjects();
+    toast({
+      title: "✨ Projet mis à jour",
+      description: "Vos modifications ont été appliquées avec succès!",
+    });
+  };
+
   const handleLogout = () => {
     logout();
     navigate("/");
