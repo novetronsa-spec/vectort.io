@@ -1349,10 +1349,10 @@ async def generate_project_code(
     
     # Cache miss - track it
     track_cache(hit=False, cache_type="llm")
-    log_generation_started(logger, current_user.id, project_id, request.framework or "react", "gpt-5")
+    log_generation_started(logger, current_user.id, project_id, request_data.framework or "react", "gpt-5")
     
     # Calculer le coût en crédits selon le mode
-    credit_cost = 2 if not request.advanced_mode else 4  # Quick: 2, Advanced: 4
+    credit_cost = 2 if not request_data.advanced_mode else 4  # Quick: 2, Advanced: 4
     
     # Vérifier et déduire les crédits AVANT la génération
     user_credits = await get_user_credit_balance(current_user.id)
@@ -1366,7 +1366,7 @@ async def generate_project_code(
     deduction_success = await deduct_credits(
         current_user.id, 
         credit_cost, 
-        f"Génération {'avancée' if request.advanced_mode else 'rapide'} - {request.type}",
+        f"Génération {'avancée' if request_data.advanced_mode else 'rapide'} - {request_data.type}",
         project_id
     )
     
