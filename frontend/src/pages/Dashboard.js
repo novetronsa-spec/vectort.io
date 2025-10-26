@@ -218,18 +218,35 @@ export default function Dashboard() {
 
   // Gestion de GitHub Save
   const handleGithubSave = (description, files) => {
-    toast({
-      title: "Save to GitHub",
-      description: "Fonctionnalité GitHub en cours de développement. Bientôt disponible !",
-    });
+    // Ouvre le modal d'export GitHub
+    if (currentProject) {
+      openGitHubExport(currentProject);
+    } else {
+      toast({
+        title: "Aucun projet sélectionné",
+        description: "Veuillez d'abord créer un projet avant de l'exporter vers GitHub",
+        variant: "destructive"
+      });
+    }
   };
 
   // Gestion de Fork
   const handleFork = (description) => {
-    toast({
-      title: "Fork du projet",
-      description: "Fonctionnalité Fork en cours de développement. Bientôt disponible !",
-    });
+    // Crée une copie du projet actuel
+    if (description && description.trim()) {
+      setNewProjectDescription(description + " (Fork)");
+      setCurrentTab("new");
+      toast({
+        title: "✅ Description copiée",
+        description: "Vous pouvez maintenant modifier et créer votre fork",
+      });
+    } else {
+      toast({
+        title: "Pas de description",
+        description: "Écrivez d'abord une description de projet pour la forker",
+        variant: "destructive"
+      });
+    }
   };
 
   // Gestion du mode Ultra
