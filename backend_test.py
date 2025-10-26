@@ -10,8 +10,8 @@ import sys
 import time
 from typing import Dict, Any, Optional
 
-# Configuration - LOCAL ENVIRONMENT API (as per review request)
-BASE_URL = "http://localhost:8001/api"
+# Configuration - PRODUCTION ENVIRONMENT API (as per review request)
+BASE_URL = "https://oauth-debug-2.preview.emergentagent.com/api"
 TEST_USER = {
     "email": f"test_vectort_{int(time.time())}@example.com",
     "password": "TestPassword123!",
