@@ -95,9 +95,9 @@ export default function LandingPage() {
       <nav className="flex justify-between items-center px-8 py-6">
         <div className="text-2xl font-bold">vectort.io</div>
         <div className="flex items-center space-x-4">
-          <button onClick={() => navigate("/features")} className="hover:text-green-400 transition-colors">Features</button>
-          <button onClick={() => navigate("/pricing")} className="hover:text-green-400 transition-colors">Pricing</button>
-          <a href="#faqs" className="hover:text-green-400 transition-colors">FAQs</a>
+          <button onClick={() => navigate("/features")} className="hover:text-green-400 transition-colors">{t('landing.nav_features')}</button>
+          <button onClick={() => navigate("/pricing")} className="hover:text-green-400 transition-colors">{t('landing.nav_pricing')}</button>
+          <a href="#faqs" className="hover:text-green-400 transition-colors">{t('landing.nav_faqs')}</a>
           <LanguageSelector />
           <Button 
             onClick={() => navigate("/auth")}
