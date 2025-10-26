@@ -79,6 +79,9 @@ pwd_context = CryptContext(schemes=["sha256_crypt"], deprecated="auto")
 # JWT Security
 security = HTTPBearer()
 
+# Rate Limiter
+limiter = Limiter(key_func=get_remote_address)
+
 # Create the main app without a prefix
 app = FastAPI(
     title="Vectort API", 
@@ -88,6 +91,13 @@ app = FastAPI(
     docs_url="/docs" if os.environ.get("DEBUG") == "true" else None,
     redoc_url="/redoc" if os.environ.get("DEBUG") == "true" else None
 )
+
+# Add rate limiter to app state
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
+# Initialize Prometheus metrics
+init_prometheus(app)
 
 # Create a router with the /api prefix
 api_router = APIRouter(prefix="/api")
