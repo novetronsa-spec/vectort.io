@@ -1430,8 +1430,8 @@ async def generate_project_code(
         track_generation(
             status="success",
             model="gpt-5",
-            framework=request.framework or "react",
-            mode="advanced" if request.advanced_mode else "quick",
+            framework=request_data.framework or "react",
+            mode="advanced" if request_data.advanced_mode else "quick",
             duration=duration,
             cost=estimated_cost
         )
