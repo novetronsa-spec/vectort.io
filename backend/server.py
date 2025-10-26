@@ -1569,9 +1569,11 @@ async def iterate_project(
     """
     Iterate/improve an existing project based on user instructions
     Allows conversational improvement of generated code
+    Credit cost adapts to complexity (1-5 credits)
     """
     from utils.iteration import create_iteration_prompt, extract_changes_from_response
     from utils.cache import sanitize_prompt
+    from utils.credit_estimator import CreditEstimator
     from ai_generators.multi_llm_service import multi_llm_service
     
     start_time = time.time()
@@ -1591,6 +1593,19 @@ async def iterate_project(
     
     # Sanitize instruction
     instruction = sanitize_prompt(iteration_request.instruction)
+    
+    # ESTIMATE CREDIT COST BASED ON COMPLEXITY (like Emergent)
+    credit_cost, complexity_level, complexity_explanation = CreditEstimator.estimate_complexity(instruction)
+    
+    logger.info(
+        f"Iteration complexity estimated: {complexity_level} - {credit_cost} credits",
+        extra={
+            "project_id": project_id,
+            "instruction": instruction[:100],
+            "estimated_credits": credit_cost,
+            "complexity": complexity_level
+        }
+    )
     
     # Get chat history
     chat_history_docs = await db.project_chat.find(
