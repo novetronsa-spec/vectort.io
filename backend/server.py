@@ -1010,9 +1010,11 @@ async def github_callback(code: str, state: str):
             user = User(**{k: v for k, v in existing_user.items() if k != "password_hash"})
         else:
             # Crée un nouvel utilisateur
+            # GitHub name peut être None si non public, utiliser login comme fallback
+            github_name = user_info.get("name") or user_info.get("login") or "GitHub User"
             user = User(
                 email=email,
-                full_name=user_info.get("name", user_info.get("login")),
+                full_name=github_name,
             )
             user_dict = user.dict()
             user_dict["oauth_provider"] = "github"
