@@ -1,4 +1,4 @@
-from fastapi import FastAPI, APIRouter, HTTPException, Depends, status
+from fastapi import FastAPI, APIRouter, HTTPException, Depends, status, Request
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from fastapi.responses import RedirectResponse
 from dotenv import load_dotenv
@@ -8,9 +8,9 @@ from passlib.context import CryptContext
 from jose import JWTError, jwt
 from datetime import datetime, timedelta
 import os
-import logging
 import asyncio
 import json
+import time
 from pathlib import Path
 from pydantic import BaseModel, Field, EmailStr, field_validator
 from typing import List, Optional
@@ -19,6 +19,19 @@ import hashlib
 import base64
 import re
 import html
+from functools import lru_cache
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
+
+# Monitoring imports
+from utils.monitoring import (
+    init_sentry, setup_logger, init_prometheus,
+    track_generation, track_cache, track_deployment,
+    track_oauth, track_payment, track_credits,
+    log_generation_started, log_generation_completed,
+    log_generation_failed, log_deployment, log_payment
+)
 from emergentintegrations.llm.chat import LlmChat, UserMessage
 from emergentintegrations.payments.stripe.checkout import StripeCheckout, CheckoutSessionResponse, CheckoutStatusResponse, CheckoutSessionRequest
 from ai_generators.advanced_generator import (
