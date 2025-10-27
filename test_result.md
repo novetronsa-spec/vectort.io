@@ -1646,14 +1646,13 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Export Interface - New Buttons Integration"
+    - "Split-Screen Interface - Preview avec Chat IA + Aperçu Temps Réel"
     - "GitHub Export Modal"
     - "Deployment Modal"
     - "Export Buttons Integration"
-  stuck_tasks:
-    - "Export Interface - New Buttons Integration"
+  stuck_tasks: []
   test_all: false
-  test_priority: "export_interface_validation"
+  test_priority: "split_screen_interface_validation_complete"
 
 agent_communication:
     - agent: "testing"
