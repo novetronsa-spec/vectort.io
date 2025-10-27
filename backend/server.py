@@ -1458,7 +1458,7 @@ async def generate_project_code(
     deduction_success = await deduct_credits(
         current_user.id, 
         credit_cost, 
-        f"Génération {'avancée' if request_data.advanced_mode else 'rapide'} - {request_data.type}",
+        f"Génération {complexity_level} ({credit_cost} crédits) - {request_data.type}",
         project_id
     )
     
