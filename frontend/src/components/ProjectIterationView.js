@@ -464,11 +464,29 @@ const ProjectIterationView = ({ projectId, onClose, userCredits, onCreditsUpdate
                 value={inputMessage}
                 onChange={(e) => setInputMessage(e.target.value)}
                 onKeyPress={handleKeyPress}
-                placeholder="Décrivez les améliorations souhaitées... (crédits adaptatifs)"
+                placeholder="Décrivez les améliorations souhaitées... (7 ou 14 crédits)"
                 className="flex-1 px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 resize-none"
                 rows="2"
                 disabled={isLoading}
               />
+              
+              {/* Microphone Button */}
+              <button
+                onClick={isRecording ? stopRecording : startRecording}
+                className={`px-4 py-3 rounded-lg flex items-center justify-center ${
+                  isRecording 
+                    ? 'bg-red-600 hover:bg-red-700 animate-pulse' 
+                    : 'bg-gray-700 hover:bg-gray-600'
+                }`}
+                title={isRecording ? "Arrêter l'enregistrement" : "Enregistrer un message vocal"}
+              >
+                {isRecording ? (
+                  <MicOff className="w-5 h-5 text-white" />
+                ) : (
+                  <Mic className="w-5 h-5 text-gray-300" />
+                )}
+              </button>
+              
               <button
                 onClick={handleSendMessage}
                 disabled={isLoading || !inputMessage.trim() || (estimatedCredits && !estimatedCredits.has_enough_credits)}
@@ -492,7 +510,7 @@ const ProjectIterationView = ({ projectId, onClose, userCredits, onCreditsUpdate
               </button>
             </div>
             <p className="text-xs text-gray-500 mt-2">
-              💡 Système adaptatif: 1-5 crédits selon la complexité • Entrée pour envoyer
+              💡 Système adaptatif: 7 crédits (simple) ou 14 crédits (complexe) • Entrée pour envoyer
             </p>
           </div>
         </div>
