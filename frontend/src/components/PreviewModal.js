@@ -105,13 +105,31 @@ const PreviewModal = ({ projectId, isOpen, onClose }) => {
               </button>
             </div>
           </div>
+        ) : previewHtml ? (
+          <>
+            <iframe
+              srcDoc={previewHtml}
+              className="w-full h-full border-0"
+              sandbox="allow-scripts allow-same-origin allow-forms"
+              title="Project Preview"
+            />
+            {/* Debug info */}
+            <div className="absolute bottom-2 left-2 bg-black/70 text-white text-xs p-2 rounded">
+              Preview: {previewHtml.length} chars
+            </div>
+          </>
         ) : (
-          <iframe
-            srcDoc={previewHtml}
-            className="w-full h-full border-0"
-            sandbox="allow-scripts allow-same-origin allow-forms"
-            title="Project Preview"
-          />
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="text-center text-gray-500">
+              <p>Aucun contenu à afficher</p>
+              <button
+                onClick={loadPreview}
+                className="mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded"
+              >
+                Charger le preview
+              </button>
+            </div>
+          </div>
         )}
       </div>
 
