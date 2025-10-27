@@ -1431,8 +1431,20 @@ async def generate_project_code(
     track_cache(hit=False, cache_type="llm")
     log_generation_started(logger, current_user.id, project_id, request_data.framework or "react", "gpt-5")
     
-    # Calculer le coût en crédits selon le mode
-    credit_cost = 2 if not request_data.advanced_mode else 4  # Quick: 2, Advanced: 4
+    # Calculer le coût en crédits selon la COMPLEXITÉ (système adaptatif 7/14 crédits)
+    from utils.credit_estimator import CreditEstimator
+    credit_cost, complexity_level, complexity_explanation = CreditEstimator.estimate_complexity(request_data.description)
+    
+    logger.info(
+        f"Generation complexity estimated: {complexity_level} - {credit_cost} credits",
+        extra={
+            "project_id": project_id,
+            "description": request_data.description[:100],
+            "estimated_credits": credit_cost,
+            "complexity": complexity_level,
+            "advanced_mode": request_data.advanced_mode
+        }
+    )
     
     # Vérifier et déduire les crédits AVANT la génération
     user_credits = await get_user_credit_balance(current_user.id)
