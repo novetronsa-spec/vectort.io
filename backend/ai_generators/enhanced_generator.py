@@ -420,7 +420,7 @@ class EnhancedProjectGenerator:
         # Créer un prompt groupé pour tous les fichiers
         files_list = "\n".join([f"- {path}: {desc}" for path, desc in files.items()])
         
-        prompt = f"""Génère le code COMPLET et DÉTAILLÉ pour TOUS ces fichiers:
+        prompt = f"""Génère le code COMPLET et FONCTIONNEL pour TOUS ces fichiers:
 
 PROJET: {description}
 TYPE: {project_type}
@@ -430,14 +430,14 @@ FICHIERS À GÉNÉRER:
 {files_list}
 
 EXIGENCES CRITIQUES:
-- Génère le code COMPLET de CHAQUE fichier (pas de simplifications)
-- AUCUN placeholder, AUCUN TODO, AUCUN "..." 
-- Implémentation DÉTAILLÉE et FONCTIONNELLE
-- Code production-ready prêt à déployer
+- Génère le code COMPLET de CHAQUE fichier
+- AUCUN placeholder (TODO, ..., etc.)
+- Implémentation FONCTIONNELLE et DÉTAILLÉE
+- Code production-ready
 - Respect strict des conventions du framework
 - Imports/exports cohérents
-- Gestion d'erreurs complète
-- Code SANS LIMITATIONS de longueur ou complexité
+- Gestion d'erreurs
+- Code de QUALITÉ (focus sur qualité, pas quantité excessive)
 
 Format de réponse OBLIGATOIRE: 
   FICHIER: chemin/fichier.ext
@@ -450,7 +450,7 @@ Format de réponse OBLIGATOIRE:
   code complet ici
   ```
 
-Génère MAINTENANT tous les fichiers avec leur implémentation COMPLÈTE."""
+Génère MAINTENANT tous les fichiers avec code COMPLET et FONCTIONNEL."""
         
         try:
             response = await chat.with_model("openai", "gpt-4o").send_message(UserMessage(text=prompt))
