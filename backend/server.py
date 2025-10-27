@@ -894,29 +894,39 @@ async def generate_app_code_basic(description: str, app_type: str, framework: st
             
             Génère une application {app_type} en {framework} basée sur la description fournie.
             
-            REQUIREMENTS:
-            - Code propre, moderne et optimisé
+            REQUIREMENTS CRITIQUES:
+            - Code propre, moderne et SANS ERREURS DE SYNTAXE
+            - JavaScript/JSX valide et testable
             - Design responsive et accessible 
             - Fonctionnalités complètes et pratiques
             - Prêt pour la production
             - Utilise les meilleures pratiques
+            - PAS de caractères spéciaux qui cassent la syntaxe
+            - PAS d'import statements dans React (utilise seulement React globals)
             
             FORMAT DE RÉPONSE:
             Réponds UNIQUEMENT avec un JSON dans ce format exact:
             {{
-                "html": "code HTML complet si applicable",
+                "html": "code HTML complet si applicable (ou vide si React)",
                 "css": "code CSS complet avec design moderne",
-                "js": "code JavaScript complet si applicable", 
-                "react": "code React JSX complet si framework=react",
+                "js": "code JavaScript vanilla complet (ou vide si React)", 
+                "react": "code React JSX complet VALIDE si framework=react (fonction App avec return JSX)",
                 "backend": "code backend API si nécessaire (FastAPI/Node.js)"
             }}
+            
+            IMPORTANT pour React:
+            - Génère UNE fonction App() qui retourne du JSX valide
+            - Utilise React, useState, useEffect depuis l'environnement global
+            - N'utilise PAS d'import statements
+            - Syntaxe JSX correcte et testable
+            - Pas d'erreurs Babel
             
             N'inclus AUCUN texte en dehors du JSON."""
         ).with_model("openai", "gpt-4o")
         
         # Create user message
         user_message = UserMessage(
-            text=f"Génère une application {app_type} en {framework}:\n\n{description}\n\nGénère du code complet et fonctionnel prêt pour la production."
+            text=f"Génère une application {app_type} en {framework}:\n\n{description}\n\nGénère du code complet, fonctionnel et SANS ERREURS DE SYNTAXE, prêt pour la production."
         )
         
         # Send message and get response
@@ -933,13 +943,25 @@ async def generate_app_code_basic(description: str, app_type: str, framework: st
                 response_text = response_text[3:-3]
                 
             code_data = json.loads(response_text)
+            
+            # Validation: Vérifier que le code React n'a pas d'imports
+            if code_data.get("react"):
+                react_code = code_data["react"]
+                # Remove import statements qui causent des erreurs
+                react_code = "\n".join([
+                    line for line in react_code.split("\n") 
+                    if not line.strip().startswith("import ")
+                ])
+                code_data["react"] = react_code
+            
             return code_data
             
-        except json.JSONDecodeError:
+        except json.JSONDecodeError as e:
+            logger.error(f"JSON decode error: {e}, response: {response_text[:200]}")
             # Fallback: create basic structure
             return {
                 "html": f"<!DOCTYPE html><html><head><title>Generated App</title></head><body><h1>Application générée</h1><p>{description}</p></body></html>",
-                "css": "body { font-family: Arial, sans-serif; margin: 20px; }",
+                "css": "body { font-family: Arial, sans-serif; margin: 20px; padding: 20px; background: #f5f5f5; }",
                 "js": "console.log('Application générée avec succès');",
                 "react": None,
                 "backend": None
