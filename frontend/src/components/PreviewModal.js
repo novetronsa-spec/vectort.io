@@ -34,12 +34,22 @@ const PreviewModal = ({ projectId, isOpen, onClose }) => {
     
     try {
       const token = localStorage.getItem('token');
+      console.log('🔍 Loading preview for project:', projectId);
+      
       const response = await axios.get(`${API}/projects/${projectId}/preview`, {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { 
+          Authorization: `Bearer ${token}`,
+          'Accept': 'text/html'
+        },
+        responseType: 'text' // CRITIQUE: Force text response
       });
+      
+      console.log('✅ Preview loaded, size:', response.data.length, 'chars');
+      console.log('📄 Preview content preview:', response.data.substring(0, 200));
+      
       setPreviewHtml(response.data);
     } catch (err) {
-      console.error('Erreur chargement preview:', err);
+      console.error('❌ Erreur chargement preview:', err);
       setError(err.response?.data?.detail || 'Erreur lors du chargement du preview');
     } finally {
       setIsLoading(false);
