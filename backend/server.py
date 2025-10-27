@@ -938,12 +938,36 @@ Réponds UNIQUEMENT avec le JSON demandé."""
         # Parse JSON
         import json
         response_text = response.strip()
+        
+        # Log raw response for debugging
+        logger.info(f"Raw LLM response length: {len(response_text)} chars")
+        logger.info(f"Response preview: {response_text[:200]}")
+        
+        if not response_text:
+            logger.error("Empty response from LLM")
+            raise HTTPException(
+                status_code=500,
+                detail="Réponse vide de l'IA. Veuillez réessayer."
+            )
+        
         if response_text.startswith("```json"):
             response_text = response_text[7:-3]
         elif response_text.startswith("```"):
             response_text = response_text[3:-3]
         
-        code_data = json.loads(response_text)
+        try:
+            code_data = json.loads(response_text)
+        except json.JSONDecodeError as e:
+            logger.error(f"JSON decode error: {e}")
+            logger.error(f"Failed to parse: {response_text[:500]}")
+            # Fallback: create basic HTML page
+            return {
+                "html": f"<!DOCTYPE html><html><head><title>{app_type}</title></head><body><h1>Application: {description[:100]}</h1><p>Génération en cours de correction...</p></body></html>",
+                "css": "body { font-family: Arial, sans-serif; padding: 40px; background: #f5f5f5; } h1 { color: #333; }",
+                "js": "",
+                "react": None,
+                "backend": None
+            }
         
         # Clean React code
         if code_data.get("react"):
