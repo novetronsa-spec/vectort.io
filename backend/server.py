@@ -1995,6 +1995,20 @@ async def preview_project(
     
     # Si html_code est vide mais react_code existe, créer un preview React
     if not html and react_code:
+        # Nettoyer le code React: enlever les imports et export default
+        clean_react = react_code
+        lines = react_code.split('\n')
+        clean_lines = []
+        
+        for line in lines:
+            stripped = line.strip()
+            # Skip import and export statements
+            if stripped.startswith('import ') or stripped.startswith('export default') or stripped.startswith('export '):
+                continue
+            clean_lines.append(line)
+        
+        clean_react = '\n'.join(clean_lines)
+        
         # Créer un preview HTML qui monte l'application React
         preview_html = f"""
 <!DOCTYPE html>
@@ -2014,19 +2028,26 @@ async def preview_project(
 <body>
     <div id="root"></div>
     <script type="text/babel">
-    {react_code}
+    // Code React généré
+    const React = window.React;
+    const {{ useState, useEffect }} = React;
+    
+    {clean_react}
     
     // Mount the React component
     const root = ReactDOM.createRoot(document.getElementById('root'));
     
-    // Try to find the default export or the main component
-    if (typeof ProjectManagementApp !== 'undefined') {{
-        root.render(<ProjectManagementApp />);
-    }} else if (typeof App !== 'undefined') {{
-        root.render(<App />);
+    // Try to find and render the App component
+    if (typeof App !== 'undefined') {{
+        root.render(React.createElement(App));
+    }} else if (typeof ProjectManagementApp !== 'undefined') {{
+        root.render(React.createElement(ProjectManagementApp));
     }} else {{
-        // Fallback: try to render the first React component found
-        root.render(<div><h1>Application générée</h1><p>Le composant React a été généré avec succès.</p></div>);
+        // Fallback
+        root.render(React.createElement('div', {{ style: {{ padding: '40px', fontFamily: 'Arial, sans-serif' }} }},
+            React.createElement('h1', {{ style: {{ color: '#333' }} }}, 'Application générée'),
+            React.createElement('p', null, 'Le composant React a été généré avec succès.')
+        ));
     }}
     </script>
 </body>
