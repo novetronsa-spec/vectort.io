@@ -951,7 +951,7 @@ Réponds UNIQUEMENT avec le JSON demandé, rien d'autre."""
 
         # Call OpenAI API with increased token limit
         response = client.chat.completions.create(
-            model="gpt-4-turbo",  # ou "gpt-4o" pour plus rapide
+            model="gpt-4o",  # GPT-4 optimized - le plus accessible
             messages=[
                 {"role": "system", "content": system_message},
                 {"role": "user", "content": user_prompt}
