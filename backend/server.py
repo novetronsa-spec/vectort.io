@@ -884,53 +884,58 @@ def generate_basic_html_for_react(request: GenerateAppRequest) -> str:
 </html>"""
 
 async def generate_app_code_basic(description: str, app_type: str, framework: str) -> dict:
-    """Génération de projets complexes avec EMERGENT_LLM_KEY"""
+    """Génération de projets complexes COMPLETS avec EMERGENT_LLM_KEY - SANS LIMITATIONS"""
     try:
         # Initialize LLM Chat (imports already at top of file)
         chat = LlmChat(
             api_key=EMERGENT_LLM_KEY,
             session_id=f"vectort-gen-{uuid.uuid4()}",
-            system_message=f"""Tu es un développeur SENIOR expert qui génère des applications COMPLÈTES et COMPLEXES.
+            system_message=f"""Tu es un développeur SENIOR expert qui génère des applications COMPLÈTES, DÉTAILLÉES et PROFESSIONNELLES.
 
-Génère du code TRÈS DÉTAILLÉ avec minimum 3000-5000 lignes de code au total.
+RÈGLE D'OR: Génère du code COMPLET et DÉTAILLÉ - AUCUNE simplification, AUCUN placeholder.
 
-Pour {app_type} en {framework}, crée une application professionnelle avec:
-- Multiples composants (8-15 minimum)
-- Fonctionnalités complètes et avancées
+Pour {app_type} en {framework}, crée une application professionnelle COMPLÈTE avec:
+- Multiples composants (10-20 minimum)
+- Fonctionnalités complètes et avancées DÉTAILLÉES
 - Design moderne et responsive
 - State management professionnel
-- Interactions riches
-- Code production-ready
+- Interactions riches et complexes
+- Code production-ready SANS limitations
+- Minimum 5000-8000 lignes de code au total
 
 FORMAT - JSON uniquement:
 {{
     "html": "HTML complet si applicable",
-    "css": "CSS complet (minimum 1000 lignes)",
+    "css": "CSS complet et détaillé (minimum 1500 lignes)",
     "js": "JavaScript complet si applicable",
-    "react": "Code React COMPLET (minimum 3000 lignes) - PAS d'import statements",
-    "backend": "Backend API si nécessaire"
+    "react": "Code React COMPLET et DÉTAILLÉ (minimum 5000 lignes) - PAS d'import statements",
+    "backend": "Backend API complet si nécessaire"
 }}
 
-IMPORTANT:
+EXIGENCES CRITIQUES:
 - PAS d'import statements
-- Code SANS ERREURS
-- Syntaxe VALIDE
-- BEAUCOUP de code détaillé"""
+- Code COMPLET (JAMAIS de TODO ou placeholders)
+- Implémentation DÉTAILLÉE de toutes les fonctionnalités
+- Syntaxe VALIDE et SANS ERREURS
+- BEAUCOUP de code détaillé
+- AUCUNE limitation de longueur ou complexité"""
         ).with_model("openai", "gpt-4o")
         
         user_message = UserMessage(
-            text=f"""Génère une application {app_type} COMPLÈTE en {framework}:
+            text=f"""Génère une application {app_type} COMPLÈTE et DÉTAILLÉE en {framework}:
 
 {description}
 
-GÉNÈRE DU CODE TRÈS DÉTAILLÉ:
-- Minimum 3000-5000 lignes au total
-- 8-15 composants React minimum
-- Fonctionnalités avancées complètes
+GÉNÈRE DU CODE TRÈS DÉTAILLÉ ET COMPLET:
+- Minimum 5000-8000 lignes au total
+- 10-20 composants React minimum
+- Fonctionnalités avancées complètes DÉTAILLÉES
 - Design professionnel
 - Code production-ready
+- AUCUNE simplification ou raccourci
+- Implémentation COMPLÈTE de tout
 
-Réponds UNIQUEMENT avec le JSON demandé."""
+Réponds UNIQUEMENT avec le JSON demandé contenant le code COMPLET."""
         )
         
         response = await chat.send_message(user_message)
