@@ -886,11 +886,7 @@ def generate_basic_html_for_react(request: GenerateAppRequest) -> str:
 async def generate_app_code_basic(description: str, app_type: str, framework: str) -> dict:
     """Génération de projets complexes avec EMERGENT_LLM_KEY"""
     try:
-        # Use EMERGENT_LLM_KEY which works
-        from emergentintegrations.llm_integration import LlmChat
-        from emergentintegrations.types import UserMessage
-        
-        # Initialize LLM Chat
+        # Initialize LLM Chat (imports already at top of file)
         chat = LlmChat(
             api_key=EMERGENT_LLM_KEY,
             session_id=f"vectort-gen-{uuid.uuid4()}",
