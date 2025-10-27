@@ -885,6 +885,85 @@ async def generate_config_files(request: GenerateAppRequest) -> dict:
     
     return config
 
+def map_multi_agent_files_to_response(all_files: dict, framework: str) -> dict:
+    """
+    Mappe les fichiers du système multi-agents vers le format de réponse attendu
+    
+    Args:
+        all_files: Tous les fichiers générés par les 6 agents
+        framework: Framework utilisé
+    
+    Returns:
+        Dict avec les champs attendus (html, css, js, react, backend, all_files)
+    """
+    
+    logger.info(f"📦 Mapping {len(all_files)} fichiers multi-agents vers format réponse")
+    
+    response = {
+        "html": "",
+        "css": "",
+        "js": "",
+        "react": "",
+        "backend": "",
+        "all_files": all_files
+    }
+    
+    # Parcourir tous les fichiers et les mapper intelligemment
+    for file_path, content in all_files.items():
+        
+        # CSS files
+        if '.css' in file_path.lower():
+            response["css"] += f"\n/* {file_path} */\n{content}\n"
+        
+        # React/JSX files
+        elif '.jsx' in file_path.lower() or 'App.jsx' in file_path or 'app.jsx' in file_path:
+            # Prioriser App.jsx comme fichier React principal
+            if 'App.jsx' in file_path or 'app.jsx' in file_path:
+                response["react"] = content
+            elif not response["react"]:  # Si pas encore de React principal
+                response["react"] = content
+        
+        # JavaScript files
+        elif '.js' in file_path.lower() and 'jsx' not in file_path.lower():
+            response["js"] += f"\n// {file_path}\n{content}\n"
+        
+        # Python/Backend files
+        elif '.py' in file_path.lower():
+            response["backend"] += f"\n# {file_path}\n{content}\n"
+        
+        # HTML files
+        elif '.html' in file_path.lower():
+            if 'index.html' in file_path.lower():
+                response["html"] = content
+            elif not response["html"]:
+                response["html"] = content
+        
+        # Package.json
+        elif 'package.json' in file_path.lower():
+            response["package_json"] = content
+        
+        # README
+        elif 'readme' in file_path.lower():
+            response["readme"] = content
+    
+    # Si pas de HTML mais il y a du React, générer un HTML de base
+    if not response["html"] and response["react"]:
+        response["html"] = f"""<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Application Vectort</title>
+</head>
+<body>
+    <div id="root"></div>
+</body>
+</html>"""
+    
+    logger.info(f"✅ Mapping terminé - HTML: {len(response['html'])}, CSS: {len(response['css'])}, React: {len(response['react'])}, Backend: {len(response['backend'])}")
+    
+    return response
+
 def generate_basic_html_for_react(request: GenerateAppRequest) -> str:
     """Génère un HTML de base pour React"""
     return f"""<!DOCTYPE html>
