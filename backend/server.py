@@ -884,56 +884,54 @@ def generate_basic_html_for_react(request: GenerateAppRequest) -> str:
 </html>"""
 
 async def generate_app_code_basic(description: str, app_type: str, framework: str) -> dict:
-    """Génération de projets complexes COMPLETS avec EMERGENT_LLM_KEY - SANS LIMITATIONS"""
+    """Génération de projets complexes COMPLETS avec EMERGENT_LLM_KEY - CODE PRODUCTION-READY"""
     try:
         # Initialize LLM Chat (imports already at top of file)
         chat = LlmChat(
             api_key=EMERGENT_LLM_KEY,
             session_id=f"vectort-gen-{uuid.uuid4()}",
-            system_message=f"""Tu es un développeur SENIOR expert qui génère des applications COMPLÈTES, DÉTAILLÉES et PROFESSIONNELLES.
+            system_message=f"""Tu es un développeur SENIOR expert qui génère des applications COMPLÈTES et PROFESSIONNELLES.
 
-RÈGLE D'OR: Génère du code COMPLET et DÉTAILLÉ - AUCUNE simplification, AUCUN placeholder.
+RÈGLE D'OR: Génère du code COMPLET et FONCTIONNEL - AUCUN placeholder, AUCUN TODO.
 
-Pour {app_type} en {framework}, crée une application professionnelle COMPLÈTE avec:
-- Multiples composants (10-20 minimum)
-- Fonctionnalités complètes et avancées DÉTAILLÉES
+Pour {app_type} en {framework}, crée une application professionnelle avec:
+- Composants multiples et bien structurés (8-15)
+- Fonctionnalités complètes et détaillées
 - Design moderne et responsive
 - State management professionnel
-- Interactions riches et complexes
-- Code production-ready SANS limitations
-- Minimum 5000-8000 lignes de code au total
+- Interactions riches
+- Code production-ready SANS simplifications
 
 FORMAT - JSON uniquement:
 {{
     "html": "HTML complet si applicable",
-    "css": "CSS complet et détaillé (minimum 1500 lignes)",
+    "css": "CSS complet et détaillé",
     "js": "JavaScript complet si applicable",
-    "react": "Code React COMPLET et DÉTAILLÉ (minimum 5000 lignes) - PAS d'import statements",
+    "react": "Code React COMPLET et FONCTIONNEL - PAS d'import statements",
     "backend": "Backend API complet si nécessaire"
 }}
 
 EXIGENCES CRITIQUES:
-- PAS d'import statements
-- Code COMPLET (JAMAIS de TODO ou placeholders)
+- PAS d'import statements dans React
+- Code COMPLET (JAMAIS de TODO, "..." ou placeholders)
 - Implémentation DÉTAILLÉE de toutes les fonctionnalités
 - Syntaxe VALIDE et SANS ERREURS
-- BEAUCOUP de code détaillé
-- AUCUNE limitation de longueur ou complexité"""
+- Code de qualité production
+- Focus sur QUALITÉ plutôt que quantité"""
         ).with_model("openai", "gpt-4o")
         
         user_message = UserMessage(
-            text=f"""Génère une application {app_type} COMPLÈTE et DÉTAILLÉE en {framework}:
+            text=f"""Génère une application {app_type} COMPLÈTE et PROFESSIONNELLE en {framework}:
 
 {description}
 
-GÉNÈRE DU CODE TRÈS DÉTAILLÉ ET COMPLET:
-- Minimum 5000-8000 lignes au total
-- 10-20 composants React minimum
-- Fonctionnalités avancées complètes DÉTAILLÉES
+IMPORTANT:
+- Code COMPLET et FONCTIONNEL
+- 8-15 composants bien structurés
+- Fonctionnalités avancées COMPLÈTES
 - Design professionnel
-- Code production-ready
-- AUCUNE simplification ou raccourci
-- Implémentation COMPLÈTE de tout
+- AUCUNE simplification, AUCUN placeholder
+- Qualité production
 
 Réponds UNIQUEMENT avec le JSON demandé contenant le code COMPLET."""
         )
