@@ -884,150 +884,111 @@ def generate_basic_html_for_react(request: GenerateAppRequest) -> str:
 </html>"""
 
 async def generate_app_code_basic(description: str, app_type: str, framework: str) -> dict:
-    """Génération de projets complexes et complets"""
+    """Génération de projets complexes avec OpenAI GPT-4 Turbo"""
     try:
-        # Initialize LLM Chat
-        chat = LlmChat(
-            api_key=EMERGENT_LLM_KEY,
-            session_id=f"vectort-basic-{uuid.uuid4()}",
-            system_message=f"""Tu es un développeur SENIOR expert qui génère des applications de PRODUCTION COMPLÈTES et COMPLEXES.
+        from openai import OpenAI
+        import os
+        
+        # Initialize OpenAI client
+        client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+        
+        # Create comprehensive prompt for complex applications
+        system_message = f"""Tu es un développeur SENIOR expert qui génère des applications de PRODUCTION COMPLÈTES et COMPLEXES.
 
-Tu dois créer des applications professionnelles avec:
-- PLUSIEURS FICHIERS et COMPOSANTS (minimum 5-10 fichiers pour projets complexes)
-- Architecture COMPLÈTE et SCALABLE
-- Fonctionnalités AVANCÉES (auth, CRUD, API, state management)
-- Base de données intégrée (si applicable)
-- Gestion d'état avancée (Context API, Redux patterns)
-- Formulaires avec validation complète
-- Routing multi-pages
-- Styling professionnel et responsive
+Tu dois créer des applications professionnelles TRÈS DÉTAILLÉES avec:
+- CODE COMPLET et FONCTIONNEL (minimum 3000-10000 lignes)
+- PLUSIEURS COMPOSANTS (8-20+ composants React)
+- Architecture PROFESSIONNELLE et SCALABLE
+- Fonctionnalités AVANCÉES et complètes
+- Design moderne et responsive
 - Interactions utilisateur riches
-- Code de PRODUCTION ready (pas de placeholder)
+- State management professionnel
+- Routing complet
+- Formulaires avec validation
+- API integration patterns
+- Error handling complet
+- Loading states
+- Code commenté et documenté
 
-Pour une application {app_type} en {framework}, génère:
-- Si React: Multiples composants, hooks personnalisés, context providers, services API
-- Si Full-stack: Frontend complet + Backend API + Modèles de données
-- Architecture modulaire et professionnelle
-- README avec instructions de setup
+Pour {app_type} en {framework}, génère du CODE TRÈS DÉTAILLÉ et COMPLET.
 
-IMPORTANT - GÉNÉRATION AVANCÉE:
-- Pour projets simples: Minimum 3-5 fichiers
-- Pour projets moyens: Minimum 8-12 fichiers
-- Pour projets complexes: 15-25+ fichiers
-- Inclus: components/, services/, utils/, hooks/, contexts/, styles/
-- Backend API si nécessaire avec routes, controllers, models
-- Database schemas et migrations si applicable
-
-FORMAT DE RÉPONSE:
-Réponds UNIQUEMENT avec un JSON dans ce format:
+FORMAT DE RÉPONSE - JSON uniquement:
 {{
-    "html": "HTML principal si applicable",
-    "css": "CSS global complet et professionnel",
-    "js": "JavaScript principal si applicable",
-    "react": "Code React JSX COMPLET avec tous les composants (séparés par '// FILE: chemin/fichier.jsx')",
-    "backend": "Code backend API complet si nécessaire (FastAPI/Node.js/Express)",
-    "files": {{
-        "package.json": "...",
-        "README.md": "...",
-        "src/components/Header.jsx": "...",
-        "src/components/Footer.jsx": "...",
-        "src/services/api.js": "...",
-        "src/utils/helpers.js": "...",
-        "src/contexts/AppContext.jsx": "...",
-        "src/hooks/useCustomHook.js": "...",
-        "src/pages/Home.jsx": "...",
-        "src/pages/Dashboard.jsx": "...",
-        "backend/server.py": "...",
-        "backend/models.py": "...",
-        "backend/routes.py": "..."
-    }}
+    "html": "HTML complet si applicable",
+    "css": "CSS global complet et professionnel (minimum 1000-2000 lignes)",
+    "js": "JavaScript complet si applicable",
+    "react": "Code React JSX COMPLET avec TOUS les composants (minimum 3000-5000 lignes). Sépare les composants par '// COMPONENT: NomComposant'",
+    "backend": "Code backend API complet si nécessaire"
 }}
 
-RÈGLES CRITIQUES:
-- PAS d'import statements dans le code React (utilise React global)
-- Code SANS ERREURS de syntaxe
+IMPORTANT:
+- PAS d'import statements (utilise React global)
+- Code SANS ERREURS
 - Syntaxe JSX VALIDE
-- Fonctionnalités COMPLÈTES et OPÉRATIONNELLES
-- Architecture PROFESSIONNELLE
-- N'inclus AUCUN texte en dehors du JSON"""
-        ).with_model("openai", "gpt-4o")
-        
-        # Create user message with emphasis on complexity
-        complexity_prompt = f"""Génère une application {app_type} COMPLÈTE et PROFESSIONNELLE en {framework}:
+- Génère BEAUCOUP de code détaillé
+- Minimum 3000 lignes de code au total"""
+
+        user_prompt = f"""Génère une application {app_type} COMPLÈTE et TRÈS DÉTAILLÉE en {framework}:
 
 DESCRIPTION: {description}
 
-REQUIREMENTS - APPLICATION COMPLEXE:
-1. Architecture multi-fichiers avec structure claire
-2. Fonctionnalités avancées et complètes
-3. Interface utilisateur riche et interactive
-4. Gestion d'état professionnelle
-5. Validation de données complète
-6. Responsive et accessible
-7. Code de production ready
-8. Documentation inline
+REQUIREMENTS - APPLICATION COMPLEXE ET DÉTAILLÉE:
+1. Génère au minimum 3000-5000 lignes de code
+2. Créer 8-15 composants React différents minimum
+3. Inclure TOUTES les fonctionnalités demandées
+4. Ajouter des fonctionnalités bonus pertinentes
+5. Design professionnel avec animations
+6. State management avec Context API
+7. Routing complet (patterns React Router)
+8. Formulaires avec validation complète
+9. Error handling et loading states
+10. Responsive design complet
+11. Commentaires et documentation
+12. Code production-ready
 
-GÉNÈRE un projet COMPLET avec minimum 8-15 fichiers incluant:
-- Composants multiples et réutilisables
-- Services et utilitaires
-- Hooks personnalisés (si React)
-- State management
-- API integration (si applicable)
-- Styling professionnel
-- README avec setup instructions
+GÉNÈRE DU CODE TRÈS DÉTAILLÉ ET COMPLET. N'économise pas sur la longueur!
+Réponds UNIQUEMENT avec le JSON demandé, rien d'autre."""
 
-QUALITÉ: Production-ready, pas de placeholder, code testable."""
-
-        user_message = UserMessage(text=complexity_prompt)
+        # Call OpenAI API with increased token limit
+        response = client.chat.completions.create(
+            model="gpt-4-turbo",  # ou "gpt-4o" pour plus rapide
+            messages=[
+                {"role": "system", "content": system_message},
+                {"role": "user", "content": user_prompt}
+            ],
+            max_tokens=16000,  # Maximum pour génération complexe
+            temperature=0.7
+        )
         
-        # Send message and get response
-        response = await chat.send_message(user_message)
+        # Extract response
+        response_text = response.choices[0].message.content.strip()
         
-        # Parse JSON response
+        # Parse JSON
         import json
-        try:
-            # Extract JSON from response
-            response_text = response.strip()
-            if response_text.startswith("```json"):
-                response_text = response_text[7:-3]
-            elif response_text.startswith("```"):
-                response_text = response_text[3:-3]
-                
-            code_data = json.loads(response_text)
-            
-            # Validation: Vérifier que le code React n'a pas d'imports
-            if code_data.get("react"):
-                react_code = code_data["react"]
-                # Remove import statements qui causent des erreurs
-                react_code = "\n".join([
-                    line for line in react_code.split("\n") 
-                    if not line.strip().startswith("import ")
-                ])
-                code_data["react"] = react_code
-            
-            # Log complexity metrics
-            file_count = len(code_data.get("files", {}))
-            total_size = len(str(code_data))
-            logger.info(f"Generated complex project: {file_count} files, {total_size} chars total")
-            
-            return code_data
-            
-        except json.JSONDecodeError as e:
-            logger.error(f"JSON decode error: {e}, response: {response_text[:200]}")
-            # Fallback: create basic structure
-            return {
-                "html": f"<!DOCTYPE html><html><head><title>Generated App</title></head><body><h1>Application générée</h1><p>{description}</p></body></html>",
-                "css": "body { font-family: Arial, sans-serif; margin: 20px; padding: 20px; background: #f5f5f5; }",
-                "js": "console.log('Application générée avec succès');",
-                "react": None,
-                "backend": None
-            }
-            
+        if response_text.startswith("```json"):
+            response_text = response_text[7:-3]
+        elif response_text.startswith("```"):
+            response_text = response_text[3:-3]
+        
+        code_data = json.loads(response_text)
+        
+        # Clean React code (remove imports)
+        if code_data.get("react"):
+            react_code = code_data["react"]
+            lines = [line for line in react_code.split("\n") if not line.strip().startswith("import ")]
+            code_data["react"] = "\n".join(lines)
+        
+        # Log metrics
+        total_chars = sum(len(str(v)) for v in code_data.values() if v)
+        logger.info(f"OpenAI GPT-4 generated: {total_chars} chars total")
+        
+        return code_data
+        
     except Exception as e:
-        logger.error(f"Error generating complex app code: {str(e)}")
+        logger.error(f"Error with OpenAI generation: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Erreur lors de la génération du code"
+            detail=f"Erreur lors de la génération: {str(e)}"
         )
 
 
