@@ -37,6 +37,7 @@ class CreditEstimator:
     def estimate_complexity(instruction: str) -> Tuple[int, str, str]:
         """
         Estimate credit cost based on instruction complexity
+        NEW SYSTEM: 7 crédits (simple) ou 14 crédits (complexe)
         
         Args:
             instruction: User's improvement request
@@ -76,22 +77,13 @@ class CreditEstimator:
         if is_multi_part:
             score += 2
         
-        # Determine complexity level and credit cost
-        if score <= 2 or (simple_count > 0 and medium_count == 0 and complex_count == 0 and word_count < 15):
-            # Simple: color change, text update, small style fix
-            return (1, "simple", "Modification simple (couleur, texte, style basique)")
-            
-        elif score <= 5 or medium_count > 0 and complex_count == 0:
-            # Medium: add a button, create a form, add section
-            return (2, "medium", "Modification moyenne (ajout de composant, formulaire simple)")
-            
-        elif score <= 10 or complex_count > 0:
-            # Complex: API integration, animations, responsive design
-            return (3, "complex", "Modification complexe (intégration API, animations, design responsive)")
-            
+        # NOUVEAU SYSTÈME: 7 crédits (simple) ou 14 crédits (complexe)
+        if score <= 5 or (simple_count > 0 and complex_count == 0 and word_count < 20):
+            # Simple: 7 crédits
+            return (7, "simple", "Modification simple (7 crédits)")
         else:
-            # Very Complex: full refactor, multiple integrations, architecture changes
-            return (5, "very_complex", "Modification très complexe (refonte complète, multiples intégrations)")
+            # Complexe: 14 crédits
+            return (14, "complex", "Modification complexe (14 crédits)")
     
     @staticmethod
     def get_credit_breakdown(instruction: str) -> Dict:
