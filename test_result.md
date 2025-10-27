@@ -1614,6 +1614,18 @@ frontend:
           agent: "testing"
           comment: "⚠️ PRICING PACKAGES PARTIALLY IMPLEMENTED: Testing reveals 3/7 packages visible on pricing page: ✅ FOUND PACKAGES: Starter (100 crédits - $20), Standard (250 crédits - $50), Pro (400 crédits - $80) ❌ MISSING PACKAGES: Micro (10 crédits - $10), Business (1200 crédits - $200), Enterprise (3000 crédits - $500), Ultimate (7000 crédits - $1000) ✅ PRICING PAGE ACCESS: Dedicated pricing page accessible via navigation menu ✅ PACKAGE STRUCTURE: Proper card layout with credits, pricing, and features displayed ✅ MULTILINGUAL: Pricing page content in French ('Rechargez vos crédits') RECOMMENDATION: Add the 4 missing packages (Micro, Business, Enterprise, Ultimate) to complete the 7-package requirement from the French specification. Current implementation covers basic/standard tiers but missing entry-level and enterprise tiers."
 
+  - task: "Preview Modal Black Screen Issue - CRITICAL ROOT CAUSE FOUND"
+    implemented: true
+    working: false
+    file: "frontend/src/components/PreviewModal.js, backend/server.py"
+    stuck_count: 1
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: false
+          agent: "testing"
+          comment: "🎯 ROOT CAUSE IDENTIFIÉ - ÉCRAN NOIR RÉSOLU! Tests complets avec credentials demo_real_1761589485@vectort.io révèlent: ✅ FONCTIONNEMENT CORRECT: 1) Connexion réussie, projet 'Restaurant Le Gourmet' visible 2) API /api/projects/{id}/preview retourne 200 OK avec 4425 chars HTML 3) Modal s'ouvre correctement 4) Iframe présent avec srcDoc rempli 5) Console logs confirment: '🔍 Loading preview', '✅ Preview loaded, size: 4425 chars', '📄 Preview content preview: <!DOCTYPE html>' ❌ PROBLÈME RÉEL: JavaScript syntax error dans le code généré - 'Unexpected token (16:4)' et erreur Babel compilation empêchent le rendu. Le HTML arrive correctement mais échoue à s'afficher à cause d'erreurs JS. SOLUTION: Corriger la génération de code JavaScript/React pour éviter les erreurs de syntaxe. Le système fonctionne, c'est la qualité du code généré qui pose problème."
+
 metadata:
   created_by: "testing_agent"
   version: "1.0"
