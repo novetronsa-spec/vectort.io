@@ -378,7 +378,7 @@ if __name__ == "__main__":
 """
     
     async def _generate_single_file(self, request: GenerationRequest, file_path: str, file_desc: str) -> str:
-        """Génère le contenu d'un fichier spécifique - CODE COMPLET ET SANS LIMITATIONS"""
+        """Génère le contenu d'un fichier spécifique - CODE COMPLET ET PRODUCTION-READY"""
         chat = LlmChat(
             api_key=self.api_key, 
             session_id=f"file-{hash(file_path)}",
@@ -391,25 +391,24 @@ if __name__ == "__main__":
         system_prompt = f"""
         {specialized_prompt}
         
-        Génère le contenu COMPLET, DÉTAILLÉ et 100% FONCTIONNEL pour ce fichier:
+        Génère le contenu COMPLET et 100% FONCTIONNEL pour ce fichier:
         
         FICHIER: {file_path}
         DESCRIPTION: {file_desc}
         PROJET: {request.description}
         FRAMEWORK: {request.framework.value}
         
-        EXIGENCES CRITIQUES:
-        - Code de production COMPLET (pas de TODO, pas de placeholders, pas de "...")
-        - Implémentation DÉTAILLÉE de toutes les fonctionnalités
-        - AUCUNE simplification ou raccourci
+        EXIGENCES ESSENTIELLES:
+        - Code de production COMPLET (pas de TODO ou placeholders)
+        - Implémentation FONCTIONNELLE de toutes les features
         - Best practices et patterns modernes
-        - Gestion d'erreurs complète et robuste
-        - TypeScript si applicable avec types complets
-        - Comments et documentation pertinents
+        - Gestion d'erreurs complète
+        - TypeScript si applicable avec types appropriés
+        - Comments pertinents si nécessaire
         - Optimisations de performance
-        - Code prêt à déployer SANS modifications
+        - Code prêt à déployer
         
-        IMPORTANT: Ne simplifie JAMAIS le code. Génère l'implémentation COMPLÈTE et DÉTAILLÉE.
+        IMPORTANT: Code COMPLET et FONCTIONNEL - pas de raccourcis.
         
         Réponds UNIQUEMENT avec le code complet, aucun markdown, aucune explication.
         """
