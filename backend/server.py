@@ -884,50 +884,101 @@ def generate_basic_html_for_react(request: GenerateAppRequest) -> str:
 </html>"""
 
 async def generate_app_code_basic(description: str, app_type: str, framework: str) -> dict:
-    """Génération basique pour compatibilité"""
+    """Génération de projets complexes et complets"""
     try:
         # Initialize LLM Chat
         chat = LlmChat(
             api_key=EMERGENT_LLM_KEY,
             session_id=f"vectort-basic-{uuid.uuid4()}",
-            system_message=f"""Tu es un développeur expert qui génère du code de production de haute qualité.
-            
-            Génère une application {app_type} en {framework} basée sur la description fournie.
-            
-            REQUIREMENTS CRITIQUES:
-            - Code propre, moderne et SANS ERREURS DE SYNTAXE
-            - JavaScript/JSX valide et testable
-            - Design responsive et accessible 
-            - Fonctionnalités complètes et pratiques
-            - Prêt pour la production
-            - Utilise les meilleures pratiques
-            - PAS de caractères spéciaux qui cassent la syntaxe
-            - PAS d'import statements dans React (utilise seulement React globals)
-            
-            FORMAT DE RÉPONSE:
-            Réponds UNIQUEMENT avec un JSON dans ce format exact:
-            {{
-                "html": "code HTML complet si applicable (ou vide si React)",
-                "css": "code CSS complet avec design moderne",
-                "js": "code JavaScript vanilla complet (ou vide si React)", 
-                "react": "code React JSX complet VALIDE si framework=react (fonction App avec return JSX)",
-                "backend": "code backend API si nécessaire (FastAPI/Node.js)"
-            }}
-            
-            IMPORTANT pour React:
-            - Génère UNE fonction App() qui retourne du JSX valide
-            - Utilise React, useState, useEffect depuis l'environnement global
-            - N'utilise PAS d'import statements
-            - Syntaxe JSX correcte et testable
-            - Pas d'erreurs Babel
-            
-            N'inclus AUCUN texte en dehors du JSON."""
+            system_message=f"""Tu es un développeur SENIOR expert qui génère des applications de PRODUCTION COMPLÈTES et COMPLEXES.
+
+Tu dois créer des applications professionnelles avec:
+- PLUSIEURS FICHIERS et COMPOSANTS (minimum 5-10 fichiers pour projets complexes)
+- Architecture COMPLÈTE et SCALABLE
+- Fonctionnalités AVANCÉES (auth, CRUD, API, state management)
+- Base de données intégrée (si applicable)
+- Gestion d'état avancée (Context API, Redux patterns)
+- Formulaires avec validation complète
+- Routing multi-pages
+- Styling professionnel et responsive
+- Interactions utilisateur riches
+- Code de PRODUCTION ready (pas de placeholder)
+
+Pour une application {app_type} en {framework}, génère:
+- Si React: Multiples composants, hooks personnalisés, context providers, services API
+- Si Full-stack: Frontend complet + Backend API + Modèles de données
+- Architecture modulaire et professionnelle
+- README avec instructions de setup
+
+IMPORTANT - GÉNÉRATION AVANCÉE:
+- Pour projets simples: Minimum 3-5 fichiers
+- Pour projets moyens: Minimum 8-12 fichiers
+- Pour projets complexes: 15-25+ fichiers
+- Inclus: components/, services/, utils/, hooks/, contexts/, styles/
+- Backend API si nécessaire avec routes, controllers, models
+- Database schemas et migrations si applicable
+
+FORMAT DE RÉPONSE:
+Réponds UNIQUEMENT avec un JSON dans ce format:
+{{
+    "html": "HTML principal si applicable",
+    "css": "CSS global complet et professionnel",
+    "js": "JavaScript principal si applicable",
+    "react": "Code React JSX COMPLET avec tous les composants (séparés par '// FILE: chemin/fichier.jsx')",
+    "backend": "Code backend API complet si nécessaire (FastAPI/Node.js/Express)",
+    "files": {{
+        "package.json": "...",
+        "README.md": "...",
+        "src/components/Header.jsx": "...",
+        "src/components/Footer.jsx": "...",
+        "src/services/api.js": "...",
+        "src/utils/helpers.js": "...",
+        "src/contexts/AppContext.jsx": "...",
+        "src/hooks/useCustomHook.js": "...",
+        "src/pages/Home.jsx": "...",
+        "src/pages/Dashboard.jsx": "...",
+        "backend/server.py": "...",
+        "backend/models.py": "...",
+        "backend/routes.py": "..."
+    }}
+}}
+
+RÈGLES CRITIQUES:
+- PAS d'import statements dans le code React (utilise React global)
+- Code SANS ERREURS de syntaxe
+- Syntaxe JSX VALIDE
+- Fonctionnalités COMPLÈTES et OPÉRATIONNELLES
+- Architecture PROFESSIONNELLE
+- N'inclus AUCUN texte en dehors du JSON"""
         ).with_model("openai", "gpt-4o")
         
-        # Create user message
-        user_message = UserMessage(
-            text=f"Génère une application {app_type} en {framework}:\n\n{description}\n\nGénère du code complet, fonctionnel et SANS ERREURS DE SYNTAXE, prêt pour la production."
-        )
+        # Create user message with emphasis on complexity
+        complexity_prompt = f"""Génère une application {app_type} COMPLÈTE et PROFESSIONNELLE en {framework}:
+
+DESCRIPTION: {description}
+
+REQUIREMENTS - APPLICATION COMPLEXE:
+1. Architecture multi-fichiers avec structure claire
+2. Fonctionnalités avancées et complètes
+3. Interface utilisateur riche et interactive
+4. Gestion d'état professionnelle
+5. Validation de données complète
+6. Responsive et accessible
+7. Code de production ready
+8. Documentation inline
+
+GÉNÈRE un projet COMPLET avec minimum 8-15 fichiers incluant:
+- Composants multiples et réutilisables
+- Services et utilitaires
+- Hooks personnalisés (si React)
+- State management
+- API integration (si applicable)
+- Styling professionnel
+- README avec setup instructions
+
+QUALITÉ: Production-ready, pas de placeholder, code testable."""
+
+        user_message = UserMessage(text=complexity_prompt)
         
         # Send message and get response
         response = await chat.send_message(user_message)
@@ -954,6 +1005,11 @@ async def generate_app_code_basic(description: str, app_type: str, framework: st
                 ])
                 code_data["react"] = react_code
             
+            # Log complexity metrics
+            file_count = len(code_data.get("files", {}))
+            total_size = len(str(code_data))
+            logger.info(f"Generated complex project: {file_count} files, {total_size} chars total")
+            
             return code_data
             
         except json.JSONDecodeError as e:
@@ -968,7 +1024,7 @@ async def generate_app_code_basic(description: str, app_type: str, framework: st
             }
             
     except Exception as e:
-        logger.error(f"Error generating basic app code: {str(e)}")
+        logger.error(f"Error generating complex app code: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Erreur lors de la génération du code"
