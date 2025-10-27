@@ -1,0 +1,36 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aperçu - Restaurant Le Gourmet - Site Vitrine</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <style>
+    body { font-family: 'Arial', sans-serif; margin: 0; padding: 0; } header { background-color: #333; color: #fff; padding: 10px 20px; text-align: center; } nav ul { list-style-type: none; padding: 0; } nav ul li { display: inline; margin-right: 20px; } .container { padding: 20px; } h1, h2, h3 { color: #333; } .menu-section, .gallery-section, .reservation-section, .about-section { margin-bottom: 40px; } .dish, .photo, .about-details { margin: 10px 0; } .reservation-form input, .reservation-form textarea { width: 100%; padding: 10px; margin-top: 10px; margin-bottom: 20px; } .reservation-form button { background-color: #333; color: #fff; padding: 10px 20px; border: none; cursor: pointer; } .reservation-form button:hover { background-color: #555; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    <script type="text/babel">
+    import React, { useState } from 'react'; import './App.css'; const dishes = [{ name: 'Foie Gras', description: 'Classic foie gras with apple sauce', price: '16.50' }, { name: 'Escargots', description: 'Snails in garlic butter', price: '12.00' }]; const photos = ['/images/dish1.jpg', '/images/dish2.jpg']; function App() { const [reservation, setReservation] = useState({ name: '', email: '', date: '', time: '', message: '' }); const handleChange = (e) => { const { name, value } = e.target; setReservation({ ...reservation, [name]: value }); }; const handleSubmit = (e) => { e.preventDefault(); console.log('Reservation Details:', reservation); // Implement backend API call here }; return (<div> <header> <h1>Gastronomic Restaurant</h1> <nav> <ul> <li><a href="#menu">Menu</a></li> <li><a href="#gallery">Gallery</a></li> <li><a href="#reservation">Reservation</a></li> <li><a href="#about">About</a></li> </ul> </nav> </header> <div className="container"> <section id="menu" className="menu-section"> <h2>Our Menu</h2> {dishes.map((dish, index) => (<div key={index} className="dish"> <h3>{dish.name}</h3> <p>{dish.description}</p> <p>${dish.price}</p> </div> ))} </section> <section id="gallery" className="gallery-section"> <h2>Gallery</h2> {photos.map((photo, index) => (<img key={index} src={photo} alt="Dish" className="photo" /> ))} </section> <section id="reservation" className="reservation-section"> <h2>Reservation</h2> <form className="reservation-form" onSubmit={handleSubmit}> <input type="text" name="name" placeholder="Your Name" value={reservation.name} onChange={handleChange} required /> <input type="email" name="email" placeholder="Your Email" value={reservation.email} onChange={handleChange} required /> <input type="date" name="date" value={reservation.date} onChange={handleChange} required /> <input type="time" name="time" value={reservation.time} onChange={handleChange} required /> <textarea name="message" placeholder="Your Message" value={reservation.message} onChange={handleChange} /> <button type="submit">Book Now</button> </form> </section> <section id="about" className="about-section"> <h2>About Us</h2> <div className="about-details"> <p>Welcome to our gastronomic restaurant where we offer exquisite dishes for your dining pleasure. Our chefs use the finest ingredients to create memorable culinary experiences.</p> </div> </section> </div> </div> ); } export default App;
+    
+    // Mount the React component
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    
+    // Try to find the default export or the main component
+    if (typeof ProjectManagementApp !== 'undefined') {
+        root.render(<ProjectManagementApp />);
+    } else if (typeof App !== 'undefined') {
+        root.render(<App />);
+    } else {
+        // Fallback: try to render the first React component found
+        root.render(<div><h1>Application générée</h1><p>Le composant React a été généré avec succès.</p></div>);
+    }
+    </script>
+</body>
+</html>
+        
