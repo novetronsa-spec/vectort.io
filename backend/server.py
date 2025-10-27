@@ -884,87 +884,64 @@ def generate_basic_html_for_react(request: GenerateAppRequest) -> str:
 </html>"""
 
 async def generate_app_code_basic(description: str, app_type: str, framework: str) -> dict:
-    """Génération de projets complexes avec OpenAI GPT-4 Turbo"""
+    """Génération de projets complexes avec EMERGENT_LLM_KEY"""
     try:
-        from openai import OpenAI
-        import os
+        # Use EMERGENT_LLM_KEY which works
+        from emergentintegrations.llm_integration import LlmChat
+        from emergentintegrations.types import UserMessage
         
-        # Initialize OpenAI client
-        client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
-        
-        # Create comprehensive prompt for complex applications
-        system_message = f"""Tu es un développeur SENIOR expert qui génère des applications de PRODUCTION COMPLÈTES et COMPLEXES.
+        # Initialize LLM Chat
+        chat = LlmChat(
+            api_key=EMERGENT_LLM_KEY,
+            session_id=f"vectort-gen-{uuid.uuid4()}",
+            system_message=f"""Tu es un développeur SENIOR expert qui génère des applications COMPLÈTES et COMPLEXES.
 
-Tu dois créer des applications professionnelles TRÈS DÉTAILLÉES avec:
-- CODE COMPLET et FONCTIONNEL (minimum 3000-10000 lignes)
-- PLUSIEURS COMPOSANTS (8-20+ composants React)
-- Architecture PROFESSIONNELLE et SCALABLE
-- Fonctionnalités AVANCÉES et complètes
+Génère du code TRÈS DÉTAILLÉ avec minimum 3000-5000 lignes de code au total.
+
+Pour {app_type} en {framework}, crée une application professionnelle avec:
+- Multiples composants (8-15 minimum)
+- Fonctionnalités complètes et avancées
 - Design moderne et responsive
-- Interactions utilisateur riches
 - State management professionnel
-- Routing complet
-- Formulaires avec validation
-- API integration patterns
-- Error handling complet
-- Loading states
-- Code commenté et documenté
+- Interactions riches
+- Code production-ready
 
-Pour {app_type} en {framework}, génère du CODE TRÈS DÉTAILLÉ et COMPLET.
-
-FORMAT DE RÉPONSE - JSON uniquement:
+FORMAT - JSON uniquement:
 {{
     "html": "HTML complet si applicable",
-    "css": "CSS global complet et professionnel (minimum 1000-2000 lignes)",
+    "css": "CSS complet (minimum 1000 lignes)",
     "js": "JavaScript complet si applicable",
-    "react": "Code React JSX COMPLET avec TOUS les composants (minimum 3000-5000 lignes). Sépare les composants par '// COMPONENT: NomComposant'",
-    "backend": "Code backend API complet si nécessaire"
+    "react": "Code React COMPLET (minimum 3000 lignes) - PAS d'import statements",
+    "backend": "Backend API si nécessaire"
 }}
 
 IMPORTANT:
-- PAS d'import statements (utilise React global)
+- PAS d'import statements
 - Code SANS ERREURS
-- Syntaxe JSX VALIDE
-- Génère BEAUCOUP de code détaillé
-- Minimum 3000 lignes de code au total"""
+- Syntaxe VALIDE
+- BEAUCOUP de code détaillé"""
+        ).with_model("openai", "gpt-4o")
+        
+        user_message = UserMessage(
+            text=f"""Génère une application {app_type} COMPLÈTE en {framework}:
 
-        user_prompt = f"""Génère une application {app_type} COMPLÈTE et TRÈS DÉTAILLÉE en {framework}:
+{description}
 
-DESCRIPTION: {description}
+GÉNÈRE DU CODE TRÈS DÉTAILLÉ:
+- Minimum 3000-5000 lignes au total
+- 8-15 composants React minimum
+- Fonctionnalités avancées complètes
+- Design professionnel
+- Code production-ready
 
-REQUIREMENTS - APPLICATION COMPLEXE ET DÉTAILLÉE:
-1. Génère au minimum 3000-5000 lignes de code
-2. Créer 8-15 composants React différents minimum
-3. Inclure TOUTES les fonctionnalités demandées
-4. Ajouter des fonctionnalités bonus pertinentes
-5. Design professionnel avec animations
-6. State management avec Context API
-7. Routing complet (patterns React Router)
-8. Formulaires avec validation complète
-9. Error handling et loading states
-10. Responsive design complet
-11. Commentaires et documentation
-12. Code production-ready
-
-GÉNÈRE DU CODE TRÈS DÉTAILLÉ ET COMPLET. N'économise pas sur la longueur!
-Réponds UNIQUEMENT avec le JSON demandé, rien d'autre."""
-
-        # Call OpenAI API with increased token limit
-        response = client.chat.completions.create(
-            model="gpt-4o",  # GPT-4 optimized - le plus accessible
-            messages=[
-                {"role": "system", "content": system_message},
-                {"role": "user", "content": user_prompt}
-            ],
-            max_tokens=16000,  # Maximum pour génération complexe
-            temperature=0.7
+Réponds UNIQUEMENT avec le JSON demandé."""
         )
         
-        # Extract response
-        response_text = response.choices[0].message.content.strip()
+        response = await chat.send_message(user_message)
         
         # Parse JSON
         import json
+        response_text = response.strip()
         if response_text.startswith("```json"):
             response_text = response_text[7:-3]
         elif response_text.startswith("```"):
@@ -972,20 +949,19 @@ Réponds UNIQUEMENT avec le JSON demandé, rien d'autre."""
         
         code_data = json.loads(response_text)
         
-        # Clean React code (remove imports)
+        # Clean React code
         if code_data.get("react"):
             react_code = code_data["react"]
             lines = [line for line in react_code.split("\n") if not line.strip().startswith("import ")]
             code_data["react"] = "\n".join(lines)
         
-        # Log metrics
         total_chars = sum(len(str(v)) for v in code_data.values() if v)
-        logger.info(f"OpenAI GPT-4 generated: {total_chars} chars total")
+        logger.info(f"Generated: {total_chars} chars total")
         
         return code_data
         
     except Exception as e:
-        logger.error(f"Error with OpenAI generation: {str(e)}")
+        logger.error(f"Error generating code: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Erreur lors de la génération: {str(e)}"
