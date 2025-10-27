@@ -9,7 +9,7 @@ import json
 import sys
 import time
 
-BASE_URL = "https://codeforge-108.preview.emergentagent.com/api"
+BASE_URL = "https://vectort-builder.preview.emergentagent.com/api"
 
 def test_real_deployment():
     """Test deployment with a real GitHub repository"""

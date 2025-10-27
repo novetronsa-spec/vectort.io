@@ -1,69 +1,64 @@
 <analysis>
-The previous AI engineer primarily worked on the Vectort.io application, focusing on critical fixes and feature enhancements. Initially, efforts were directed at resolving a persistent GitHub push protection error caused by committed secrets, which was successfully addressed by rewriting Git history with . Concurrently, significant work was done to stabilize and implement multi-platform deployment capabilities (Vercel, Netlify, Render) and complete comprehensive OAuth integrations for Google, GitHub, and Apple. This involved extensive debugging of  errors and correctly configuring API keys and callback URLs. A major part of the recent work involved integrating robust monitoring (Sentry, Prometheus), caching, rate limiting, and a crucial iteration/conversation system to allow dynamic project evolution. The AI successfully implemented these backend features, and the latest checks confirmed Google OAuth is fully functional.
+The previous AI engineer laid the groundwork for Vectort.io, establishing core OAuth, multi-platform deployment, monitoring, and an iteration system. However, the current AI engineer inherited an application plagued by critical functional gaps: project generation issues, a non-functional preview (displaying blank screens or raw HTML), and an inaccessible iteration interface. The AI systematically addressed these by building the  and  for a split-screen UI, troubleshooting persistent preview errors (from  blocks to JavaScript syntax errors in generated code, and empty databases due to temporary test data). It also implemented an adaptive credit system via , integrated user-provided OpenAI keys (eventually reverting to ), and added various UI buttons for functionality like file upload and GitHub actions. Continuous diagnosis with  and  agents was crucial, revealing issues such as LLM JSON parsing errors and  import problems. The immediate focus is now on ensuring the 7/14 credit system is respected, the preview consistently shows *finished* projects, and generation is truly unlimited.
 </analysis>
 
 <product_requirements>
-The overarching goal is Vectort.io, a emergent.sh clone, featuring robust authentication, advanced AI generation (25+ project types, quick/advanced modes, voice-to-text), and a credit-based monetization model with Stripe. Key user requests included file upload, GitHub save/fork, Ultra Mode, functional microphone, UI improvements, and comprehensive third-party integrations (GitHub OAuth, SendGrid, AWS S3, Slack, Google Sheets, Airtable). Automated Contabo deployment was a prior requirement. The AI has implemented core API/frontend, fixed preview issues, added ZIP/GitHub export, multi-file generation, multilingual support (9 languages), and updated credit packages. Recent efforts focused on debugging OAuth integrations, adding multi-LLM capabilities, multi-platform deployment (Vercel, Netlify, Render), and crucially, enabling project iteration/evolution with a conversational interface, and a functional preview, addressing user complaints about static generation.
+The goal is to build Vectort.io, a emergent.sh clone, featuring robust authentication (Google, GitHub, Apple OAuth), advanced AI code generation (25+ project types, quick/advanced modes, voice-to-text), and a credit-based monetization model with Stripe. Key requests include file upload, GitHub save/fork, Ultra Mode, functional microphone, and comprehensive third-party integrations. Recent focus was on multi-LLM capabilities, multi-platform deployment (Vercel, Netlify, Render), and crucially, enabling project iteration/evolution with a conversational interface and a functional, real-time preview. Users explicitly require the application to generate complex, multi-file projects, display a functional split-screen preview (chat left, live preview right) that shows *finished* projects, implement an adaptive credit system (7 credits for simple, 14 for complex), and integrate UI buttons for save to trombone, GitHub, fork, Ultra Mode, file upload, and microphone. The system should first generate a complete application before allowing improvements.
 </product_requirements>
 
 <key_technical_concepts>
--   **Frontend:** React.js, Next.js (inspiration), i18n.
--   **Backend:** FastAPI, Pydantic, MongoDB, JWT Auth, Stripe, OAuth (Google, GitHub, Apple), ,  (rate limiting), Celery/Redis (planned async processing), Sentry/Prometheus (monitoring),  (Git history rewriting).
--   **Integrations:** Google OAuth, GitHub OAuth, Apple OAuth, Stripe, Vercel, Netlify, Render.
--   **Deployment:** Docker, Git.
+- **Frontend:** React.js, i18n, .
+- **Backend:** FastAPI, Pydantic, MongoDB (UUIDs), JWT Auth, OAuth (Google, GitHub, Apple), , Celery/Redis (planned), Sentry/Prometheus, .
+- **Integrations:** OpenAI (GPT-4o), Stripe, Vercel, Netlify, Render.
+- **Tools:** , backend                          RUNNING   pid 28, uptime 0:00:03
+code-server                      RUNNING   pid 29, uptime 0:00:03
+frontend                         STOPPED   Oct 27 10:55 PM
+mongodb                          RUNNING   pid 32, uptime 0:00:03
+supervisor> , yarn install v1.22.22
+[1/4] Resolving packages...
+[2/4] Fetching packages...
+[3/4] Linking dependencies...
+[4/4] Building fresh packages...
+success Saved lockfile.
+Done in 0.08s..
 </key_technical_concepts>
 
 <code_architecture>
 
--   ****: Stores API keys (Stripe, Google, GitHub, Apple, Vercel, Netlify, Render). Recently updated with Vercel, Netlify, Render tokens and Apple OAuth credentials. Apple private key was reformatted to a single line. The  client ID for Apple was corrected after a typo.
--   ****: Manages Python dependencies. Updated to add  and , removing .
--   ****: Main FastAPI application.
-    -   Integrated , fixed OAuth redirects, added  fallbacks.
-    -   Added deployment routes ().
-    -   Added Pydantic models for deployment requests.
-    -   Integrated monitoring setup (Sentry, Prometheus, logging) via  and middleware.
-    -   Implemented caching and rate limiting () on  and  routes.
-    -   Corrected  parameter names for  decorators.
-    -   Implemented new iteration routes (, ) and associated Pydantic models.
-    -   Added MongoDB indexes for new collections (, ).
-    -   The OAuth callbacks were corrected to use  instead of  field for user creation. Missing Apple OAuth callback logic was implemented.
--   ****: Backend endpoints for Google, GitHub, Apple OAuth. Modified to complete Apple OAuth implementation using provided private key and IDs.
--   ****: *New file*. Intended for intelligent multi-LLM routing with fallback.
--   ****: *New file*. Houses logic for deploying to various platforms (Vercel, Netlify, Render).
--   ****: *New file*. Contains  for Sentry, Prometheus, and structured logging.
--   ****: *New file*. Provides caching utility functions.
--   ****: *New file*. Contains core logic for project iteration and conversational AI.
--   ****: Confirmed to have correct handlers for OAuth buttons.
--   ****: *New file*. Intended for advanced multi-platform deployment UI.
--   **, , , , , **: *New markdown files* for comprehensive architecture documentation, roadmap, action plans, and final analysis.
+
+- ****: Stores API keys. Updated for OpenAI API key and then .
+- ****: Python dependencies.  added,  re-installed.
+- ****: Main FastAPI app.
+    - Integrated OAuth, deployment, monitoring, caching, rate limiting, and iteration/chat routes.
+    - Modified LLM generation prompts and added  logic and endpoint.
+    - Updated  with React code validation/cleanup.
+    - Fixed  import.
+- ****: Handles OAuth. Apple OAuth callback configurations were discussed.
+- ****: Orchestrates LLM calls. Configured to use OpenAI GPT-4o, then .
+- ****: Contains core project iteration logic.
+- ****: *New file*. Implements adaptive credit cost estimation (7/14 credits).
+- ****: Main dashboard view. Integrated , , . Modified to replace  for preview and added various UI actions like opening split-screen and modal controls.
+- ****: *New file*. Provides the interactive chat UI. Enhanced with buttons for save to trombone, GitHub, fork, Ultra Mode, file upload, and a microphone input.
+- ****: *New file*. Implements the split-screen interface (chat + real-time preview). Includes logic for loading preview HTML, refresh, and external link buttons.
+- ****: *New file*. A standalone modal component for displaying project previews. Corrected for iframe content and debug visibility.
 </code_architecture>
 
 <pending_tasks>
--   Complete frontend UI for GitHub export and deployment modals (DeploymentModal exists, AdvancedDeploymentModal was created).
--   Full implementation of AWS S3 and Slack integrations.
--   Implement an interactive preview in an iframe.
--   Implement one-click deploy to Vercel/Netlify. (Backend routes exist, frontend needs completion).
--   Implement progressive/streaming generation.
--   Integrate all remaining hardcoded texts in  and  into the i18n system for all 9 languages.
--   Resolve Contabo deployment issues.
--   Further optimize LLM calls using load balancers or parallel inference.
--   Implement real-time credit tracking in the UI.
--   Develop comprehensive unit and E2E tests, and CI/CD pipelines.
--   Implement file processing/async queue for large AI workloads.
--   Add cache/CDN for AI responses.
--   Implement robust logging and observability tools (Prometheus metrics are integrated, but full Grafana/Sentry integration needs completion).
--   Store generated project ZIPs on S3.
--   Implement team management/collaboration features.
--   Implement auto-scaling and enhanced containerization (Docker, Kubernetes).
--   Strengthen AI security (prompt sanitization, content audit).
+- Full implementation of AWS S3 and Slack integrations.
+- Resolve Contabo deployment issues.
+- Further optimize LLM calls using load balancers or parallel inference.
+- Implement real-time credit tracking in the UI.
+- Develop comprehensive unit and E2E tests, and CI/CD pipelines.
+- Store generated project ZIPs on S3.
+- Ensure the 7/14 adaptive credit system is correctly applied during generation.
+- Ensure applications are coded without complexity/length limitations.
 </pending_tasks>
 
 <current_work>
-Immediately before this summary request, the AI engineer was focused on resolving lingering OAuth connection errors for Google and GitHub, despite having previously confirmed all OAuth providers as functional. The diagnostic process, likely involving automated frontend testing, identified that the OAuth buttons in  were not correctly wired up. The AI confirmed that the necessary code corrections were already present in  to handle .
-
-Following this, the AI performed a final frontend screenshot-based test specifically for Google OAuth, which successfully demonstrated that Google OAuth is now fully functional, correctly redirecting to the Google sign-in page. The work on improving the application's core capabilities, such as iteration and complex application generation, and architectural enhancements (monitoring, caching, rate limiting), had just been completed. The current state reflects that the core authentication mechanism for Google is confirmed to be working.
+Immediately before this summary request, the AI engineer was addressing three critical user feedback points. First, the adaptive credit system, configured for 7 credits for simple modifications and 14 for complex ones, was reported by the user as not respected during generation. Second, the real-time preview, despite several previous fixes to display HTML, was still not showing *finished* projects to the user, leading to a disconnect between generated code and visual feedback. Third, the user requested that applications should be coded without limitations, implying the current generation process might be imposing unstated constraints on complexity or completeness. The AI's last action was to acknowledge these problems and explicitly start by investigating why the 7/14 credit system was not being applied, indicating the current work is focused on debugging and correcting the credit estimation and application logic within the backend.
 </current_work>
 
 <optional_next_step>
-Verify the functionality of GitHub and Apple OAuth following the confirmation of Google OAuth.
+Investigate and correct the adaptive credit system to ensure 7/14 credit consumption is properly applied.
 </optional_next_step>
+

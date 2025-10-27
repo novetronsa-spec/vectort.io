@@ -11,7 +11,7 @@ import time
 from typing import Dict, Any, Optional
 
 # Configuration - Production Environment API
-BASE_URL = "https://codeforge-108.preview.emergentagent.com/api"
+BASE_URL = "https://vectort-builder.preview.emergentagent.com/api"
 
 class VectortIterationTester:
     def __init__(self):

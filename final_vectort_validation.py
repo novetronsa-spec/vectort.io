@@ -9,7 +9,7 @@ import json
 import time
 import re
 
-BASE_URL = "https://codeforge-108.preview.emergentagent.com/api"
+BASE_URL = "https://vectort-builder.preview.emergentagent.com/api"
 
 def create_test_user():
     """Créer un utilisateur de test avec crédits"""

@@ -21,12 +21,12 @@ Le message d'erreur "oauth-debug-2.preview.emergentagent.com n'autorise pas la c
 
 **3. Configurez les Origines JavaScript autorisées**
    ```
-   https://codeforge-108.preview.emergentagent.com
+   https://vectort-builder.preview.emergentagent.com
    ```
 
 **4. Configurez les URI de redirection autorisés**
    ```
-   https://codeforge-108.preview.emergentagent.com/api/auth/google/callback
+   https://vectort-builder.preview.emergentagent.com/api/auth/google/callback
    ```
 
 **5. Enregistrez et copiez**
@@ -43,10 +43,10 @@ Le message d'erreur "oauth-debug-2.preview.emergentagent.com n'autorise pas la c
 
 **2. Remplissez le formulaire**
    - Application name: `Vectort.io`
-   - Homepage URL: `https://codeforge-108.preview.emergentagent.com`
+   - Homepage URL: `https://vectort-builder.preview.emergentagent.com`
    - Authorization callback URL: 
      ```
-     https://codeforge-108.preview.emergentagent.com/api/auth/github/callback
+     https://vectort-builder.preview.emergentagent.com/api/auth/github/callback
      ```
 
 **3. Enregistrez et copiez**
@@ -82,10 +82,10 @@ Une fois les redirect URIs configurés dans Google et GitHub:
 
 Les URLs de callback sont configurées pour pointer vers:
 ```
-Backend: https://codeforge-108.preview.emergentagent.com/api/auth/google/callback
-Backend: https://codeforge-108.preview.emergentagent.com/api/auth/github/callback
+Backend: https://vectort-builder.preview.emergentagent.com/api/auth/google/callback
+Backend: https://vectort-builder.preview.emergentagent.com/api/auth/github/callback
 
-Frontend redirect: https://codeforge-108.preview.emergentagent.com/auth/callback
+Frontend redirect: https://vectort-builder.preview.emergentagent.com/auth/callback
 ```
 
 ---
