@@ -634,12 +634,29 @@ async def generate_complete_multifile_project(request: GenerateAppRequest) -> di
 
 
 async def generate_app_code_advanced(request: GenerateAppRequest) -> dict:
-    """GÉNÉRATEUR ULTRA-PUISSANT OPTIMISÉ - Génère des applications complètes rapidement"""
+    """GÉNÉRATEUR ULTRA-PUISSANT MULTI-AGENTS - 6 agents spécialisés en parallèle"""
     try:
         if request.advanced_mode:
-            # MODE AVANCÉ: Utiliser le nouveau générateur multi-fichiers
-            logger.info("Mode avancé activé - Génération multi-fichiers complète")
-            return await generate_complete_multifile_project(request)
+            # MODE AVANCÉ MULTI-AGENTS: 6 agents spécialisés travaillent en parallèle
+            logger.info("🚀 Mode avancé MULTI-AGENTS activé - 6 agents en parallèle")
+            
+            try:
+                from ai_generators.multi_agent_orchestrator import generate_with_multi_agents
+                
+                # Génération avec système multi-agents
+                all_files = await generate_with_multi_agents(
+                    description=request.description,
+                    framework=request.framework or "react",
+                    project_type=request.type,
+                    api_key=EMERGENT_LLM_KEY
+                )
+                
+                # Mapper les fichiers vers le format attendu
+                return map_multi_agent_files_to_response(all_files, request.framework)
+                
+            except Exception as multi_agent_error:
+                logger.error(f"Multi-agent failed: {multi_agent_error}, fallback to standard")
+                return await generate_complete_multifile_project(request)
         else:
             # MODE RAPIDE: Génération basique (compatibilité)
             return await generate_app_code_basic(request.description, request.type, request.framework)
