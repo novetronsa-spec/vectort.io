@@ -1682,9 +1682,8 @@ metadata:
 
 test_plan:
   current_focus:
+    - "Multi-Agent Generation System (6 Agents)"
     - "Adaptive Credit System 7/14 for Project Generation"
-    - "File Generation Limitations Removal"
-    - "LLM Prompts Enhancement - Complete Code Generation"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
