@@ -378,11 +378,11 @@ if __name__ == "__main__":
 """
     
     async def _generate_single_file(self, request: GenerationRequest, file_path: str, file_desc: str) -> str:
-        """Génère le contenu d'un fichier spécifique"""
+        """Génère le contenu d'un fichier spécifique - CODE COMPLET ET SANS LIMITATIONS"""
         chat = LlmChat(
             api_key=self.api_key, 
             session_id=f"file-{hash(file_path)}",
-            system_message="Tu es un développeur expert spécialisé dans la génération de fichiers de code."
+            system_message="Tu es un développeur expert senior qui génère du code COMPLET et PRODUCTION-READY."
         )
         
         # Prompt spécialisé selon le type de fichier
@@ -391,22 +391,27 @@ if __name__ == "__main__":
         system_prompt = f"""
         {specialized_prompt}
         
-        Génère le contenu COMPLET et FONCTIONNEL pour ce fichier:
+        Génère le contenu COMPLET, DÉTAILLÉ et 100% FONCTIONNEL pour ce fichier:
         
         FICHIER: {file_path}
         DESCRIPTION: {file_desc}
         PROJET: {request.description}
         FRAMEWORK: {request.framework.value}
         
-        EXIGENCES:
-        - Code de production prêt à déployer
+        EXIGENCES CRITIQUES:
+        - Code de production COMPLET (pas de TODO, pas de placeholders, pas de "...")
+        - Implémentation DÉTAILLÉE de toutes les fonctionnalités
+        - AUCUNE simplification ou raccourci
         - Best practices et patterns modernes
-        - Gestion d'erreurs complète
-        - TypeScript si applicable
-        - Comments et documentation
+        - Gestion d'erreurs complète et robuste
+        - TypeScript si applicable avec types complets
+        - Comments et documentation pertinents
         - Optimisations de performance
+        - Code prêt à déployer SANS modifications
         
-        Réponds UNIQUEMENT avec le code, aucun markdown.
+        IMPORTANT: Ne simplifie JAMAIS le code. Génère l'implémentation COMPLÈTE et DÉTAILLÉE.
+        
+        Réponds UNIQUEMENT avec le code complet, aucun markdown, aucune explication.
         """
         
         response = await chat.with_model("openai", "gpt-4o").send_message(
