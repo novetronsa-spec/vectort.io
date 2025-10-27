@@ -169,6 +169,70 @@ const ProjectIterationView = ({ projectId, onClose, userCredits, onCreditsUpdate
     }
   };
 
+  // Voice recording functions
+  const startRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mediaRecorder = new MediaRecorder(stream);
+      mediaRecorderRef.current = mediaRecorder;
+      
+      const audioChunks = [];
+      mediaRecorder.ondataavailable = (event) => {
+        audioChunks.push(event.data);
+      };
+      
+      mediaRecorder.onstop = async () => {
+        const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+        // TODO: Envoyer à API de transcription (Whisper)
+        console.log('Audio enregistré:', audioBlob.size, 'bytes');
+        setInputMessage(inputMessage + ' [Audio transcription à implémenter]');
+      };
+      
+      mediaRecorder.start();
+      setIsRecording(true);
+    } catch (error) {
+      console.error('Erreur microphone:', error);
+      alert('Impossible d\'accéder au microphone');
+    }
+  };
+
+  const stopRecording = () => {
+    if (mediaRecorderRef.current && isRecording) {
+      mediaRecorderRef.current.stop();
+      mediaRecorderRef.current.stream.getTracks().forEach(track => track.stop());
+      setIsRecording(false);
+    }
+  };
+
+  // File upload functions
+  const handleFileSelect = (e) => {
+    const files = Array.from(e.target.files);
+    setSelectedFiles(files);
+    console.log('Fichiers sélectionnés:', files.map(f => f.name));
+  };
+
+  const handleSaveToFiles = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleGitHubExport = () => {
+    // TODO: Ouvrir modal GitHub export
+    console.log('Export vers GitHub');
+    alert('Export vers GitHub - À implémenter');
+  };
+
+  const handleFork = () => {
+    // TODO: Fork du projet
+    console.log('Fork du projet');
+    alert('Fork du projet - À implémenter');
+  };
+
+  const handleUltraMode = () => {
+    // TODO: Activer mode Ultra (génération avancée)
+    console.log('Mode Ultra activé');
+    alert('Mode Ultra - Génération avancée - À implémenter');
+  };
+
   const formatTimestamp = (timestamp) => {
     const date = new Date(timestamp);
     return date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
