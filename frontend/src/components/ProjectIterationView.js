@@ -374,14 +374,30 @@ const ProjectIterationView = ({ projectId, onClose, userCredits, onCreditsUpdate
                 <Eye className="w-4 h-4 text-green-500" />
                 <span className="text-sm text-gray-300 font-medium">Preview en Temps Réel</span>
               </div>
-              <button
-                onClick={loadPreview}
-                disabled={isLoadingPreview}
-                className="text-xs px-2 py-1 rounded bg-gray-800 hover:bg-gray-700 text-gray-400 flex items-center gap-1"
-              >
-                {isLoadingPreview ? <Loader2 className="w-3 h-3 animate-spin" /> : '↻'}
-                Actualiser
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={loadPreview}
+                  disabled={isLoadingPreview}
+                  className="text-xs px-3 py-1.5 rounded bg-gray-800 hover:bg-gray-700 text-gray-400 flex items-center gap-1"
+                  title="Actualiser le preview"
+                >
+                  {isLoadingPreview ? <Loader2 className="w-3 h-3 animate-spin" /> : '↻'}
+                  Actualiser
+                </button>
+                <button
+                  onClick={() => {
+                    // Ouvrir le preview dans un nouvel onglet
+                    const blob = new Blob([previewHtml], { type: 'text/html' });
+                    const url = URL.createObjectURL(blob);
+                    window.open(url, '_blank');
+                  }}
+                  className="text-xs px-3 py-1.5 rounded bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-1"
+                  title="Ouvrir dans un nouvel onglet"
+                >
+                  <Maximize2 className="w-3 h-3" />
+                  Ouvrir
+                </button>
+              </div>
             </div>
             <div className="flex-1 relative">
               {isLoadingPreview ? (
