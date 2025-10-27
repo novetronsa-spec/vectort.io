@@ -204,26 +204,26 @@ class AdvancedCodeGenerator:
             return self._get_default_structure(request)
     
     async def _generate_main_files(self, request: GenerationRequest, architecture: Dict) -> Dict[str, str]:
-        """Génère le contenu de tous les fichiers principaux"""
+        """Génère le contenu de tous les fichiers principaux - SANS LIMITATIONS"""
         files = {}
         
-        # Sélectionner les fichiers les plus importants d'abord
+        # Sélectionner TOUS les fichiers importants (pas de limite artificielle)
         priority_files = []
-        for file_path in list(architecture.keys())[:8]:  # Limite réduite
+        for file_path in list(architecture.keys())[:30]:  # Augmenté de 8 à 30 fichiers
             if self._should_generate_file(file_path):
                 priority_files.append((file_path, architecture[file_path]))
         
-        # Génération séquentielle pour éviter les timeouts
-        for file_path, file_desc in priority_files[:5]:  # Encore plus limité
+        # Génération séquentielle des fichiers principaux - SANS LIMITATION
+        for file_path, file_desc in priority_files[:20]:  # Augmenté de 5 à 20 fichiers
             try:
                 content = await asyncio.wait_for(
                     self._generate_single_file(request, file_path, file_desc),
-                    timeout=15.0  # Timeout par fichier
+                    timeout=30.0  # Augmenté de 15s à 30s par fichier
                 )
                 files[file_path] = content
                 
                 # Ajouter un délai entre les générations pour éviter le rate limiting
-                await asyncio.sleep(0.5)
+                await asyncio.sleep(0.3)  # Réduit de 0.5s à 0.3s pour accélérer
                 
             except asyncio.TimeoutError:
                 files[file_path] = f"// Timeout lors de la génération de {file_path}"
