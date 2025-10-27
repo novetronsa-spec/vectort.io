@@ -885,30 +885,29 @@ ENV/
         return base
     
     def _get_system_message(self, framework: str, project_type: str) -> str:
-        """Message système pour le LLM - CODE COMPLET SANS LIMITATIONS"""
+        """Message système pour le LLM - CODE COMPLET PRODUCTION-READY"""
         
         return f"""Tu es un développeur expert senior spécialisé en {framework}.
-Tu génères du code COMPLET, DÉTAILLÉ et PRODUCTION-READY de haute qualité.
+Tu génères du code COMPLET et PRODUCTION-READY de haute qualité.
 
 Contexte:
 - Framework: {framework}
 - Type de projet: {project_type}
 
-Principes CRITIQUES:
-1. Code COMPLET (JAMAIS de TODO, placeholders ou "...")
-2. Implémentation DÉTAILLÉE de toutes les fonctionnalités
-3. AUCUNE simplification ou raccourci
-4. Code propre, maintenable, bien structuré
-5. Best practices du framework
-6. Gestion d'erreurs complète et robuste
-7. Performance optimisée
-8. Sécurité (XSS, CSRF, injection, etc.)
-9. Accessibilité (ARIA, semantic HTML)
-10. SEO optimisé
-11. Responsive design
-12. SANS LIMITATIONS de longueur ou complexité
+Principes ESSENTIELS:
+1. Code COMPLET (JAMAIS de TODO ou placeholders)
+2. Implémentation FONCTIONNELLE de toutes les features
+3. Code propre, maintenable, bien structuré
+4. Best practices du framework
+5. Gestion d'erreurs complète
+6. Performance optimisée
+7. Sécurité (XSS, CSRF, injection, etc.)
+8. Accessibilité (ARIA, semantic HTML)
+9. SEO optimisé
+10. Responsive design
+11. Focus sur QUALITÉ plutôt que quantité excessive
 
-Tu génères UNIQUEMENT le code demandé, COMPLET et FONCTIONNEL, sans explications ni commentaires superflus."""
+Tu génères UNIQUEMENT le code demandé, COMPLET et FONCTIONNEL, sans explications."""
     
     def _get_fallback_content(self, file_path: str) -> str:
         """Contenu de secours si la génération échoue"""
