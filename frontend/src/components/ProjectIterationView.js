@@ -61,12 +61,20 @@ const ProjectIterationView = ({ projectId, onClose, userCredits, onCreditsUpdate
     setIsLoadingPreview(true);
     try {
       const token = localStorage.getItem('token');
+      console.log('🔍 [IterationView] Loading preview for project:', projectId);
+      
       const response = await axios.get(`${API}/projects/${projectId}/preview`, {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { 
+          Authorization: `Bearer ${token}`,
+          'Accept': 'text/html'
+        },
+        responseType: 'text' // Force text response
       });
+      
+      console.log('✅ [IterationView] Preview loaded:', response.data.length, 'chars');
       setPreviewHtml(response.data);
     } catch (error) {
-      console.error('Erreur chargement preview:', error);
+      console.error('❌ [IterationView] Erreur chargement preview:', error);
       setPreviewHtml('<div style="color: white; padding: 20px;">Erreur lors du chargement du preview</div>');
     } finally {
       setIsLoadingPreview(false);
