@@ -1646,13 +1646,12 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Split-Screen Interface - Preview avec Chat IA + Aperçu Temps Réel"
-    - "GitHub Export Modal"
-    - "Deployment Modal"
-    - "Export Buttons Integration"
+    - "Adaptive Credit System 7/14 for Project Generation"
+    - "File Generation Limitations Removal"
+    - "LLM Prompts Enhancement - Complete Code Generation"
   stuck_tasks: []
   test_all: false
-  test_priority: "split_screen_interface_validation_complete"
+  test_priority: "high_first"
 
 agent_communication:
     - agent: "testing"
