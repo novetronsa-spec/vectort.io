@@ -102,7 +102,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Test complet du système d'itération et de chat IA pour Vectort.io - Le système d'amélioration itérative des projets comme emergent.sh"
+user_problem_statement: "Corrections CRITIQUES Vectort.io: 1) Système adaptatif 7 crédits (simple) ou 14 crédits (complexe) non respecté lors de la génération - actuellement fixe à 2/4 crédits. 2) Preview en temps réel doit afficher un projet FINI (actuellement peut être incomplet). 3) Les applications doivent être codées SANS LIMITATIONS (actuellement limites artificielles de 5 fichiers, timeouts courts, prompts LLM avec simplifications)."
 
 backend:
   - task: "Basic API Response"
