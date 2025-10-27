@@ -386,9 +386,8 @@ export default function Dashboard() {
   };
 
   const openPreview = async (projectId) => {
-    // Ouvrir le modal de preview simple
-    setPreviewProjectId(projectId);
-    setShowPreviewModal(true);
+    // Ouvrir directement l'interface split-screen (chat + preview) comme Emergent
+    openChatPanel(projectId);
   };
 
   const viewCode = async (projectId) => {
