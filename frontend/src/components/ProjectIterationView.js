@@ -365,6 +365,69 @@ const ProjectIterationView = ({ projectId, onClose, userCredits, onCreditsUpdate
 
           {/* Input Area */}
           <div className="p-4 border-t border-gray-800 bg-gray-900">
+            {/* Action Buttons Bar */}
+            <div className="flex items-center gap-2 mb-3 pb-3 border-b border-gray-700">
+              <button
+                onClick={handleSaveToFiles}
+                className="flex items-center gap-1 px-3 py-1.5 rounded bg-gray-800 hover:bg-gray-700 text-gray-300 text-sm"
+                title="Ajouter des fichiers"
+              >
+                <Paperclip className="w-4 h-4" />
+                <span className="hidden md:inline">Fichiers</span>
+              </button>
+              
+              <button
+                onClick={handleGitHubExport}
+                className="flex items-center gap-1 px-3 py-1.5 rounded bg-gray-800 hover:bg-gray-700 text-gray-300 text-sm"
+                title="Exporter vers GitHub"
+              >
+                <Github className="w-4 h-4" />
+                <span className="hidden md:inline">GitHub</span>
+              </button>
+              
+              <button
+                onClick={handleFork}
+                className="flex items-center gap-1 px-3 py-1.5 rounded bg-gray-800 hover:bg-gray-700 text-gray-300 text-sm"
+                title="Dupliquer le projet"
+              >
+                <GitFork className="w-4 h-4" />
+                <span className="hidden md:inline">Fork</span>
+              </button>
+              
+              <button
+                onClick={handleUltraMode}
+                className="flex items-center gap-1 px-3 py-1.5 rounded bg-purple-600 hover:bg-purple-700 text-white text-sm"
+                title="Mode Ultra - Génération avancée"
+              >
+                <Zap className="w-4 h-4" />
+                <span className="hidden md:inline">Ultra</span>
+              </button>
+              
+              <button
+                onClick={() => fileInputRef.current?.click()}
+                className="flex items-center gap-1 px-3 py-1.5 rounded bg-gray-800 hover:bg-gray-700 text-gray-300 text-sm"
+                title="Téléverser des fichiers"
+              >
+                <Upload className="w-4 h-4" />
+                <span className="hidden md:inline">Upload</span>
+              </button>
+              
+              {/* Hidden file input */}
+              <input
+                ref={fileInputRef}
+                type="file"
+                multiple
+                onChange={handleFileSelect}
+                className="hidden"
+              />
+              
+              {selectedFiles.length > 0 && (
+                <span className="text-xs text-gray-400">
+                  {selectedFiles.length} fichier(s) sélectionné(s)
+                </span>
+              )}
+            </div>
+
             {/* Credit Estimation */}
             {estimatedCredits && (
               <div className={`mb-3 p-3 rounded-lg border ${
