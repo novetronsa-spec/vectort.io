@@ -15,8 +15,12 @@ const ProjectIterationView = ({ projectId, onClose, userCredits, onCreditsUpdate
   const [estimatedCredits, setEstimatedCredits] = useState(null);
   const [isEstimating, setIsEstimating] = useState(false);
   const [showPreview, setShowPreview] = useState(true);
+  const [isRecording, setIsRecording] = useState(false);
+  const [selectedFiles, setSelectedFiles] = useState([]);
   const messagesEndRef = useRef(null);
   const iframeRef = useRef(null);
+  const fileInputRef = useRef(null);
+  const mediaRecorderRef = useRef(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
