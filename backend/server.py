@@ -948,7 +948,49 @@ def map_multi_agent_files_to_response(all_files: dict, framework: str) -> dict:
         # FORMAT EXTRAIT: Fichiers JavaScript extraits par l'optimiseur (src/index.js, src/App.jsx, etc.)
         logger.info("🎯 Format fichiers JavaScript extraits détecté - Mapping intelligent")
         response["all_files"] = all_files
-        # FORMAT CLASSIQUE: Parcourir tous les fichiers avec noms de fichiers comme clés
+        
+        for file_path, content in all_files.items():
+            
+            # CSS files
+            if '.css' in file_path.lower():
+                response["css"] += f"\n/* {file_path} */\n{content}\n"
+            
+            # React/JSX files
+            elif '.jsx' in file_path.lower() or 'App.jsx' in file_path or 'app.jsx' in file_path:
+                # Prioriser App.jsx comme fichier React principal
+                if 'App.jsx' in file_path or 'app.jsx' in file_path:
+                    response["react"] = content
+                elif not response["react"]:  # Si pas encore de React principal
+                    response["react"] = content
+            
+            # JavaScript files
+            elif '.js' in file_path.lower() and 'jsx' not in file_path.lower():
+                response["js"] += f"\n// {file_path}\n{content}\n"
+            
+            # Python/Backend files
+            elif '.py' in file_path.lower():
+                response["backend"] += f"\n# {file_path}\n{content}\n"
+            
+            # HTML files
+            elif '.html' in file_path.lower():
+                if 'index.html' in file_path.lower():
+                    response["html"] = content
+                elif not response["html"]:
+                    response["html"] = content
+            
+            # Package.json
+            elif 'package.json' in file_path.lower():
+                response["package_json"] = content
+            
+            # README
+            elif 'readme' in file_path.lower():
+                response["readme"] = content
+        
+        logger.info(f"✅ Fichiers JavaScript extraits mappés - HTML: {len(response['html'])}, CSS: {len(response['css'])}, React: {len(response['react'])}, Backend: {len(response['backend'])}")
+    
+    else:
+        # FORMAT CLASSIQUE MULTI-AGENTS: Autres formats
+        logger.info("🔧 Format classique multi-agents détecté")
         response["all_files"] = all_files
         
         for file_path, content in all_files.items():
