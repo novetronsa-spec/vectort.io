@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 
 class AgentRole:
-    """Définition des rôles d'agents spécialisés - SYSTÈME À 10 AGENTS"""
+    """Définition des rôles d'agents spécialisés - SYSTÈME ÉVOLUTIF À 12 AGENTS"""
     DIAGNOSTIC = "diagnostic"     # Phase 0: Analyse avant génération
     FRONTEND = "frontend"
     STYLING = "styling"
@@ -24,6 +24,8 @@ class AgentRole:
     SECURITY = "security"         # Nouveau: Audit sécurité
     TESTING = "testing"           # Nouveau: Tests automatiques
     QA = "qa"
+    META_LEARNING = "meta_learning"  # Agent 11: Apprentissage et optimisation
+    SELF_HEALING = "self_healing"    # Agent 12: Auto-réparation système
 
 
 class SpecializedAgent:
