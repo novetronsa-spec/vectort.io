@@ -525,6 +525,10 @@ class MultiAgentOrchestrator:
         }
         self.logger = logging.getLogger("MultiAgentOrchestrator")
         self.diagnostic_result = None
+        
+        # JavaScript Optimizer pour génération JavaScript/Node.js robuste
+        self.js_optimizer = JavaScriptOptimizer(api_key)
+        self.logger.info("✅ JavaScriptOptimizer initialisé - Génération JavaScript optimisée activée")
     
     async def generate_application(
         self,
