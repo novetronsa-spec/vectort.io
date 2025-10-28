@@ -275,10 +275,10 @@ class FocusedJSTest:
                 if response.status_code == 200:
                     data = response.json()
                     results["quick"] = {
-                        "html": len(data.get("html_code", "")),
-                        "css": len(data.get("css_code", "")),
-                        "react": len(data.get("react_code", "")),
-                        "all_files": len(data.get("all_files", {}))
+                        "html": len(str(data.get("html_code") or "")),
+                        "css": len(str(data.get("css_code") or "")),
+                        "react": len(str(data.get("react_code") or "")),
+                        "all_files": len(data.get("all_files") or {})
                     }
                     self.log_result("Quick Mode Code Retrieval", True, f"Retrieved: {results['quick']}")
                 else:
