@@ -80,19 +80,21 @@ class JavaScriptOptimizer:
         project_bonus = complexity_map.get(project_type.lower(), 20.0)
         base_timeout += project_bonus
         
-        # Facteur 3: Features demandées - BONUS IMPORTANT
+        # Facteur 3: Features demandées - BONUS IMPORTANT ET DIFFÉRENCIÉ
         if features:
             feature_count = len(features)
             if feature_count > 10:
-                base_timeout += 35.0
+                base_timeout += 40.0
             elif feature_count > 7:
-                base_timeout += 25.0
+                base_timeout += 30.0
             elif feature_count > 4:
-                base_timeout += 15.0
+                base_timeout += 20.0
             elif feature_count > 2:
-                base_timeout += 8.0
+                base_timeout += 12.0
+            elif feature_count > 1:
+                base_timeout += 6.0
             elif feature_count > 0:
-                base_timeout += 4.0
+                base_timeout += 2.0
         
         # Facteur 4: Mots-clés de complexité - BONUS PROGRESSIF
         complexity_keywords = {
