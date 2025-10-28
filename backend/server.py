@@ -913,7 +913,11 @@ def map_multi_agent_files_to_response(all_files: dict, framework: str) -> dict:
     }
     
     # NOUVEAU: Détecter si c'est le format JavaScriptOptimizer (clés: react_code, css_code, etc.)
-    if "react_code" in all_files or "js_code" in all_files or "backend_code" in all_files:
+    # OU si ce sont des fichiers JavaScript extraits (src/*.js, src/*.jsx)
+    has_js_optimizer_format = "react_code" in all_files or "js_code" in all_files or "backend_code" in all_files
+    has_extracted_js_files = any(key for key in all_files.keys() if key.endswith(('.js', '.jsx', '.css', '.html')))
+    
+    if has_js_optimizer_format:
         logger.info("🎯 Format JavaScriptOptimizer détecté - Mapping direct")
         
         # Mapper les clés JavaScriptOptimizer vers le format attendu
@@ -940,7 +944,10 @@ def map_multi_agent_files_to_response(all_files: dict, framework: str) -> dict:
         # Log le mapping
         logger.info(f"✅ JavaScriptOptimizer mapped - React: {len(response['react'])}, CSS: {len(response['css'])}, HTML: {len(response['html'])}, Backend: {len(response['backend'])}")
         
-    else:
+    elif has_extracted_js_files:
+        # FORMAT EXTRAIT: Fichiers JavaScript extraits par l'optimiseur (src/index.js, src/App.jsx, etc.)
+        logger.info("🎯 Format fichiers JavaScript extraits détecté - Mapping intelligent")
+        response["all_files"] = all_files
         # FORMAT CLASSIQUE: Parcourir tous les fichiers avec noms de fichiers comme clés
         response["all_files"] = all_files
         
