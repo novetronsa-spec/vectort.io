@@ -694,14 +694,6 @@ class MultiAgentOrchestrator:
         self.logger.info(f"🎉 Génération terminée - Total: {len(all_files)} fichiers")
         
         return all_files
-            
-        except asyncio.TimeoutError:
-            self.logger.error("⚠️ Timeout de génération - retour des fichiers partiels")
-            return all_files if 'all_files' in locals() else {}
-        
-        except Exception as e:
-            self.logger.error(f"❌ Erreur orchestration: {e}")
-            return {}
     
     async def generate_with_fallback(
         self,
