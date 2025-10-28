@@ -566,33 +566,73 @@ class MultiAgentOrchestrator:
         context = {"diagnostic": self.diagnostic_result} if self.diagnostic_result else None
         
         tasks = [
-            self.agents[AgentRole.FRONTEND].generate(description, framework),
-            self.agents[AgentRole.STYLING].generate(description, framework),
-            self.agents[AgentRole.BACKEND].generate(description, framework),
-            self.agents[AgentRole.CONFIG].generate(description, framework),
-            self.agents[AgentRole.COMPONENTS].generate(description, framework),
+            self.agents[AgentRole.FRONTEND].generate(description, framework, context),
+            self.agents[AgentRole.STYLING].generate(description, framework, context),
+            self.agents[AgentRole.BACKEND].generate(description, framework, context),
+            self.agents[AgentRole.CONFIG].generate(description, framework, context),
+            self.agents[AgentRole.COMPONENTS].generate(description, framework, context),
+            self.agents[AgentRole.DATABASE].generate(description, framework, context),
         ]
         
         try:
-            # Exécuter tous les agents en parallèle avec timeout de 40s
+            # Exécuter tous les agents en parallèle avec timeout de 45s
             results = await asyncio.wait_for(
                 asyncio.gather(*tasks, return_exceptions=True),
-                timeout=40.0
+                timeout=45.0
             )
             
-            # Fusionner tous les fichiers
+            # Fusionner tous les fichiers de la Phase 1
             all_files = {}
+            agent_names = [AgentRole.FRONTEND, AgentRole.STYLING, AgentRole.BACKEND, 
+                          AgentRole.CONFIG, AgentRole.COMPONENTS, AgentRole.DATABASE]
+            
             for i, result in enumerate(results):
                 if isinstance(result, dict):
                     all_files.update(result)
-                    agent_name = list(self.agents.keys())[i]
-                    self.logger.info(f"✅ Agent {agent_name}: {len(result)} fichiers")
+                    self.logger.info(f"✅ Agent {agent_names[i]}: {len(result)} fichiers")
                 else:
-                    agent_name = list(self.agents.keys())[i]
-                    self.logger.error(f"❌ Agent {agent_name} erreur: {result}")
+                    self.logger.error(f"❌ Agent {agent_names[i]} erreur: {result}")
             
-            # Phase 2: Agent QA pour validation (séquentiel)
-            self.logger.info("🔍 Phase 2: Quality Assurance")
+            # Phase 2: Agent Security pour audit (séquentiel)
+            self.logger.info("🛡️ Phase 2: Audit de Sécurité")
+            
+            try:
+                security_result = await asyncio.wait_for(
+                    self.agents[AgentRole.SECURITY].generate(
+                        description, 
+                        framework,
+                        context={"files": list(all_files.keys())}
+                    ),
+                    timeout=15.0
+                )
+                
+                if security_result:
+                    all_files.update(security_result)
+                    self.logger.info(f"✅ Agent Security: {len(security_result)} fichiers")
+            except Exception as e:
+                self.logger.warning(f"⚠️ Security audit échoué: {e}")
+            
+            # Phase 3: Agent Testing pour tests automatiques (séquentiel)
+            self.logger.info("🧪 Phase 3: Génération des Tests")
+            
+            try:
+                testing_result = await asyncio.wait_for(
+                    self.agents[AgentRole.TESTING].generate(
+                        description, 
+                        framework,
+                        context={"files": list(all_files.keys())}
+                    ),
+                    timeout=15.0
+                )
+                
+                if testing_result:
+                    all_files.update(testing_result)
+                    self.logger.info(f"✅ Agent Testing: {len(testing_result)} fichiers")
+            except Exception as e:
+                self.logger.warning(f"⚠️ Tests generation échoué: {e}")
+            
+            # Phase 4: Agent QA pour validation finale (séquentiel)
+            self.logger.info("🔍 Phase 4: Quality Assurance Finale")
             
             qa_result = await self.agents[AgentRole.QA].generate(
                 description, 
