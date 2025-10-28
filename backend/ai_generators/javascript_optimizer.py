@@ -447,8 +447,17 @@ Code JavaScript COMPLET et FONCTIONNEL."""
         """Tente de générer code JavaScript"""
         
         try:
-            # Création LlmChat
-            llm = LlmChat(api_key=self.api_key)
+            # Création LlmChat avec session_id et system_message requis
+            import uuid
+            
+            # System message adapté au framework
+            system_message = f"Tu es un expert {framework.upper()}. Génère du code COMPLET et FONCTIONNEL."
+            
+            llm = LlmChat(
+                api_key=self.api_key,
+                session_id=f"js-opt-{uuid.uuid4()}",
+                system_message=system_message
+            )
             llm = llm.with_model("gpt-4o")
             
             # Prompt optimisé
