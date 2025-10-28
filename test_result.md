@@ -958,9 +958,9 @@ backend:
 
   - task: "JavaScript Generation Optimization - Adaptive Timeouts & Robustness"
     implemented: true
-    working: true
+    working: false
     file: "backend/ai_generators/multi_agent_orchestrator.py"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
     needs_retesting: false
     status_history:
@@ -976,6 +976,9 @@ backend:
         - working: true
           agent: "testing"
           comment: "🎯 FRONTEND JAVASCRIPT GENERATION TESTING COMPLETED - 100% SUCCESS! Comprehensive end-to-end testing confirms the JavaScript generation and preview system is fully functional: ✅ USER REGISTRATION: Successfully created test user with 10 free credits ✅ PROJECT CREATION: Created React counter project successfully ✅ QUICK MODE GENERATION: Generated complete React application with React code (1,954 chars), CSS (390 chars), proper component structure with useState hooks ✅ PREVIEW NOT EMPTY: Preview endpoint returns complete HTML (2,847 chars) with embedded React, CSS, and proper DOCTYPE structure ✅ CODE RETRIEVAL: All generated code accessible via /api/projects/{id}/code endpoint ✅ CREDIT SYSTEM: Adaptive credit system working (10→3 credits, 7 credits deducted for simple generation) ✅ EXPORT FUNCTIONALITY: ZIP export working (5,003 bytes downloaded successfully) ❌ ADVANCED MODE ISSUE: Advanced mode generation returns empty code (needs investigation) 🎉 CRITICAL SUCCESS: The main bug reported in the review (empty preview) is COMPLETELY FIXED. The preview now shows real, functional React applications with proper styling and interactivity. JavaScript generation system is production-ready for Quick Mode."
+        - working: false
+          agent: "testing"
+          comment: "🚨 CRITICAL ISSUE IDENTIFIED IN ADVANCED MODE: Comprehensive testing reveals the exact problem with advanced mode returning empty code. ✅ QUICK MODE WORKS PERFECTLY: HTML(271), CSS(516), React(1953) - total 2740 chars ❌ ADVANCED MODE MAPPING BUG: JavaScriptOptimizer generates code (2687 chars) but mapping function fails. Root cause: JavaScriptOptimizer returns {'src/index.js': '...'} format but mapping function expects {'js_code': '...', 'react_code': '...'} format. Backend logs show: 'JSON parsing échoué, tentative extraction code' → code extracted but wrong format → mapping detects JavaScriptOptimizer format but finds no expected keys → all fields mapped to 0 length. SOLUTION REQUIRED: Fix map_multi_agent_files_to_response() to handle both expected format (js_code, react_code) AND file format (src/index.js, src/App.jsx) OR fix JavaScriptOptimizer _extract_code_from_text() to return correct format."
 
 frontend:
   - task: "Frontend JavaScript Generation & Preview Testing (CRITICAL)"
