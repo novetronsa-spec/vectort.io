@@ -639,61 +639,61 @@ class MultiAgentOrchestrator:
                         f"Agent {agent_name} échec - Fallback appliqué",
                         agent_name
                     )
-            
-            # Phase 2: Agent Security pour audit (séquentiel)
-            self.logger.info("🛡️ Phase 2: Audit de Sécurité")
-            
-            try:
-                security_result = await asyncio.wait_for(
-                    self.agents[AgentRole.SECURITY].generate(
-                        description, 
-                        framework,
-                        context={"files": list(all_files.keys())}
-                    ),
-                    timeout=15.0
-                )
-                
-                if security_result:
-                    all_files.update(security_result)
-                    self.logger.info(f"✅ Agent Security: {len(security_result)} fichiers")
-            except Exception as e:
-                self.logger.warning(f"⚠️ Security audit échoué: {e}")
-            
-            # Phase 3: Agent Testing pour tests automatiques (séquentiel)
-            self.logger.info("🧪 Phase 3: Génération des Tests")
-            
-            try:
-                testing_result = await asyncio.wait_for(
-                    self.agents[AgentRole.TESTING].generate(
-                        description, 
-                        framework,
-                        context={"files": list(all_files.keys())}
-                    ),
-                    timeout=15.0
-                )
-                
-                if testing_result:
-                    all_files.update(testing_result)
-                    self.logger.info(f"✅ Agent Testing: {len(testing_result)} fichiers")
-            except Exception as e:
-                self.logger.warning(f"⚠️ Tests generation échoué: {e}")
-            
-            # Phase 4: Agent QA pour validation finale (séquentiel)
-            self.logger.info("🔍 Phase 4: Quality Assurance Finale")
-            
-            qa_result = await self.agents[AgentRole.QA].generate(
-                description, 
-                framework,
-                context={"files": list(all_files.keys())}
+        
+        # Phase 2: Agent Security pour audit (séquentiel)
+        self.logger.info("🛡️ Phase 2: Audit de Sécurité")
+        
+        try:
+            security_result = await asyncio.wait_for(
+                self.agents[AgentRole.SECURITY].generate(
+                    description, 
+                    framework,
+                    context={"files": list(all_files.keys())}
+                ),
+                timeout=15.0
             )
             
-            if qa_result:
-                all_files.update(qa_result)
-                self.logger.info("✅ Agent QA: Validation terminée")
+            if security_result:
+                all_files.update(security_result)
+                self.logger.info(f"✅ Agent Security: {len(security_result)} fichiers")
+        except Exception as e:
+            self.logger.warning(f"⚠️ Security audit échoué: {e}")
+        
+        # Phase 3: Agent Testing pour tests automatiques (séquentiel)
+        self.logger.info("🧪 Phase 3: Génération des Tests")
+        
+        try:
+            testing_result = await asyncio.wait_for(
+                self.agents[AgentRole.TESTING].generate(
+                    description, 
+                    framework,
+                    context={"files": list(all_files.keys())}
+                ),
+                timeout=15.0
+            )
             
-            self.logger.info(f"🎉 Génération terminée - Total: {len(all_files)} fichiers")
-            
-            return all_files
+            if testing_result:
+                all_files.update(testing_result)
+                self.logger.info(f"✅ Agent Testing: {len(testing_result)} fichiers")
+        except Exception as e:
+            self.logger.warning(f"⚠️ Tests generation échoué: {e}")
+        
+        # Phase 4: Agent QA pour validation finale (séquentiel)
+        self.logger.info("🔍 Phase 4: Quality Assurance Finale")
+        
+        qa_result = await self.agents[AgentRole.QA].generate(
+            description, 
+            framework,
+            context={"files": list(all_files.keys())}
+        )
+        
+        if qa_result:
+            all_files.update(qa_result)
+            self.logger.info("✅ Agent QA: Validation terminée")
+        
+        self.logger.info(f"🎉 Génération terminée - Total: {len(all_files)} fichiers")
+        
+        return all_files
             
         except asyncio.TimeoutError:
             self.logger.error("⚠️ Timeout de génération - retour des fichiers partiels")
