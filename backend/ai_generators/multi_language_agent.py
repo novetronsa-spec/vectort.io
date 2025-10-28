@@ -70,6 +70,7 @@ class MultiLanguageAgent:
     ) -> Dict[str, str]:
         """
         Génère un projet complet dans le langage et framework choisis
+        OPTIMISÉ avec timeouts adaptatifs selon complexité
         
         Args:
             description: Description du projet
@@ -88,6 +89,10 @@ class MultiLanguageAgent:
             self.logger.error(f"❌ Combinaison invalide: {language}/{framework}")
             return await self._generate_fallback(description, language)
         
+        # Calculer timeout adaptatif selon complexité
+        timeout = self._calculate_adaptive_timeout(description, project_type, language)
+        self.logger.info(f"⏱️ Timeout adaptatif calculé: {timeout}s")
+        
         chat = LlmChat(
             api_key=self.api_key,
             session_id=f"multilang-{language}-{framework}",
@@ -97,20 +102,87 @@ class MultiLanguageAgent:
         prompt = self._build_prompt(description, language, framework, project_type)
         
         try:
-            response = await chat.with_model("openai", "gpt-4o").send_message(
-                UserMessage(text=prompt)
+            response = await asyncio.wait_for(
+                chat.with_model("openai", "gpt-4o").send_message(
+                    UserMessage(text=prompt)
+                ),
+                timeout=timeout
             )
             
-            # Parser les fichiers
-            files = self._parse_response(response, language, framework)
+            # Parser les fichiers avec méthode améliorée
+            files = self._parse_response_enhanced(response, language, framework)
+            
+            if not files or len(files) == 0:
+                self.logger.warning(f"⚠️ Parsing retourné vide - Tentative fallback intelligent")
+                files = await self._generate_intelligent_fallback(description, language, framework, project_type)
             
             self.logger.info(f"✅ {len(files)} fichiers générés pour {language}/{framework}")
             
             return files
             
+        except asyncio.TimeoutError:
+            self.logger.error(f"❌ Timeout après {timeout}s - Fallback intelligent")
+            return await self._generate_intelligent_fallback(description, language, framework, project_type)
+            
         except Exception as e:
             self.logger.error(f"❌ Erreur génération {language}/{framework}: {e}")
-            return await self._generate_fallback(description, language)
+            return await self._generate_intelligent_fallback(description, language, framework, project_type)
+    
+    def _calculate_adaptive_timeout(
+        self,
+        description: str,
+        project_type: str,
+        language: str
+    ) -> float:
+        """
+        Calcule timeout adaptatif selon complexité du projet
+        
+        Facteurs:
+        - Longueur description (plus long = plus complexe)
+        - Type de projet (web_app > api_rest > cli_tool)
+        - Langage (JavaScript/React > Python > Go)
+        
+        Returns:
+            Timeout en secondes (15-60s)
+        """
+        
+        # Base timeout
+        base = 20.0
+        
+        # Facteur longueur description (0-10s)
+        desc_length = len(description)
+        if desc_length > 200:
+            base += 15.0
+        elif desc_length > 100:
+            base += 10.0
+        elif desc_length > 50:
+            base += 5.0
+        
+        # Facteur type de projet (0-15s)
+        complexity_map = {
+            "web_app": 15.0,
+            "mobile_app": 15.0,
+            "microservice": 15.0,
+            "machine_learning": 12.0,
+            "api_graphql": 10.0,
+            "api_rest": 8.0,
+            "cli_tool": 5.0
+        }
+        base += complexity_map.get(project_type, 8.0)
+        
+        # Facteur langage (0-10s)
+        language_complexity = {
+            "javascript": 10.0,
+            "typescript": 10.0,
+            "rust": 8.0,
+            "java": 8.0,
+            "go": 5.0,
+            "python": 5.0
+        }
+        base += language_complexity.get(language, 5.0)
+        
+        # Cap à 60s max
+        return min(60.0, base)
     
     def _validate_language_framework(self, language: str, framework: str) -> bool:
         """Valide que la combinaison langage/framework est supportée"""
