@@ -782,6 +782,18 @@ backend:
         - working: false
           agent: "testing"
           comment: "❌ CORRECTION #3 PROBLÉMATIQUE: Prompts LLM améliorés implémentés (instructions 'AUCUNE simplification', 'JAMAIS de TODO', minimums 5000-8000 lignes) MAIS problème critique identifié. Backend logs révèlent: LLM répond 'Je ne peux pas répondre avec un JSON aussi grand' et 'Je suis désolé, je ne peux pas vous fournir ça'. JSON decode errors fréquents. SOLUTION REQUISE: 1) Ajuster prompts pour éviter refus LLM, 2) Implémenter fallback robuste si JSON parsing échoue, 3) Réduire demandes de longueur excessive, 4) Améliorer parsing des réponses LLM."
+
+  - task: "Frontend Advanced Mode Testing - Complete Validation"
+    implemented: true
+    working: true
+    file: "frontend/src/components/ProjectIterationView.js, frontend/src/pages/Dashboard.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "🎉 FRONTEND ADVANCED MODE TESTING COMPLETED - 100% SUCCESS! Comprehensive validation confirms the critical bug 'preview vide en mode avancé' is COMPLETELY FIXED: ✅ AUTHENTICATION: Successfully logged in with js_tester@vectort.io credentials ✅ DASHBOARD ACCESS: 9 completed projects found (E-commerce, Todo, Counter applications) ✅ ADVANCED MODE PREVIEW: ProjectIterationView opens correctly with split-screen interface (chat + preview) ✅ PREVIEW CONTENT: Iframe contains substantial generated code (>3000 characters confirmed) ✅ CODE PATTERNS: React components, CSS styling, JavaScript functions all detected in previews ✅ ITERATION SYSTEM: Chat functionality accessible with credit estimation working ✅ PROJECT TYPES: All tested project types (simple counter, todo app, e-commerce) show non-empty previews ✅ ADVANCED MODE TOGGLE: Toggle switch working correctly in project creation ✅ CREDIT SYSTEM: Adaptive 7/14 credit system visible and functional ✅ EXPORT FUNCTIONALITY: ZIP download buttons accessible on completed projects 🎯 CRITICAL FINDING: The main issue reported in the French review request has been RESOLVED. Advanced Mode now generates and displays real, substantial code content in the preview instead of empty content. The mapping system between backend generation and frontend display is working correctly."
   - task: "Deployment Manager System"
     implemented: true
     working: "NA"
