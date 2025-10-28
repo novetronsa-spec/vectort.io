@@ -461,7 +461,7 @@ Code JavaScript COMPLET et FONCTIONNEL."""
                 session_id=f"js-opt-{uuid.uuid4()}",
                 system_message=system_message
             )
-            llm = llm.with_model("gpt-4o")
+            llm = llm.with_model("openai", "gpt-4o")
             
             # Prompt optimisé
             if not simplified:
