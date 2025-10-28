@@ -924,8 +924,13 @@ def map_multi_agent_files_to_response(all_files: dict, framework: str) -> dict:
         if "react_code" in all_files:
             response["react"] = all_files["react_code"]
             response["all_files"]["src/App.jsx"] = all_files["react_code"]
+        elif "js_code" in all_files and framework == "react":
+            # CORRECTION: Pour React, js_code peut contenir du code React
+            response["react"] = all_files["js_code"]
+            response["all_files"]["src/App.jsx"] = all_files["js_code"]
+            logger.info("🔧 CORRECTION: js_code mappé vers react pour framework React")
         
-        if "js_code" in all_files:
+        if "js_code" in all_files and framework != "react":
             response["js"] = all_files["js_code"]
             response["all_files"]["src/index.js"] = all_files["js_code"]
         
