@@ -55,9 +55,9 @@ class FocusedJSTest:
         """Setup user with sufficient credits"""
         print("\n=== SETUP: User with Credits ===")
         
-        # Use existing user with credits
+        # Use test user with credits
         test_user = {
-            "email": "josephayingono@gmail.com",  # User with 5127 credits
+            "email": "js_tester@vectort.io",  # User with 150 credits
             "password": "TestPassword123!"
         }
         
