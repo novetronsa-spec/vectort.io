@@ -2764,6 +2764,72 @@ async def get_supported_platforms():
     }
 
 
+@api_router.get("/projects/{project_id}/stream")
+async def stream_generation_progress(
+    project_id: str,
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Stream Server-Sent Events pour la progression de génération EN TEMPS RÉEL
+    
+    Affiche:
+    - Messages des agents en direct
+    - Fichiers créés
+    - Progression %
+    - Erreurs
+    - Completion
+    
+    Compatible avec EventSource côté frontend
+    """
+    
+    logger.info(f"📡 Stream SSE demandé pour projet: {project_id}")
+    
+    # Vérifier que le projet appartient à l'utilisateur
+    project = await db.projects.find_one({"id": project_id, "user_id": current_user.id})
+    if not project:
+        raise HTTPException(status_code=404, detail="Projet non trouvé")
+    
+    # Créer ou récupérer le stream
+    stream = streaming_manager.get_stream(project_id)
+    if not stream:
+        stream = streaming_manager.create_stream(project_id)
+    
+    # Retourner StreamingResponse avec SSE
+    return StreamingResponse(
+        streaming_manager.generate_sse_stream(project_id),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "Connection": "keep-alive",
+            "X-Accel-Buffering": "no"  # Pour nginx
+        }
+    )
+
+
+@api_router.get("/projects/{project_id}/stream/state")
+async def get_generation_state(
+    project_id: str,
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Récupère l'état actuel d'une génération
+    
+    Utile pour reprendre une connexion SSE perdue
+    """
+    
+    project = await db.projects.find_one({"id": project_id, "user_id": current_user.id})
+    if not project:
+        raise HTTPException(status_code=404, detail="Projet non trouvé")
+    
+    state = streaming_manager.get_generation_state(project_id)
+    
+    return {
+        "project_id": project_id,
+        "state": state,
+        "active": project_id in streaming_manager.queues
+    }
+
+
 # Include the router in the main app
 app.include_router(api_router)
 
