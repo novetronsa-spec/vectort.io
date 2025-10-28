@@ -13,12 +13,16 @@ logger = logging.getLogger(__name__)
 
 
 class AgentRole:
-    """Définition des rôles d'agents spécialisés"""
+    """Définition des rôles d'agents spécialisés - SYSTÈME À 10 AGENTS"""
+    DIAGNOSTIC = "diagnostic"     # Phase 0: Analyse avant génération
     FRONTEND = "frontend"
     STYLING = "styling"
     BACKEND = "backend"
     CONFIG = "config"
     COMPONENTS = "components"
+    DATABASE = "database"         # Nouveau: Schémas BDD
+    SECURITY = "security"         # Nouveau: Audit sécurité
+    TESTING = "testing"           # Nouveau: Tests automatiques
     QA = "qa"
 
 
