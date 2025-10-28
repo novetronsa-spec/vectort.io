@@ -894,7 +894,7 @@ def map_multi_agent_files_to_response(all_files: dict, framework: str) -> dict:
     Mappe les fichiers du système multi-agents vers le format de réponse attendu
     
     Args:
-        all_files: Tous les fichiers générés par les 6 agents
+        all_files: Tous les fichiers générés par les 6 agents OU par JavaScriptOptimizer
         framework: Framework utilisé
     
     Returns:
@@ -909,50 +909,83 @@ def map_multi_agent_files_to_response(all_files: dict, framework: str) -> dict:
         "js": "",
         "react": "",
         "backend": "",
-        "all_files": all_files
+        "all_files": {}
     }
     
-    # Parcourir tous les fichiers et les mapper intelligemment
-    for file_path, content in all_files.items():
+    # NOUVEAU: Détecter si c'est le format JavaScriptOptimizer (clés: react_code, css_code, etc.)
+    if "react_code" in all_files or "js_code" in all_files or "backend_code" in all_files:
+        logger.info("🎯 Format JavaScriptOptimizer détecté - Mapping direct")
         
-        # CSS files
-        if '.css' in file_path.lower():
-            response["css"] += f"\n/* {file_path} */\n{content}\n"
+        # Mapper les clés JavaScriptOptimizer vers le format attendu
+        if "react_code" in all_files:
+            response["react"] = all_files["react_code"]
+            response["all_files"]["src/App.jsx"] = all_files["react_code"]
         
-        # React/JSX files
-        elif '.jsx' in file_path.lower() or 'App.jsx' in file_path or 'app.jsx' in file_path:
-            # Prioriser App.jsx comme fichier React principal
-            if 'App.jsx' in file_path or 'app.jsx' in file_path:
-                response["react"] = content
-            elif not response["react"]:  # Si pas encore de React principal
-                response["react"] = content
+        if "js_code" in all_files:
+            response["js"] = all_files["js_code"]
+            response["all_files"]["src/index.js"] = all_files["js_code"]
         
-        # JavaScript files
-        elif '.js' in file_path.lower() and 'jsx' not in file_path.lower():
-            response["js"] += f"\n// {file_path}\n{content}\n"
+        if "css_code" in all_files:
+            response["css"] = all_files["css_code"]
+            response["all_files"]["src/styles.css"] = all_files["css_code"]
         
-        # Python/Backend files
-        elif '.py' in file_path.lower():
-            response["backend"] += f"\n# {file_path}\n{content}\n"
+        if "html_code" in all_files:
+            response["html"] = all_files["html_code"]
+            response["all_files"]["public/index.html"] = all_files["html_code"]
         
-        # HTML files
-        elif '.html' in file_path.lower():
-            if 'index.html' in file_path.lower():
-                response["html"] = content
-            elif not response["html"]:
-                response["html"] = content
+        if "backend_code" in all_files:
+            response["backend"] = all_files["backend_code"]
+            response["all_files"]["server.js"] = all_files["backend_code"]
         
-        # Package.json
-        elif 'package.json' in file_path.lower():
-            response["package_json"] = content
+        # Log le mapping
+        logger.info(f"✅ JavaScriptOptimizer mapped - React: {len(response['react'])}, CSS: {len(response['css'])}, HTML: {len(response['html'])}, Backend: {len(response['backend'])}")
         
-        # README
-        elif 'readme' in file_path.lower():
-            response["readme"] = content
+    else:
+        # FORMAT CLASSIQUE: Parcourir tous les fichiers avec noms de fichiers comme clés
+        response["all_files"] = all_files
+        
+        for file_path, content in all_files.items():
+            
+            # CSS files
+            if '.css' in file_path.lower():
+                response["css"] += f"\n/* {file_path} */\n{content}\n"
+            
+            # React/JSX files
+            elif '.jsx' in file_path.lower() or 'App.jsx' in file_path or 'app.jsx' in file_path:
+                # Prioriser App.jsx comme fichier React principal
+                if 'App.jsx' in file_path or 'app.jsx' in file_path:
+                    response["react"] = content
+                elif not response["react"]:  # Si pas encore de React principal
+                    response["react"] = content
+            
+            # JavaScript files
+            elif '.js' in file_path.lower() and 'jsx' not in file_path.lower():
+                response["js"] += f"\n// {file_path}\n{content}\n"
+            
+            # Python/Backend files
+            elif '.py' in file_path.lower():
+                response["backend"] += f"\n# {file_path}\n{content}\n"
+            
+            # HTML files
+            elif '.html' in file_path.lower():
+                if 'index.html' in file_path.lower():
+                    response["html"] = content
+                elif not response["html"]:
+                    response["html"] = content
+            
+            # Package.json
+            elif 'package.json' in file_path.lower():
+                response["package_json"] = content
+            
+            # README
+            elif 'readme' in file_path.lower():
+                response["readme"] = content
+        
+        logger.info(f"✅ Mapping classique terminé - HTML: {len(response['html'])}, CSS: {len(response['css'])}, React: {len(response['react'])}, Backend: {len(response['backend'])}")
     
     # Si pas de HTML mais il y a du React, générer un HTML de base
     if not response["html"] and response["react"]:
-        response["html"] = f"""<!DOCTYPE html>
+        html_content = f"""<!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
@@ -963,8 +996,8 @@ def map_multi_agent_files_to_response(all_files: dict, framework: str) -> dict:
     <div id="root"></div>
 </body>
 </html>"""
-    
-    logger.info(f"✅ Mapping terminé - HTML: {len(response['html'])}, CSS: {len(response['css'])}, React: {len(response['react'])}, Backend: {len(response['backend'])}")
+        response["html"] = html_content
+        response["all_files"]["public/index.html"] = html_content
     
     return response
 
