@@ -48,88 +48,107 @@ class JavaScriptOptimizer:
             Timeout en secondes (30-180s)
         """
         
-        # Base timeout pour JavaScript
-        base_timeout = 30.0
+        # Base timeout pour JavaScript - RÉDUIT pour projets simples
+        base_timeout = 25.0
         
-        # Facteur 1: Longueur description
+        # Facteur 1: Longueur description - PROGRESSION PLUS DOUCE
         desc_length = len(description)
         if desc_length > 500:
-            base_timeout += 40.0
+            base_timeout += 45.0
         elif desc_length > 300:
-            base_timeout += 30.0
+            base_timeout += 35.0
         elif desc_length > 150:
-            base_timeout += 20.0
+            base_timeout += 25.0
         elif desc_length > 75:
-            base_timeout += 10.0
+            base_timeout += 15.0
+        elif desc_length > 30:
+            base_timeout += 8.0
         else:
-            # Description très courte - projet simple
-            base_timeout += 5.0
+            # Description très courte - projet très simple
+            base_timeout += 3.0
         
-        # Facteur 2: Type de projet
+        # Facteur 2: Type de projet - DIFFÉRENCIATION CLAIRE
         complexity_map = {
-            "full_stack": 50.0,       # Full-Stack le plus complexe
-            "web_app": 40.0,          # Web App complexe
-            "microservice": 35.0,     # Microservices
-            "api_rest": 25.0,         # API REST
-            "api_graphql": 30.0,      # GraphQL plus complexe
-            "cli_tool": 15.0,         # CLI le plus simple
-            "library": 20.0           # Library simple
+            "full_stack": 55.0,       # Full-Stack le plus complexe
+            "web_app": 35.0,          # Web App complexe
+            "microservice": 30.0,     # Microservices
+            "api_rest": 20.0,         # API REST
+            "api_graphql": 25.0,      # GraphQL plus complexe
+            "cli_tool": 10.0,         # CLI le plus simple
+            "library": 15.0           # Library simple
         }
-        base_timeout += complexity_map.get(project_type.lower(), 25.0)
+        project_bonus = complexity_map.get(project_type.lower(), 20.0)
+        base_timeout += project_bonus
         
-        # Facteur 3: Features demandées
+        # Facteur 3: Features demandées - BONUS IMPORTANT
         if features:
             feature_count = len(features)
             if feature_count > 10:
-                base_timeout += 30.0
+                base_timeout += 35.0
             elif feature_count > 7:
-                base_timeout += 20.0
+                base_timeout += 25.0
             elif feature_count > 4:
-                base_timeout += 10.0
+                base_timeout += 15.0
+            elif feature_count > 2:
+                base_timeout += 8.0
+            elif feature_count > 0:
+                base_timeout += 4.0
         
-        # Facteur 4: Mots-clés de complexité
+        # Facteur 4: Mots-clés de complexité - BONUS PROGRESSIF
         complexity_keywords = {
-            "authentication": 15.0,
-            "real-time": 20.0,
-            "websocket": 20.0,
-            "database": 15.0,
-            "mongodb": 12.0,
-            "postgresql": 12.0,
-            "mysql": 12.0,
-            "redis": 10.0,
-            "payment": 18.0,
-            "stripe": 15.0,
-            "oauth": 15.0,
-            "jwt": 10.0,
-            "email": 10.0,
-            "upload": 12.0,
-            "image": 12.0,
-            "video": 15.0,
-            "chat": 18.0,
-            "notification": 12.0,
-            "search": 12.0,
-            "analytics": 12.0,
-            "admin": 15.0,
-            "dashboard": 15.0,
+            "authentication": 18.0,
+            "real-time": 22.0,
+            "websocket": 22.0,
+            "database": 16.0,
+            "mongodb": 14.0,
+            "postgresql": 14.0,
+            "mysql": 14.0,
+            "redis": 12.0,
+            "payment": 20.0,
+            "stripe": 18.0,
+            "oauth": 18.0,
+            "jwt": 12.0,
+            "email": 12.0,
+            "upload": 14.0,
+            "image": 14.0,
+            "video": 18.0,
+            "chat": 20.0,
+            "notification": 14.0,
+            "search": 14.0,
+            "analytics": 14.0,
+            "admin": 18.0,
+            "dashboard": 18.0,
             "api": 10.0,
-            "graphql": 15.0,
-            "docker": 8.0,
-            "kubernetes": 10.0,
-            "ci/cd": 8.0,
-            "testing": 8.0,
-            "typescript": 12.0
+            "graphql": 16.0,
+            "docker": 10.0,
+            "kubernetes": 12.0,
+            "ci/cd": 10.0,
+            "testing": 10.0,
+            "typescript": 14.0
         }
         
         desc_lower = description.lower()
+        keyword_bonus = 0.0
+        keywords_found = 0
+        
         for keyword, bonus in complexity_keywords.items():
             if keyword in desc_lower:
-                base_timeout += bonus
+                keyword_bonus += bonus
+                keywords_found += 1
                 self.logger.debug(f"🔍 Keyword '{keyword}' found, adding +{bonus}s")
+        
+        base_timeout += keyword_bonus
         
         # Cap maximum à 180s (3 minutes)
         final_timeout = min(180.0, base_timeout)
         
-        self.logger.info(f"⏱️ Timeout adaptatif JavaScript: {final_timeout}s (base: {base_timeout}s)")
+        # Log détaillé
+        self.logger.info(f"⏱️ Timeout adaptatif JavaScript: {final_timeout}s")
+        self.logger.debug(f"   📝 Description: {desc_length} chars")
+        self.logger.debug(f"   📦 Type projet: {project_type} (+{project_bonus}s)")
+        self.logger.debug(f"   ⚡ Features: {len(features) if features else 0} (+{feature_count if features else 0})")
+        self.logger.debug(f"   🔑 Keywords: {keywords_found} trouvés (+{keyword_bonus}s)")
+        self.logger.debug(f"   🎯 Total: {base_timeout}s → {final_timeout}s (cap 180s)")
         
         return final_timeout
     
