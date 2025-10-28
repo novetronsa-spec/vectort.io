@@ -496,19 +496,29 @@ Format: JSON uniquement"""
 
 
 class MultiAgentOrchestrator:
-    """Orchestrateur qui coordonne les 6 agents spécialisés"""
+    """Orchestrateur qui coordonne les 10 agents spécialisés - SYSTÈME PROFESSIONNEL COMPLET"""
     
     def __init__(self, api_key: str):
         self.api_key = api_key
         self.agents = {
+            # Phase 0: Diagnostic
+            AgentRole.DIAGNOSTIC: SpecializedAgent(AgentRole.DIAGNOSTIC, api_key),
+            # Phase 1: Génération parallèle
             AgentRole.FRONTEND: SpecializedAgent(AgentRole.FRONTEND, api_key),
             AgentRole.STYLING: SpecializedAgent(AgentRole.STYLING, api_key),
             AgentRole.BACKEND: SpecializedAgent(AgentRole.BACKEND, api_key),
             AgentRole.CONFIG: SpecializedAgent(AgentRole.CONFIG, api_key),
             AgentRole.COMPONENTS: SpecializedAgent(AgentRole.COMPONENTS, api_key),
+            AgentRole.DATABASE: SpecializedAgent(AgentRole.DATABASE, api_key),
+            # Phase 2: Sécurité
+            AgentRole.SECURITY: SpecializedAgent(AgentRole.SECURITY, api_key),
+            # Phase 3: Tests
+            AgentRole.TESTING: SpecializedAgent(AgentRole.TESTING, api_key),
+            # Phase 4: QA Final
             AgentRole.QA: SpecializedAgent(AgentRole.QA, api_key),
         }
         self.logger = logging.getLogger("MultiAgentOrchestrator")
+        self.diagnostic_result = None
     
     async def generate_application(
         self,
@@ -518,15 +528,42 @@ class MultiAgentOrchestrator:
     ) -> Dict[str, str]:
         """
         Génère une application complète avec tous les agents en parallèle
+        ARCHITECTURE PROFESSIONNELLE À 10 AGENTS
         
         Returns:
             Dict avec tous les fichiers générés par tous les agents
         """
         
-        self.logger.info(f"🚀 Démarrage génération multi-agents - Framework: {framework}")
+        self.logger.info(f"🚀 Démarrage génération MULTI-AGENTS PROFESSIONNEL (10 agents) - Framework: {framework}")
         
-        # Phase 1: Génération parallèle des agents principaux (5 agents)
-        self.logger.info("📋 Phase 1: Génération parallèle (5 agents)")
+        # Phase 0: Agent Diagnostic (CRITIQUE - analyse AVANT génération)
+        self.logger.info("🔍 Phase 0: Diagnostic et Analyse du Projet")
+        try:
+            diagnostic_files = await asyncio.wait_for(
+                self.agents[AgentRole.DIAGNOSTIC].generate(description, framework),
+                timeout=10.0
+            )
+            
+            # Extraire le rapport diagnostic
+            if diagnostic_files:
+                import json
+                for file_path, content in diagnostic_files.items():
+                    if 'json' in file_path.lower() or content.strip().startswith('{'):
+                        try:
+                            self.diagnostic_result = json.loads(content)
+                            self.logger.info(f"✅ Diagnostic terminé - Complexité: {self.diagnostic_result.get('complexity', 'unknown')}")
+                            break
+                        except:
+                            pass
+        except Exception as e:
+            self.logger.warning(f"⚠️ Diagnostic échoué, continue avec valeurs par défaut: {e}")
+            self.diagnostic_result = {"complexity": "medium", "needs": {}}
+        
+        # Phase 1: Génération parallèle des agents principaux (6 agents)
+        self.logger.info("📋 Phase 1: Génération parallèle (6 agents + Database)")
+        
+        # Préparer le contexte avec les résultats du diagnostic
+        context = {"diagnostic": self.diagnostic_result} if self.diagnostic_result else None
         
         tasks = [
             self.agents[AgentRole.FRONTEND].generate(description, framework),
