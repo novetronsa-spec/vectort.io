@@ -83,6 +83,9 @@ security = HTTPBearer()
 # Rate Limiter
 limiter = Limiter(key_func=get_remote_address)
 
+# Streaming Manager
+from streaming.streaming_system import streaming_manager
+
 # Create the main app without a prefix
 app = FastAPI(
     title="Vectort API", 
