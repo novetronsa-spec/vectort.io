@@ -912,6 +912,69 @@ class User(BaseModel):
         return fallbacks.get(agent_name, {
             f"fallback/{agent_name}.txt": f"Fallback file for {agent_name}"
         })
+    
+    async def generate_javascript_optimized(
+        self,
+        description: str,
+        framework: str = "react",
+        project_type: str = "web_app",
+        language: str = "javascript",
+        features: List[str] = None
+    ) -> Dict[str, str]:
+        """
+        Génération JavaScript OPTIMISÉE avec JavaScriptOptimizer
+        
+        Utilise le système de timeouts adaptatifs et fallbacks robustes
+        spécialement conçu pour JavaScript/Node.js/React/Vue/Angular
+        
+        Args:
+            description: Description du projet
+            framework: Framework (react, vue, angular, express, nextjs, etc.)
+            project_type: Type (web_app, api_rest, full_stack, etc.)
+            language: javascript ou typescript
+            features: Liste des features demandées
+        
+        Returns:
+            Dict de fichiers JavaScript générés avec qualité maximale
+        """
+        
+        self.logger.info(f"🚀 GÉNÉRATION JAVASCRIPT OPTIMISÉE: {framework} / {project_type}")
+        
+        # Utiliser le JavaScriptOptimizer avec fallbacks robustes
+        try:
+            result = await self.js_optimizer.generate_with_fallback(
+                description=description,
+                project_type=project_type,
+                framework=framework,
+                language=language,
+                features=features or []
+            )
+            
+            if result:
+                self.logger.info(f"✅ Génération JavaScript réussie: {len(result)} fichiers")
+                return result
+            else:
+                self.logger.warning("⚠️ JavaScriptOptimizer n'a pas retourné de résultat")
+                # Fallback au système multi-agents normal
+                return await self.generate_application(description, framework, project_type)
+        
+        except Exception as e:
+            self.logger.error(f"❌ Erreur JavaScriptOptimizer: {e}")
+            # Fallback au système multi-agents normal
+            self.logger.info("🔄 Fallback au système multi-agents normal")
+            return await self.generate_application(description, framework, project_type)
+    
+    def _is_javascript_framework(self, framework: str) -> bool:
+        """Détecte si c'est un framework JavaScript/Node.js"""
+        
+        js_frameworks = [
+            "react", "vue", "angular", "svelte",
+            "nextjs", "next.js", "nuxt", "nuxt.js",
+            "express", "fastify", "koa", "nestjs",
+            "nodejs", "node.js", "javascript", "typescript"
+        ]
+        
+        return framework.lower() in js_frameworks
 
 
 # Export principal
@@ -935,4 +998,15 @@ async def generate_with_multi_agents(
     """
     
     orchestrator = MultiAgentOrchestrator(api_key)
-    return await orchestrator.generate_with_fallback(description, framework, project_type)
+    
+    # Si c'est JavaScript/Node.js, utiliser l'optimiseur JavaScript
+    if orchestrator._is_javascript_framework(framework):
+        orchestrator.logger.info(f"🎯 Framework JavaScript détecté: {framework} - Utilisation JavaScriptOptimizer")
+        return await orchestrator.generate_javascript_optimized(
+            description=description,
+            framework=framework,
+            project_type=project_type
+        )
+    else:
+        # Sinon utiliser le système multi-agents normal
+        return await orchestrator.generate_application(description, framework, project_type)
