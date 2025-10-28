@@ -23,13 +23,13 @@
 **A. Origines JavaScript autorisées**
 ```
 Cliquez sur : "+ AJOUTER UN URI"
-Collez ceci : https://vectort-builder.preview.emergentagent.com
+Collez ceci : https://devstream-ai.preview.emergentagent.com
 ```
 
 **B. URI de redirection autorisés**
 ```
 Cliquez sur : "+ AJOUTER UN URI"
-Collez ceci : https://vectort-builder.preview.emergentagent.com/api/auth/google/callback
+Collez ceci : https://devstream-ai.preview.emergentagent.com/api/auth/google/callback
 ```
 
 ### Étape 4 : Sauvegarder
@@ -40,7 +40,7 @@ Collez ceci : https://vectort-builder.preview.emergentagent.com/api/auth/google/
 
 ### Étape 5 : Tester
 ```
-1. Allez sur : https://vectort-builder.preview.emergentagent.com
+1. Allez sur : https://devstream-ai.preview.emergentagent.com
 2. Cliquez sur : "Continue with Google"
 3. ✅ Résultat : Vous êtes redirigé vers Google
 4. ✅ Vous pouvez vous connecter
@@ -70,13 +70,13 @@ Collez ceci : https://vectort-builder.preview.emergentagent.com/api/auth/google/
 ### Étape 4 : Configurer le Callback URL
 ```
 📝 Champ : "Authorization callback URL"
-Mettez : https://vectort-builder.preview.emergentagent.com/api/auth/github/callback
+Mettez : https://devstream-ai.preview.emergentagent.com/api/auth/github/callback
 💾 Cliquez sur "Update application"
 ```
 
 ### Étape 5 : Tester
 ```
-1. Allez sur : https://vectort-builder.preview.emergentagent.com
+1. Allez sur : https://devstream-ai.preview.emergentagent.com
 2. Cliquez sur : "GitHub" (icône verte)
 3. ✅ Résultat : Vous êtes redirigé vers GitHub
 4. ✅ Vous pouvez autoriser

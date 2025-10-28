@@ -7,7 +7,7 @@ import requests
 import json
 import time
 
-BASE_URL = "https://vectort-builder.preview.emergentagent.com/api"
+BASE_URL = "https://devstream-ai.preview.emergentagent.com/api"
 TEST_USER = {
     "email": f"check.gen.{int(time.time())}@vectort.io",
     "password": "CheckGen123!",

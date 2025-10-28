@@ -8,7 +8,7 @@ import requests
 import json
 import time
 
-BASE_URL = "https://vectort-builder.preview.emergentagent.com/api"
+BASE_URL = "https://devstream-ai.preview.emergentagent.com/api"
 
 def test_xss_vulnerability():
     """Test if XSS vulnerability still exists after understanding the issue"""

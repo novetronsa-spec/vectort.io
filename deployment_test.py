@@ -11,7 +11,7 @@ import time
 from typing import Dict, Any, Optional
 
 # Configuration - Use environment URL
-BASE_URL = "https://vectort-builder.preview.emergentagent.com/api"
+BASE_URL = "https://devstream-ai.preview.emergentagent.com/api"
 
 class DeploymentFlowTester:
     def __init__(self):

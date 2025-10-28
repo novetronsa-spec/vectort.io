@@ -2,7 +2,7 @@
 """
 🎯 VECTORT.IO PRODUCTION API TESTING - 100% FUNCTIONALITY VERIFICATION
 Test complet du backend Vectort.io selon les spécifications françaises
-Backend URL: https://vectort-builder.preview.emergentagent.com/api
+Backend URL: https://devstream-ai.preview.emergentagent.com/api
 """
 
 import requests
@@ -13,7 +13,7 @@ from typing import Dict, Any, Optional
 import uuid
 
 # Configuration - PRODUCTION ENVIRONMENT API
-BASE_URL = "https://vectort-builder.preview.emergentagent.com/api"
+BASE_URL = "https://devstream-ai.preview.emergentagent.com/api"
 
 class VectortProductionTester:
     def __init__(self):
@@ -313,7 +313,7 @@ class VectortProductionTester:
         try:
             purchase_data = {
                 "package_id": "starter",
-                "origin_url": "https://vectort-builder.preview.emergentagent.com"
+                "origin_url": "https://devstream-ai.preview.emergentagent.com"
             }
             
             response = self.make_request("POST", "/credits/purchase", purchase_data)

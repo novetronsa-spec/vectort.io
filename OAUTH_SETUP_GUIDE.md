@@ -17,12 +17,12 @@ The Google OAuth credentials are configured in `/app/backend/.env`:
 
 **JavaScript Origins**:
 ```
-https://vectort-builder.preview.emergentagent.com
+https://devstream-ai.preview.emergentagent.com
 ```
 
 **Redirect URIs**:
 ```
-https://vectort-builder.preview.emergentagent.com/api/auth/google/callback
+https://devstream-ai.preview.emergentagent.com/api/auth/google/callback
 ```
 
 ### How to Configure
@@ -48,7 +48,7 @@ The GitHub OAuth credentials are configured in `/app/backend/.env`:
 
 **Authorization callback URL**:
 ```
-https://vectort-builder.preview.emergentagent.com/api/auth/github/callback
+https://devstream-ai.preview.emergentagent.com/api/auth/github/callback
 ```
 
 ### How to Configure
@@ -62,7 +62,7 @@ https://vectort-builder.preview.emergentagent.com/api/auth/github/callback
 
 ## 🧪 Testing OAuth
 
-1. Visit: https://vectort-builder.preview.emergentagent.com
+1. Visit: https://devstream-ai.preview.emergentagent.com
 2. Click "Continue with Google" or "GitHub"
 3. Authorize access
 4. You should be redirected to the dashboard

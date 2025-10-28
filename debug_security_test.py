@@ -6,7 +6,7 @@ Debug the XSS test specifically
 import requests
 import re
 
-BASE_URL = "https://vectort-builder.preview.emergentagent.com/api"
+BASE_URL = "https://devstream-ai.preview.emergentagent.com/api"
 
 # Setup test user
 test_user = {

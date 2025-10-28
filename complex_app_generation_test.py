@@ -27,7 +27,7 @@ import re
 from typing import Dict, Any, Optional
 
 # Configuration
-BASE_URL = "https://vectort-builder.preview.emergentagent.com/api"
+BASE_URL = "https://devstream-ai.preview.emergentagent.com/api"
 TEST_USER = {
     "email": f"complex_test_{int(time.time())}@vectort.io",
     "password": "ComplexTest123!",

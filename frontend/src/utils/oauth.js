@@ -3,7 +3,7 @@
  * Gère les flux d'authentification OAuth pour Google, GitHub et Apple
  */
 
-const API_URL = process.env.REACT_APP_BACKEND_URL || 'https://vectort-builder.preview.emergentagent.com';
+const API_URL = process.env.REACT_APP_BACKEND_URL || 'https://devstream-ai.preview.emergentagent.com';
 
 /**
  * Initie le flux OAuth Google
