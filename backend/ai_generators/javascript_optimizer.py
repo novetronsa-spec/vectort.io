@@ -61,6 +61,9 @@ class JavaScriptOptimizer:
             base_timeout += 20.0
         elif desc_length > 75:
             base_timeout += 10.0
+        else:
+            # Description très courte - projet simple
+            base_timeout += 5.0
         
         # Facteur 2: Type de projet
         complexity_map = {
