@@ -471,7 +471,7 @@ Code JavaScript COMPLET et FONCTIONNEL."""
             
             # Génération avec timeout
             response = await asyncio.wait_for(
-                llm.send_message(UserMessage(content=prompt)),
+                llm.send_message(UserMessage(text=prompt)),
                 timeout=timeout
             )
             
