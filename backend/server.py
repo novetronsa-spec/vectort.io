@@ -2906,6 +2906,138 @@ async def get_system_harmony(current_user: User = Depends(get_current_user)):
         )
 
 
+@api_router.get("/templates")
+async def get_all_templates():
+    """
+    Récupère tous les templates de projets professionnels
+    
+    Templates pré-configurés pour:
+    - Web Apps (E-commerce, SaaS, Blog)
+    - APIs (REST, GraphQL)
+    - Mobile (React Native, Flutter)
+    - Microservices
+    - CLI Tools
+    - ML/Data
+    """
+    
+    try:
+        from templates.project_templates import TemplateManager
+        
+        templates = TemplateManager.get_all_templates()
+        stats = TemplateManager.get_template_stats()
+        
+        # Convertir en dict
+        templates_dict = [
+            {
+                "id": t.id,
+                "name": t.name,
+                "description": t.description,
+                "category": t.category,
+                "language": t.language,
+                "framework": t.framework,
+                "complexity": t.complexity,
+                "features": t.features,
+                "estimated_files": t.estimated_files,
+                "estimated_time": t.estimated_time,
+                "fibonacci_priority": t.fibonacci_priority,
+                "icon": t.icon,
+                "tags": t.tags
+            }
+            for t in templates
+        ]
+        
+        return {
+            "success": True,
+            "templates": templates_dict,
+            "stats": stats,
+            "total": len(templates_dict)
+        }
+        
+    except Exception as e:
+        logger.error(f"❌ Erreur templates: {e}")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Erreur templates: {str(e)}"
+        )
+
+
+@api_router.get("/templates/{template_id}")
+async def get_template_details(template_id: str):
+    """Récupère les détails d'un template spécifique"""
+    
+    try:
+        from templates.project_templates import TemplateManager
+        
+        template = TemplateManager.get_template(template_id)
+        
+        if not template:
+            raise HTTPException(status_code=404, detail="Template non trouvé")
+        
+        return {
+            "success": True,
+            "template": {
+                "id": template.id,
+                "name": template.name,
+                "description": template.description,
+                "category": template.category,
+                "language": template.language,
+                "framework": template.framework,
+                "complexity": template.complexity,
+                "features": template.features,
+                "estimated_files": template.estimated_files,
+                "estimated_time": template.estimated_time,
+                "fibonacci_priority": template.fibonacci_priority,
+                "icon": template.icon,
+                "tags": template.tags
+            }
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"❌ Erreur template: {e}")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Erreur template: {str(e)}"
+        )
+
+
+@api_router.get("/templates/category/{category}")
+async def get_templates_by_category(category: str):
+    """Récupère templates par catégorie"""
+    
+    try:
+        from templates.project_templates import TemplateManager
+        
+        templates = TemplateManager.get_templates_by_category(category)
+        
+        templates_dict = [
+            {
+                "id": t.id,
+                "name": t.name,
+                "description": t.description,
+                "icon": t.icon,
+                "complexity": t.complexity,
+                "estimated_time": t.estimated_time
+            }
+            for t in templates
+        ]
+        
+        return {
+            "success": True,
+            "category": category,
+            "templates": templates_dict,
+            "count": len(templates_dict)
+        }
+        
+    except Exception as e:
+        logger.error(f"❌ Erreur catégorie: {e}")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Erreur catégorie: {str(e)}"
+        )
+
+
 # Include the router in the main app
 app.include_router(api_router)
 
