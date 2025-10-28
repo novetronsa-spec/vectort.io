@@ -188,23 +188,6 @@ Responsabilités:
 - Assurer les best practices
 
 Analyse COMPLÈTE et PROFESSIONNELLE."""
-- Types TypeScript
-- Constantes et configurations
-
-Code COMPLET et RÉUTILISABLE.""",
-
-            AgentRole.QA: """Tu es un EXPERT Quality Assurance senior.
-Tu valides et optimises le code généré.
-
-Responsabilités:
-- Vérifier la cohérence entre fichiers
-- Détecter les imports manquants
-- Valider la syntaxe et structure
-- Suggérer optimisations
-- Vérifier la complétude
-- Assurer les best practices
-
-Analyse COMPLÈTE et PROFESSIONNELLE."""
         }
         
         return messages.get(self.role, "Tu es un développeur expert senior.")
