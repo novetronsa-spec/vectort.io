@@ -55,9 +55,9 @@ class FocusedJSTest:
         """Setup user with sufficient credits"""
         print("\n=== SETUP: User with Credits ===")
         
-        # Use existing user from logs that has credits
+        # Use existing user with credits
         test_user = {
-            "email": "test_vectort_1730127597@example.com",  # From logs
+            "email": "josephayingono@gmail.com",  # User with 5127 credits
             "password": "TestPassword123!"
         }
         
