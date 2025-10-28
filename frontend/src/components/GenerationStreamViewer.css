@@ -1,0 +1,309 @@
+/* GenerationStreamViewer.css - Style Emergent-like */
+
+.generation-stream-viewer {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: #0f0f0f;
+  color: #e0e0e0;
+  font-family: 'Monaco', 'Menlo', 'Courier New', monospace;
+  font-size: 13px;
+  overflow: hidden;
+}
+
+/* Header */
+.stream-header {
+  background: #1a1a1a;
+  padding: 15px 20px;
+  border-bottom: 1px solid #333;
+}
+
+.stream-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 10px;
+  color: #4ade80;
+}
+
+.pulse-dot {
+  width: 8px;
+  height: 8px;
+  background: #4ade80;
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.2);
+  }
+}
+
+/* Progress Bar */
+.progress-bar {
+  width: 100%;
+  height: 24px;
+  background: #2a2a2a;
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+  transition: width 0.5s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.progress-text {
+  color: white;
+  font-weight: 700;
+  font-size: 11px;
+}
+
+/* Content */
+.stream-content {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* Messages Panel */
+.messages-panel {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid #333;
+}
+
+.panel-title {
+  background: #1a1a1a;
+  padding: 10px 15px;
+  border-bottom: 1px solid #333;
+  font-weight: 600;
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+.messages-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px;
+}
+
+.messages-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.messages-list::-webkit-scrollbar-track {
+  background: #1a1a1a;
+}
+
+.messages-list::-webkit-scrollbar-thumb {
+  background: #3a3a3a;
+  border-radius: 4px;
+}
+
+/* Messages */
+.message {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  margin-bottom: 4px;
+  border-radius: 4px;
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.message-info {
+  background: rgba(59, 130, 246, 0.1);
+  border-left: 3px solid #3b82f6;
+}
+
+.message-phase {
+  background: rgba(139, 92, 246, 0.1);
+  border-left: 3px solid #8b5cf6;
+}
+
+.message-success {
+  background: rgba(74, 222, 128, 0.1);
+  border-left: 3px solid #4ade80;
+}
+
+.message-file_created {
+  background: rgba(251, 191, 36, 0.1);
+  border-left: 3px solid #fbbf24;
+}
+
+.message-error {
+  background: rgba(239, 68, 68, 0.1);
+  border-left: 3px solid #ef4444;
+}
+
+.message-complete {
+  background: rgba(74, 222, 128, 0.15);
+  border-left: 3px solid #4ade80;
+  font-weight: 600;
+}
+
+.message-icon {
+  font-size: 14px;
+}
+
+.message-time {
+  color: #6b7280;
+  font-size: 10px;
+  min-width: 65px;
+}
+
+.message-agent {
+  color: #8b5cf6;
+  font-weight: 600;
+  font-size: 11px;
+}
+
+.message-content {
+  flex: 1;
+  color: #e0e0e0;
+}
+
+/* Files Panel */
+.files-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: #0a0a0a;
+}
+
+.files-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px;
+}
+
+.file-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  margin-bottom: 2px;
+  border-radius: 3px;
+  transition: background 0.2s;
+}
+
+.file-item:hover {
+  background: rgba(59, 130, 246, 0.1);
+}
+
+.file-icon {
+  font-size: 14px;
+}
+
+.file-path {
+  color: #9ca3af;
+  font-size: 12px;
+  word-break: break-all;
+}
+
+.no-files {
+  color: #6b7280;
+  font-style: italic;
+  text-align: center;
+  padding: 20px;
+}
+
+/* Error */
+.stream-error {
+  background: rgba(239, 68, 68, 0.2);
+  border: 1px solid #ef4444;
+  color: #fca5a5;
+  padding: 12px 15px;
+  margin: 10px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.error-icon {
+  font-size: 18px;
+}
+
+/* Complete */
+.stream-complete {
+  background: linear-gradient(135deg, rgba(74, 222, 128, 0.2), rgba(34, 197, 94, 0.2));
+  border: 1px solid #4ade80;
+  padding: 20px;
+  margin: 15px;
+  border-radius: 8px;
+  text-align: center;
+  animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.complete-icon {
+  font-size: 48px;
+  margin-bottom: 10px;
+}
+
+.complete-text {
+  font-size: 16px;
+  font-weight: 600;
+  color: #4ade80;
+}
+
+.complete-text small {
+  display: block;
+  margin-top: 5px;
+  font-size: 12px;
+  color: #9ca3af;
+  font-weight: 400;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .stream-content {
+    flex-direction: column;
+  }
+
+  .messages-panel {
+    border-right: none;
+    border-bottom: 1px solid #333;
+  }
+
+  .files-panel {
+    max-height: 200px;
+  }
+}
