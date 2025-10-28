@@ -2830,6 +2830,82 @@ async def get_generation_state(
     }
 
 
+@api_router.post("/system/auto-test")
+async def run_auto_test(current_user: User = Depends(get_current_user)):
+    """
+    Lance l'auto-test complet du système
+    
+    Teste:
+    - 12 agents
+    - Streaming
+    - Machine Learning
+    - Harmonie mathématique
+    - Performance
+    - Intégration
+    
+    Réservé aux administrateurs
+    """
+    
+    logger.info(f"🧪 Auto-test lancé par: {current_user.email}")
+    
+    try:
+        from auto_test.system_test import SystemAutoTest
+        
+        # Créer instance auto-test
+        auto_test = SystemAutoTest(db, EMERGENT_LLM_KEY)
+        
+        # Lancer tous les tests
+        report = await auto_test.run_full_auto_test()
+        
+        logger.info(f"✅ Auto-test terminé - Score: {report['overall_score']}/100")
+        
+        return {
+            "success": True,
+            "report": report,
+            "message": f"Auto-test terminé - Score: {report['overall_score']}/100"
+        }
+        
+    except Exception as e:
+        logger.error(f"❌ Erreur auto-test: {e}")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Erreur auto-test: {str(e)}"
+        )
+
+
+@api_router.get("/system/harmony")
+async def get_system_harmony(current_user: User = Depends(get_current_user)):
+    """
+    Récupère les statistiques d'harmonie mathématique du système
+    
+    Retourne:
+    - Nombre d'or (φ)
+    - Séquence Fibonacci
+    - Ratios optimaux agents
+    - Priorités
+    - Timeouts optimaux
+    """
+    
+    try:
+        from math_optimization.harmony import MathematicalHarmony
+        
+        harmony = MathematicalHarmony()
+        stats = harmony.get_system_stats()
+        
+        return {
+            "success": True,
+            "harmony_stats": stats,
+            "message": "Harmonie mathématique calculée"
+        }
+        
+    except Exception as e:
+        logger.error(f"❌ Erreur harmonie: {e}")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Erreur harmonie: {str(e)}"
+        )
+
+
 # Include the router in the main app
 app.include_router(api_router)
 
