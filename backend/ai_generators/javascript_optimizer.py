@@ -523,7 +523,7 @@ Code JavaScript COMPLET et FONCTIONNEL."""
         
         result = {}
         
-        # Extraction code JavaScript
+        # Extraction code JavaScript/TypeScript
         js_patterns = [
             r"```javascript\s*(.*?)\s*```",
             r"```js\s*(.*?)\s*```",
@@ -534,26 +534,60 @@ Code JavaScript COMPLET et FONCTIONNEL."""
         for pattern in js_patterns:
             matches = re.findall(pattern, text, re.DOTALL)
             if matches:
-                result["js_code"] = matches[0]
+                # Combiner tous les blocs JavaScript trouvés
+                result["js_code"] = "\n\n".join(matches)
                 break
         
         # Extraction JSX/React
         jsx_pattern = r"```jsx\s*(.*?)\s*```"
         jsx_matches = re.findall(jsx_pattern, text, re.DOTALL)
         if jsx_matches:
-            result["react_code"] = jsx_matches[0]
+            result["react_code"] = "\n\n".join(jsx_matches)
         
         # Extraction CSS
         css_pattern = r"```css\s*(.*?)\s*```"
         css_matches = re.findall(css_pattern, text, re.DOTALL)
         if css_matches:
-            result["css_code"] = css_matches[0]
+            result["css_code"] = "\n\n".join(css_matches)
         
         # Extraction HTML
         html_pattern = r"```html\s*(.*?)\s*```"
         html_matches = re.findall(html_pattern, text, re.DOTALL)
         if html_matches:
-            result["html_code"] = html_matches[0]
+            result["html_code"] = "\n\n".join(html_matches)
+        
+        # Si aucun bloc markdown trouvé, mais qu'on a du code dans le texte
+        if not result:
+            self.logger.warning("⚠️ Aucun bloc markdown trouvé, tentative extraction intelligente")
+            
+            # Pour React/Vue/Angular - chercher import statements
+            if "import" in text and ("react" in text.lower() or "vue" in text.lower() or framework in ["react", "vue", "angular"]):
+                # Tout le texte est probablement du code
+                if framework in ["react", "nextjs"]:
+                    result["react_code"] = text
+                else:
+                    result["js_code"] = text
+                
+                self.logger.info(f"✅ Code extrait directement (pas de blocs markdown): {len(text)} chars")
+            
+            # Pour Express/Node.js backend
+            elif "express" in text.lower() or "app.get" in text or "app.post" in text:
+                result["backend_code"] = text
+                self.logger.info(f"✅ Backend code extrait directement: {len(text)} chars")
+            
+            # Tentative générique
+            elif len(text.strip()) > 100:
+                # Déterminer le type basé sur framework
+                if framework in ["react", "nextjs"]:
+                    result["react_code"] = text
+                elif framework in ["express", "fastify", "koa", "nodejs"]:
+                    result["backend_code"] = text
+                elif framework in ["vue", "vuejs"]:
+                    result["js_code"] = text
+                else:
+                    result["js_code"] = text
+                
+                self.logger.info(f"✅ Code extrait génériquement pour {framework}: {len(text)} chars")
         
         return result if result else None
     
