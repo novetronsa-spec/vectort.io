@@ -322,6 +322,128 @@ IMPORTANT:
 
 Format: FICHIER: chemin/fichier.js suivi du code entre triple backticks""",
 
+            AgentRole.DIAGNOSTIC: f"""ANALYSE DIAGNOSTIQUE COMPLÈTE DU PROJET:
+
+DESCRIPTION: {description}
+FRAMEWORK: {framework}
+
+Mission CRITIQUE:
+Analyse cette description en profondeur et fournis un rapport diagnostic JSON complet.
+
+Analyse requise:
+1. COMPLEXITÉ du projet (simple/medium/complex)
+2. BESOINS TECHNIQUES détectés:
+   - Authentification nécessaire? (JWT, OAuth, etc.)
+   - Base de données nécessaire? (MongoDB, PostgreSQL, etc.)
+   - Paiements nécessaires? (Stripe, PayPal, etc.)
+   - API externes nécessaires? (Google Maps, SendGrid, etc.)
+   - Temps réel nécessaire? (WebSocket, Socket.io, etc.)
+3. TECH STACK optimal recommandé
+4. ARCHITECTURE recommandée (MVC, microservices, etc.)
+5. INSTRUCTIONS pour chaque agent (Frontend, Backend, etc.)
+
+FORMAT OBLIGATOIRE - Réponds UNIQUEMENT avec ce JSON:
+{{
+  "complexity": "simple|medium|complex",
+  "estimated_files": 20,
+  "needs": {{
+    "authentication": true/false,
+    "database": "mongodb|postgresql|none",
+    "payments": true/false,
+    "real_time": true/false,
+    "external_apis": ["api1", "api2"],
+    "file_upload": true/false
+  }},
+  "tech_stack": {{
+    "frontend": "react",
+    "backend": "fastapi",
+    "database": "mongodb",
+    "authentication": "jwt"
+  }},
+  "architecture": "Description de l'architecture recommandée",
+  "agent_instructions": {{
+    "frontend": "Instructions spécifiques pour agent frontend",
+    "backend": "Instructions spécifiques pour agent backend",
+    "database": "Instructions spécifiques pour schéma BDD"
+  }}
+}}
+
+Analyse MAINTENANT.""",
+
+            AgentRole.DATABASE: f"""Génère le schéma de base de données COMPLET:
+
+DESCRIPTION: {description}
+FRAMEWORK: {framework}
+CONTEXTE: {context if context else 'Aucun'}
+
+Fichiers à générer:
+1. database/models.py ou database/schemas.js - Models/Collections
+2. database/migrations/001_initial.sql - Migration initiale
+3. database/seed.py ou database/seed.js - Données de test
+4. database/indexes.sql - Indexes optimisés
+
+IMPORTANT:
+- Schémas avec validation complète
+- Relations optimisées
+- Indexes pour performance
+- Seed data réalistes
+- Migrations versionnées
+
+Format: FICHIER: chemin/fichier suivi du code entre triple backticks""",
+
+            AgentRole.SECURITY: f"""AUDIT DE SÉCURITÉ COMPLET du projet:
+
+DESCRIPTION: {description}
+FRAMEWORK: {framework}
+CONTEXTE: {context if context else 'Aucun'}
+
+Mission CRITIQUE:
+1. Analyser TOUS les fichiers générés
+2. Détecter vulnérabilités (XSS, CSRF, injection, etc.)
+3. Générer code de sécurité corrigé
+
+Fichiers à générer:
+1. security/middleware.py - Middleware sécurité
+2. security/validators.py - Validation inputs
+3. security/config.py - Configuration sécurité
+4. security/audit_report.json - Rapport d'audit détaillé
+
+Rapport JSON OBLIGATOIRE dans audit_report.json:
+{{
+  "vulnerabilities": [
+    {{"type": "XSS", "severity": "high", "file": "src/App.jsx", "line": 42}}
+  ],
+  "fixes_applied": ["Description des corrections"],
+  "security_score": 85,
+  "recommendations": ["Recommandation 1", "Recommandation 2"]
+}}
+
+Format: FICHIER: chemin/fichier suivi du code entre triple backticks""",
+
+            AgentRole.TESTING: f"""Génère les TESTS AUTOMATIQUES COMPLETS:
+
+DESCRIPTION: {description}
+FRAMEWORK: {framework}
+CONTEXTE: {context if context else 'Aucun'}
+
+Fichiers à générer:
+1. tests/unit/components.test.js - Tests unitaires React
+2. tests/unit/api.test.py - Tests unitaires Backend
+3. tests/integration/auth.test.js - Tests intégration
+4. tests/e2e/user-flow.spec.js - Tests E2E Playwright
+5. tests/fixtures/data.js - Données de test
+6. jest.config.js - Configuration Jest
+7. pytest.ini - Configuration Pytest
+
+IMPORTANT:
+- Tests avec VRAIES assertions (expect, assert)
+- Coverage >80% souhaité
+- Tests des cas limites (edge cases)
+- Mocking approprié
+- Tests de sécurité (XSS, injection)
+
+Format: FICHIER: chemin/fichier.test.js suivi du code entre triple backticks""",
+
             AgentRole.QA: f"""Analyse et valide le code généré:
 
 DESCRIPTION: {description}
