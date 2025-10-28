@@ -991,13 +991,42 @@ def map_multi_agent_files_to_response(all_files: dict, framework: str) -> dict:
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Application Vectort</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div id="root"></div>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
 </body>
 </html>"""
         response["html"] = html_content
         response["all_files"]["public/index.html"] = html_content
+        logger.info("✅ HTML de base généré automatiquement pour React")
+    
+    # Si pas de CSS, générer un CSS de base
+    if not response["css"] and response["react"]:
+        css_content = """* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}"""
+        response["css"] = css_content
+        response["all_files"]["src/styles.css"] = css_content
+        logger.info("✅ CSS de base généré automatiquement")
     
     return response
 
