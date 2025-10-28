@@ -121,20 +121,20 @@ class FocusedJSTest:
             if response.status_code == 200:
                 data = response.json()
                 
-                # Detailed analysis
-                html_code = data.get("html_code", "")
-                css_code = data.get("css_code", "")
-                js_code = data.get("js_code", "")
-                react_code = data.get("react_code", "")
-                backend_code = data.get("backend_code", "")
-                all_files = data.get("all_files", {})
+                # Detailed analysis - handle None values safely
+                html_code = data.get("html_code") or ""
+                css_code = data.get("css_code") or ""
+                js_code = data.get("js_code") or ""
+                react_code = data.get("react_code") or ""
+                backend_code = data.get("backend_code") or ""
+                all_files = data.get("all_files") or {}
                 
                 analysis = {
-                    "html_length": len(html_code),
-                    "css_length": len(css_code),
-                    "js_length": len(js_code),
-                    "react_length": len(react_code),
-                    "backend_length": len(backend_code),
+                    "html_length": len(str(html_code)),
+                    "css_length": len(str(css_code)),
+                    "js_length": len(str(js_code)),
+                    "react_length": len(str(react_code)),
+                    "backend_length": len(str(backend_code)),
                     "all_files_count": len(all_files),
                     "generation_time": generation_time
                 }
