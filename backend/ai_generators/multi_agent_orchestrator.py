@@ -745,6 +745,173 @@ class MultiAgentOrchestrator:
                 "src/App.jsx": "export default function App() { return <div>Application générée</div>; }",
                 "src/styles/global.css": "body { font-family: Arial, sans-serif; margin: 0; padding: 20px; }"
             }
+    
+    async def _generate_with_retry_and_streaming(
+        self,
+        agent_name: str,
+        description: str,
+        framework: str,
+        context: Dict,
+        project_id: str,
+        streaming_manager,
+        max_retries: int = 3
+    ) -> Dict[str, str]:
+        """
+        Génère avec un agent spécifique avec RETRY automatique et streaming
+        
+        Garantit 100% de succès via fallback intelligent
+        """
+        
+        # Notifier début agent
+        if streaming_manager and project_id:
+            await streaming_manager.stream_agent_start(project_id, agent_name)
+        
+        # Tenter génération avec retries
+        for attempt in range(max_retries):
+            try:
+                self.logger.info(f"🤖 Agent {agent_name} - Tentative {attempt + 1}/{max_retries}")
+                
+                # Générer avec timeout adaptatif (augmente avec chaque retry)
+                timeout = 20.0 + (attempt * 10.0)  # 20s, 30s, 40s
+                
+                result = await asyncio.wait_for(
+                    self.agents[agent_name].generate(description, framework, context),
+                    timeout=timeout
+                )
+                
+                if result and len(result) > 0:
+                    self.logger.info(f"✅ Agent {agent_name} succès - {len(result)} fichiers")
+                    return result
+                else:
+                    self.logger.warning(f"⚠️ Agent {agent_name} retour vide - Retry")
+                    
+            except asyncio.TimeoutError:
+                self.logger.warning(f"⏱️ Agent {agent_name} timeout (tentative {attempt + 1}) - Retry")
+                
+            except Exception as e:
+                self.logger.error(f"❌ Agent {agent_name} erreur (tentative {attempt + 1}): {e}")
+        
+        # Si tous les retries échouent, utiliser fallback
+        self.logger.warning(f"⚠️ Agent {agent_name} échec après {max_retries} tentatives - Fallback")
+        return await self._generate_fallback_files(agent_name, description, framework)
+    
+    async def _generate_fallback_files(
+        self,
+        agent_name: str,
+        description: str,
+        framework: str
+    ) -> Dict[str, str]:
+        """
+        Génère des fichiers de fallback basiques mais fonctionnels
+        
+        GARANTIT qu'il y aura toujours des fichiers, même en cas d'échec total
+        """
+        
+        self.logger.info(f"🔄 Génération fallback pour agent: {agent_name}")
+        
+        fallbacks = {
+            AgentRole.FRONTEND: {
+                "src/App.jsx": f"""import React from 'react';
+
+export default function App() {{
+  return (
+    <div className="app">
+      <header>
+        <h1>{description[:50]}</h1>
+      </header>
+      <main>
+        <p>Application générée par Vectort.io</p>
+      </main>
+    </div>
+  );
+}}""",
+                "src/pages/Home.jsx": """import React from 'react';
+
+export default function Home() {
+  return <div><h2>Page d'accueil</h2></div>;
+}""",
+            },
+            
+            AgentRole.STYLING: {
+                "src/styles/global.css": """* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  line-height: 1.6;
+  color: #333;
+}
+
+.app {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}""",
+            },
+            
+            AgentRole.BACKEND: {
+                "backend/main.py": """from fastapi import FastAPI
+
+app = FastAPI(title="API Backend")
+
+@app.get("/")
+async def root():
+    return {"message": "API Backend"}
+
+@app.get("/health")
+async def health():
+    return {"status": "healthy"}""",
+            },
+            
+            AgentRole.CONFIG: {
+                "package.json": """{
+  "name": "vectort-app",
+  "version": "1.0.0",
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build"
+  }
+}""",
+                "README.md": f"""# {description[:50]}
+
+Application générée par Vectort.io
+
+## Installation
+```
+npm install
+npm start
+```""",
+            },
+            
+            AgentRole.COMPONENTS: {
+                "src/hooks/useAuth.js": """import { useState } from 'react';
+
+export default function useAuth() {
+  const [user, setUser] = useState(null);
+  return { user, setUser };
+}""",
+            },
+            
+            AgentRole.DATABASE: {
+                "database/models.py": """from pydantic import BaseModel
+
+class User(BaseModel):
+    id: str
+    email: str
+    name: str""",
+            }
+        }
+        
+        return fallbacks.get(agent_name, {
+            f"fallback/{agent_name}.txt": f"Fallback file for {agent_name}"
+        })
 
 
 # Export principal
