@@ -956,6 +956,18 @@ backend:
           agent: "testing"
           comment: "✅ CACHE SYSTEM FIXED: Modified cache hit logic to create new GeneratedApp instance with current project_id and save to database. Cached results now properly associated with requesting project. Code retrieval working correctly after cache hits."
 
+  - task: "JavaScript Generation Optimization - Adaptive Timeouts & Robustness"
+    implemented: false
+    working: false
+    file: "backend/ai_generators/multi_agent_orchestrator.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: false
+          agent: "main"
+          comment: "🚀 STARTING JAVASCRIPT GENERATION OPTIMIZATION: User requested comprehensive JavaScript optimization to handle all complexities and eventualities. Will implement: 1) Adaptive intelligent timeouts based on project complexity (simple: 30s, medium: 60s, complex: 120s+) 2) Enhanced JavaScript-specific parsing with better error recovery 3) Robust fallback mechanisms for Node.js/Express/React generation 4) Optimized LLM prompts for JavaScript syntax 5) Comprehensive testing across various JavaScript project types"
+
 frontend:
   - task: "ProjectIterationView Component (CRITICAL)"
     implemented: true
