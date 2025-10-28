@@ -2,12 +2,16 @@
 Multi-Agent Orchestrator for Vectort.io
 Architecture avec 6 agents spécialisés travaillant en parallèle
 Performance et qualité professionnelle maximales
+OPTIMISÉ pour génération JavaScript/Node.js/React avec timeouts adaptatifs
 """
 
 import asyncio
 from typing import Dict, List, Optional
 from emergentintegrations.llm.chat import LlmChat, UserMessage
 import logging
+
+# Import JavaScript Optimizer
+from .javascript_optimizer import JavaScriptOptimizer
 
 logger = logging.getLogger(__name__)
 
